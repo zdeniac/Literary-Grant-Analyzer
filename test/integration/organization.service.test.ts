@@ -76,26 +76,38 @@ describe('OrganizationService', () => {
     });
 
     it('updates organization', async () => {
-        const created = await createOrganization({
+        const created: Organization = await createOrganization({
             name: 'Alapítvány',
             legalForm: LegalForm.FOUNDATION
         });
 
-        const updated = await organizationService.update(created.id, { name: 'Alapítvány upd' });
+        const updated: Organization = await organizationService.update(created.id, { name: 'Alapítvány upd' });
 
         expect(updated.name).toStrictEqual('Alapítvány upd');
     });
 
     it('deletes organization', async () => {
-        const created = await createOrganization({ 
+        const created: Organization = await createOrganization({ 
             name: 'Alapítvány', 
             legalForm: LegalForm.FOUNDATION
         });
 
         await organizationService.delete(created.id);
         
-        const found = await organizationService.findById(created.id);
+        const found: Organization|null = await organizationService.findById(created.id);
 
         expect(found).toBeNull();
+    });
+
+    it('throws exception on deleting non-existent organization', async () => {
+        await expect(
+            organizationService.delete(999)
+        ).rejects.toThrow();
+    });
+
+    it('throws exception on updating non-existent organization', async () => {
+        await expect(
+            organizationService.update(999, { name: 'Alapítvány' })
+        ).rejects.toThrow();
     });
 });
