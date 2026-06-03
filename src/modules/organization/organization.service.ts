@@ -25,7 +25,7 @@ export class OrganizationService {
         return prisma.organization.findMany();
     }
 
-    async update(id: number, data: { name: string, legalForm: LegalForm, address?: string, foundingDate?: Date }): Promise<Organization> {
+    async update(id: number, data: { name?: string, legalForm?: LegalForm, address?: string, foundingDate?: Date }): Promise<Organization> {
         return prisma.organization.update({
             where: { id },
             data,
