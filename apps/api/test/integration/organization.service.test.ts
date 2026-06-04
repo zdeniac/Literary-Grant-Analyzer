@@ -20,12 +20,12 @@ describe('OrganizationService', () => {
         address?: string, 
         foundingDate?: Date
     }) => {
-        return organizationService.create(
-            overrides.name ?? 'Jelenkor Alapítvány',
-            overrides.legalForm ?? LegalForm.LTD,
-            overrides.address,
-            overrides.foundingDate,
-        );
+        return organizationService.create({
+            name: overrides.name ?? 'Jelenkor Alapítvány',
+            legalForm: overrides.legalForm ?? LegalForm.LTD,
+            address: overrides.address,
+            foundingDate: overrides.foundingDate,
+        });
     };
 
     beforeEach(async () => {
