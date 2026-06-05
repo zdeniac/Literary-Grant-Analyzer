@@ -43,11 +43,7 @@ describe('OrganizationService', () => {
     });
 
     it('finds organization by id', async () => {
-        const created = await createOrganization({ 
-            name: 'Jelenkor Alapítvány',
-            legalForm: LegalForm.LTD,
-        });
-
+        const created = await createOrganization();
         const found = await organizationService.findById(created.id);
 
         expect(found).not.toBeNull();
@@ -76,7 +72,7 @@ describe('OrganizationService', () => {
         expect(found).toEqual(
             expect.arrayContaining([org1, org2, org3])
         );
-        // Order is intact
+        // Order of elements is intact
         expect(found.map(o => o.id)).toEqual([org1.id, org2.id, org3.id]);
     });
 
@@ -96,11 +92,7 @@ describe('OrganizationService', () => {
     });
 
     it('deletes organization', async () => {
-        const created = await createOrganization({ 
-            name: 'Alapítvány', 
-            legalForm: LegalForm.FOUNDATION,
-        });
-
+        const created = await createOrganization();
         const deleted = await organizationService.delete(created.id);
         
         // Returns the deleted org
