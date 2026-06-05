@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { prisma } from "../../src/db/prisma";
-import { OrganizationService } from "../../src/modules/organization/organization.service";
+import { prisma } from "../../../src/db/prisma";
+import { OrganizationService } from "../../../src/modules/organization/organization.service";
 import { LegalForm } from "@prisma/client";
 
 describe('OrganizationService', () => {

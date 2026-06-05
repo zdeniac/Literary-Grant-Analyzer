@@ -1,5 +1,5 @@
 import { prisma } from "../../db/prisma";
-import { Organization, LegalForm } from "@prisma/client";
+import { Organization } from "@prisma/client";
 import { CreateOrganizationDto, UpdateOrganizationDto } from "./dto/organization.dto";
 
 export class OrganizationService {

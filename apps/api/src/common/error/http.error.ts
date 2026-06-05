@@ -5,6 +5,7 @@ export class NotFoundError extends AppError {
         message: string = 'Not Found',
     ) {
         super(message, 404);
+        // class name for tracing
         this.name = 'NotFoundError';
     }
 }
