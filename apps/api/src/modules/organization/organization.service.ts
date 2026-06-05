@@ -1,6 +1,7 @@
 import { prisma } from "../../db/prisma";
 import { Organization } from "@prisma/client";
 import { CreateOrganizationDto, UpdateOrganizationDto } from "./dto/organization.dto";
+import { NotFoundError } from "../../common/error/http.error";
 
 export class OrganizationService {
     async create(dto: CreateOrganizationDto): Promise<Organization> {
@@ -9,12 +10,16 @@ export class OrganizationService {
         });
     }
 
-    async findById(id: number): Promise<Organization | null> {
-        return prisma.organization.findUnique({
+    async findById(id: number): Promise<Organization> {
+        const org: Organization | null = await prisma.organization.findUnique({
             where: {
                 id,
             },
         });
+
+        if (!org) throw new NotFoundError();
+
+        return org;
     }
 
     async findAll(): Promise<Organization[]> {

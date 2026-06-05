@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { prisma } from "../../../src/db/prisma";
 import { OrganizationService } from "../../../src/modules/organization/organization.service";
-import { LegalForm } from "@prisma/client";
+import { LegalForm, Organization } from "@prisma/client";
 
 describe('OrganizationService', () => {
 
@@ -19,7 +19,7 @@ describe('OrganizationService', () => {
         legalForm?: LegalForm, 
         address?: string, 
         foundingDate?: Date
-    }) => {
+    }): Promise<Organization> => {
         return organizationService.create({
             name: overrides.name ?? 'Jelenkor Alapítvány',
             legalForm: overrides.legalForm ?? LegalForm.LTD,
@@ -76,6 +76,8 @@ describe('OrganizationService', () => {
         expect(found).toEqual(
             expect.arrayContaining([org1, org2, org3])
         );
+        // Order is intact
+        expect(found.map(o => o.id)).toEqual([org1.id, org2.id, org3.id]);
     });
 
     it('updates organization', async () => {
@@ -95,11 +97,16 @@ describe('OrganizationService', () => {
             legalForm: LegalForm.FOUNDATION,
         });
 
-        await organizationService.delete(created.id);
+        const deleted = await organizationService.delete(created.id);
         
-        const found = await organizationService.findById(created.id);
+        // Returns the deleted org
+        expect(created.id).toBe(deleted.id)
+    });
 
-        expect(found).toBeNull();
+    it('throws exception on querying for non-existent organization', async () => {
+        await expect(
+            organizationService.findById(999)
+        ).rejects.toThrow();
     });
 
     it('throws exception on deleting non-existent organization', async () => {
