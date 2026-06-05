@@ -19,7 +19,7 @@ describe('OrganizationService', () => {
         legalForm?: LegalForm, 
         address?: string, 
         foundingDate?: Date
-    }): Promise<Organization> => {
+    } = {}): Promise<Organization> => {
         return organizationService.create({
             name: overrides.name ?? 'Jelenkor Alapítvány',
             legalForm: overrides.legalForm ?? LegalForm.LTD,
@@ -81,14 +81,18 @@ describe('OrganizationService', () => {
     });
 
     it('updates organization', async () => {
-        const created = await createOrganization({
-            name: 'Alapítvány',
-            legalForm: LegalForm.FOUNDATION,
-        });
-
+        const created = await createOrganization({ legalForm: LegalForm.OTHER });
         const updated = await organizationService.update(created.id, { name: 'Alapítvány upd' });
 
-        expect(updated.name).toStrictEqual('Alapítvány upd');
+        expect(updated.updatedAt).toBeDefined();
+        expect(updated).toMatchObject({
+            id: created.id,
+            name: 'Alapítvány upd',
+            legalForm: LegalForm.OTHER,
+            foundingDate: created.foundingDate,
+            address: created.address,
+            createdAt: created.createdAt,
+        });
     });
 
     it('deletes organization', async () => {
