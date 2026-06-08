@@ -3,7 +3,7 @@ import { organizationSchema } from "../../../src/modules/organization/validation
 import { LegalForm } from "@prisma/client";
 
 describe('organizationSchema', () => {
-
+    
         it('accepts valid organization', () => {
             const result = organizationSchema.safeParse({
                 name: 'Tiszatáj',
@@ -28,5 +28,4 @@ describe('organizationSchema', () => {
                 legalForm: 'INVALID'
             });
         });
-
 });

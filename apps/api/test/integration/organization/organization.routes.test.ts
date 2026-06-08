@@ -90,5 +90,4 @@ describe('Organization routes', () => {
         
         expect(deleted.status).toBe(404);
     });
-
 });
