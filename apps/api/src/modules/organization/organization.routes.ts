@@ -53,7 +53,10 @@ router.get(
     asyncHandler (async (req: Request, res: Response) => {
         const orgs = (await service.findAll())
             .map(toOrganizationDto);
-        res.json(orgs);
+        res.json({ 
+            data: orgs,
+            total: orgs.length,
+        });
     }),
 );
 
