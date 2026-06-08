@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect } from "vitest";
 import { organizationSchema } from "../../../src/modules/organization/validation/organization.schema";
 import { LegalForm } from "@prisma/client";
 
