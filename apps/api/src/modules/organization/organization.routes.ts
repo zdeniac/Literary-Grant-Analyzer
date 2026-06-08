@@ -2,8 +2,9 @@ import { Request, Response, Router } from "express";
 import { asyncHandler } from "../../common/middleware/asyncHandler";
 import { createOrganizationModule } from "./organization.factory";
 import { validate } from "../../common/middleware/validate";
-import { createOrganizationSchema } from "./validation/organization.schema";
+import { organizationSchema } from "./validation/organization.schema";
 import { toOrganizationDto } from "./mapper/organization.mapper";
+import { idSchema } from "../../common/validation/common.schema";
 
 const router = Router();
 const { service } = createOrganizationModule();
@@ -11,16 +12,19 @@ const { service } = createOrganizationModule();
 router.get(
     '/:id', 
     asyncHandler(async (req: Request, res: Response) => {
-        const org = await service.findById(Number(req.params.id));
+        const org = await service.findById(
+            idSchema.parse(req.params.id)
+        );
         res.json(toOrganizationDto(org));
     }),
 );
 
 router.put(
     '/:id',
+    validate(organizationSchema),
     asyncHandler(async (req: Request, res: Response) => {
         const org = await service.update(
-            Number(req.params.id), 
+            idSchema.parse(req.params.id),
             req.body
         );
         res.json(toOrganizationDto(org));
@@ -30,13 +34,14 @@ router.put(
 router.delete(
     '/:id',
     asyncHandler(async (req: Request, res: Response) => {
-        await service.delete(Number(req.params.id));
+        await service.delete(idSchema.parse(req.params.id));
+        res.sendStatus(204);
     }),
 );
 
 router.post(
     '/',
-    validate(createOrganizationSchema),
+    validate(organizationSchema),
     asyncHandler(async (req: Request, res: Response) => {
         const org = await service.create(req.body);
         res.json(toOrganizationDto(org));
