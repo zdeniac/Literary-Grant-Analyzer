@@ -1,15 +1,29 @@
 import './App.css';
-import { Admin, Layout, Resource } from 'react-admin';
+import { Admin, Layout, Resource, type DataProvider } from 'react-admin';
 import { OrganizationList } from './pages/organizations/organization.list';
-import simpleRestProvider from 'ra-data-simple-rest';
 
-const dataProvider = simpleRestProvider('http://localhost:3000');
+const dataProvider: DataProvider = {
+	getList: async (resource: string): Promise<{ data: Array<{ id: number | string}>, total: number }> => {
+		const res = await fetch(`/api/${resource}`);
+
+		if (!res.ok) {
+      		throw new Error(await res.text());
+    	}
+
+		const json = await res.json();
+		
+		return {
+  			data: json.data,
+			total: json.total,
+    	};
+	}
+};
 
 const App = () => (
 	<Admin layout={Layout} dataProvider={dataProvider}>
 		<Resource 
 			name="organizations" 
-			list={OrganizationList} 
+			list={OrganizationList}
 		/>
 	</Admin>
 );

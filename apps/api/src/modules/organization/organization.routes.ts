@@ -53,10 +53,13 @@ router.get(
     asyncHandler (async (req: Request, res: Response) => {
         const orgs = (await service.findAll())
             .map(toOrganizationDto);
-        res.json({ 
+        res.setHeader('Content-Range', `organizations 0-9/${orgs.length}`);
+        res.setHeader('Access-Control-Expose-Headers', 'Content-Range');
+
+        res.json({
             data: orgs,
             total: orgs.length,
-        });
+        });   
     }),
 );
 
