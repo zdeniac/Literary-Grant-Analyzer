@@ -29,14 +29,18 @@ export class OrganizationService {
 
     async update(id: IdParam, dto: UpdateOrganizationDto): Promise<Organization> {
         return prisma.organization.update({
-            where: { id },
+            where: { 
+                id 
+            },
             data: dto,
         });
     }
 
     async delete(id: IdParam): Promise<Organization> {
         return prisma.organization.delete({
-            where: { id },
+            where: { 
+                id 
+            },
         });
     }
 }
