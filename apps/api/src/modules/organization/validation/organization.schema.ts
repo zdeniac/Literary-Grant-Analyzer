@@ -7,5 +7,5 @@ export const organizationSchema = z.object({
     name: z.string().min(1).max(maxStrLen),
     legalForm: z.enum(LegalForm),
     address: z.optional(z.string().min(4).max(maxStrLen)),
-    foundingDate: z.date().optional(),
+    foundingYear: z.number().optional(),
 });

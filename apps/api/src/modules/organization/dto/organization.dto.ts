@@ -5,7 +5,7 @@ export type OrganizationDto = {
     name: string,
     legalForm: LegalForm,
     address: string | null,
-    foundingDate: Date | null,
+    foundingYear: number | null,
     createdAt: Date,
     updatedAt: Date | null,
 };
@@ -14,12 +14,12 @@ export type CreateOrganizationDto = {
     name: string,
     legalForm: LegalForm,
     address?: string,
-    foundingDate?: Date,
+    foundingYear?: number,
 };
 
 export type UpdateOrganizationDto = {
     name?: string,
     legalForm?: LegalForm,
     address?: string,
-    foundingDate?: Date,
+    foundingYear?: number,
 };

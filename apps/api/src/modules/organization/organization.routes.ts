@@ -15,7 +15,9 @@ router.get(
         const org = await service.findById(
             idSchema.parse(req.params.id)
         );
-        res.json(toOrganizationDto(org));
+        res.json({
+            data: toOrganizationDto(org)
+        });
     }),
 );
 
@@ -27,7 +29,9 @@ router.put(
             idSchema.parse(req.params.id),
             req.body
         );
-        res.json(toOrganizationDto(org));
+        res.json({ 
+            data: toOrganizationDto(org)
+        });
     }),
 );
 
@@ -44,7 +48,9 @@ router.post(
     validate(organizationSchema),
     asyncHandler(async (req: Request, res: Response) => {
         const org = await service.create(req.body);
-        res.json(toOrganizationDto(org));
+        res.json({
+            data: toOrganizationDto(org)
+        });
     }),
 );
 

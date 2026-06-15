@@ -6,7 +6,7 @@ export const toOrganizationDto = (org: Organization): OrganizationDto => ({
     name: org.name,
     legalForm: org.legalForm,
     address: org.address,
-    foundingDate: org.foundingDate,
+    foundingYear: org.foundingYear,
     createdAt: org.createdAt,
     updatedAt: org.updatedAt,
 });

@@ -7,7 +7,7 @@ export const OrganizationList = () => (
             <TextField source="name" />
             <TextField source="address" />
             <TextField source="legalForm" />
-            <TextField source="foundingDate" />
+            <TextField source="foundingYear" />
             <TextField source="createdAt" />
             <TextField source="updatedAt" />
         </Datagrid>
