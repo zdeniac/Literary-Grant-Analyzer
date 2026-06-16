@@ -1,6 +1,6 @@
 import { Create, required, SelectInput, SimpleForm, TextInput } from "react-admin";
-import { legalFormChoices } from "./organization.edit";
-import { YearInput } from "../../components/inputs/YearInputs";
+import { YearInput } from "../../components/inputs/YearInput";
+import { legalForms } from "./organization.constants";
 
 export const OrganizationCreate = () => (
     <Create>
@@ -10,7 +10,7 @@ export const OrganizationCreate = () => (
 
             <SelectInput 
                 source="legalForm"
-                choices={legalFormChoices}
+                choices={legalForms}
                 validate={[required()]}
             />
 

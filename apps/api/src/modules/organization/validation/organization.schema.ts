@@ -1,7 +1,7 @@
 import { LegalForm } from "@prisma/client";
 import * as z from "zod";
 
-export const maxStrLen = 60;
+const maxStrLen = 60;
 
 export const organizationSchema = z.object({
     name: z.string().min(1).max(maxStrLen),

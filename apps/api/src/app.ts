@@ -1,5 +1,6 @@
 import express from "express";
 import organizationRouter from "./modules/organization/organization.routes";
+import journalRouter from "./modules/journal/journal.routes";
 
 const app = express();
 
@@ -14,6 +15,7 @@ app.use(
 );
 
 app.use('/api/organizations', organizationRouter);
+app.use('/api/journals', journalRouter);
 
 
 export default app;

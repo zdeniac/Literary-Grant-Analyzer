@@ -1,8 +1,13 @@
-import './App.css';
-import { Admin, Layout, Resource, type CreateParams, type CreateResult, type DataProvider, type DeleteManyParams, type DeleteManyResult, type DeleteParams, type DeleteResult, type GetListParams, type GetListResult, type GetManyParams, type GetManyReferenceParams, type GetManyReferenceResult, type GetManyResult, type GetOneParams, type GetOneResult, type Identifier, type QueryFunctionContext, type RaRecord, type UpdateManyParams, type UpdateManyResult, type UpdateParams, type UpdateResult } from 'react-admin';
+import { Admin, Resource, type CreateParams, type CreateResult, type DataProvider, type DeleteManyParams, type DeleteManyResult, type DeleteParams, type DeleteResult, type GetListParams, type GetListResult, type GetManyParams, type GetManyReferenceParams, type GetManyReferenceResult, type GetManyResult, type GetOneParams, type GetOneResult, type Identifier, type QueryFunctionContext, type RaRecord, type UpdateManyParams, type UpdateManyResult, type UpdateParams, type UpdateResult } from 'react-admin';
 import { OrganizationList } from './pages/organizations/organization.list';
 import { OrganizationEdit } from './pages/organizations/organization.edit';
 import { OrganizationCreate } from './pages/organizations/organization.create';
+import { JournalList } from './pages/journals/journal.list';
+import { JournalCreate } from './pages/journals/journal.create';
+import { JournalEdit } from './pages/journals/journal.edit';
+import { CustomLayout } from './CustomLayout';
+import ArticleIcon from '@mui/icons-material/Article';
+import BusinessIcon from "@mui/icons-material/Business";
 
 const dataProvider: DataProvider = {
 	getList: async <RecordType extends RaRecord = RaRecord>(
@@ -38,7 +43,17 @@ const dataProvider: DataProvider = {
 		};
 	},
 	getMany: async function <RecordType extends RaRecord = any>(resource: string, params: GetManyParams<RecordType> & QueryFunctionContext): Promise<GetManyResult<RecordType>> {
-		throw new Error('Function not implemented.');
+		const res = await fetch(`/api/${resource}`);
+
+		if (!res.ok) {
+			throw new Error(await res.text());
+		}
+
+		const json = await res.json();
+
+		return {
+			data: json.data,
+		};
 	},
 	getManyReference: function <RecordType extends RaRecord = any>(resource: string, params: GetManyReferenceParams & QueryFunctionContext): Promise<GetManyReferenceResult<RecordType>> {
 		throw new Error('Function not implemented.');
@@ -105,12 +120,20 @@ const dataProvider: DataProvider = {
 }
 
 const App = () => (
-	<Admin layout={Layout} dataProvider={dataProvider}>
+	<Admin layout={CustomLayout} dataProvider={dataProvider}>
 		<Resource 
 			name="organizations" 
 			list={OrganizationList}
 			edit={OrganizationEdit}
 			create={OrganizationCreate}
+			icon={BusinessIcon}
+		/>
+		<Resource
+			name="journals"
+			list={JournalList}
+			create={JournalCreate}
+			edit={JournalEdit}
+			icon={ArticleIcon}
 		/>
 	</Admin>
 );

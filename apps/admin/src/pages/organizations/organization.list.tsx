@@ -1,15 +1,17 @@
-import { Datagrid, List, TextField } from "react-admin";
+import { DataTable, List } from "react-admin";
+import { HungarianDateField } from "../../components/inputs/HungarianDateField";
 
 export const OrganizationList = () => (
     <List>
-        <Datagrid>
-            <TextField source="id" />
-            <TextField source="name" />
-            <TextField source="address" />
-            <TextField source="legalForm" />
-            <TextField source="foundingYear" />
-            <TextField source="createdAt" />
-            <TextField source="updatedAt" />
-        </Datagrid>
+        <DataTable>
+            <DataTable.Col source="id" />
+            <DataTable.Col source="name" />
+            <DataTable.Col source="address" />
+            <DataTable.Col source="legalForm" />
+            <DataTable.Col source="foundingYear" />
+
+            <DataTable.Col source="createdAt" field={HungarianDateField} />
+            <DataTable.Col source="updatedAt" field={HungarianDateField} />
+        </DataTable>
     </List>
 );

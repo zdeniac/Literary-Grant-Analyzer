@@ -1,21 +1,23 @@
-import { Edit, SelectInput, SimpleForm, TextInput } from "react-admin";
-import { LegalForm } from "@prisma/client";
-import { YearInput } from "../../components/inputs/YearInputs";
-
-export const legalFormChoices = [
-    { id: LegalForm.LTD, name: "Ltd." },
-    { id: LegalForm.PLC, name: "PLC" },
-    { id: LegalForm.FOUNDATION, name: "Foundation" },
-    { id: LegalForm.ASSOCIATION, name: "Association" },
-    { id: LegalForm.OTHER, name: "Other" },
-];
+import { Edit, required, SelectInput, SimpleForm, TextInput } from "react-admin";
+import { YearInput } from "../../components/inputs/YearInput";
+import { legalForms } from "./organization.constants";
 
 export const OrganizationEdit = () => (
     <Edit>
         <SimpleForm>
-            <TextInput source="name" />
+            <TextInput 
+                source="name"
+                validate={[required()]}
+            />
+
             <TextInput source="address" />
-            <SelectInput source="legalForm" choices={legalFormChoices}/>
+
+            <SelectInput 
+                source="legalForm"
+                validate={[required()]}
+                choices={legalForms}
+            />
+
             <YearInput source="foundingYear" />
         </SimpleForm>
     </Edit>
