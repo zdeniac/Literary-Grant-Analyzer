@@ -5,13 +5,9 @@ import { LegalForm } from "@prisma/client";
 import { prisma } from "../../../src/db/prisma";
 import { beforeEach } from "node:test";
 
-beforeEach(async () => {
-  await prisma.organization.deleteMany();
-});
+describe('Organization routes test', () => {
 
-const route = '/api/organizations';
-
-describe('Organization routes', () => {
+    const route = '/api/organizations';
 
     const createOrganization = async (data: {} = {
         name: 'Tiszatáj Alapítvány',
@@ -23,6 +19,10 @@ describe('Organization routes', () => {
 
         return res;
     };
+
+    beforeEach(async () => {
+        await prisma.organization.deleteMany();
+    });
 
     it('POST /organization creates organization', async () => {
         const res = await createOrganization();

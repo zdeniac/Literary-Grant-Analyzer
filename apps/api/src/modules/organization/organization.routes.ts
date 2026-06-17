@@ -2,7 +2,7 @@ import { Request, Response, Router } from "express";
 import { asyncHandler } from "../../common/middleware/asyncHandler";
 import { createOrganizationModule } from "./organization.factory";
 import { validate } from "../../common/middleware/validate";
-import { organizationSchema } from "./validation/organization.schema";
+import { OrganizationSchema } from "./validation/organization.schema";
 import { toOrganizationDto } from "./mapper/organization.mapper";
 import { idSchema } from "../../common/validation/common.schema";
 
@@ -23,7 +23,7 @@ router.get(
 
 router.put(
     '/:id',
-    validate(organizationSchema),
+    validate(OrganizationSchema),
     asyncHandler(async (req: Request, res: Response) => {
         const org = await service.update(
             idSchema.parse(req.params.id),
@@ -45,7 +45,7 @@ router.delete(
 
 router.post(
     '/',
-    validate(organizationSchema),
+    validate(OrganizationSchema),
     asyncHandler(async (req: Request, res: Response) => {
         const org = await service.create(req.body);
         res.json({

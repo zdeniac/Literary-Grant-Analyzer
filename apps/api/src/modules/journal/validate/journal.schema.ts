@@ -1,6 +1,5 @@
 import { JournalStatus } from "@prisma/client";
 import z from "zod";
-import { uz } from "zod/v4/locales";
 
 const maxStrLen = 60;
 

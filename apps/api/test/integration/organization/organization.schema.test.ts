@@ -1,11 +1,11 @@
 import { describe, it, expect } from "vitest";
-import { organizationSchema } from "../../../src/modules/organization/validation/organization.schema";
+import { OrganizationSchema } from "../../../src/modules/organization/validation/organization.schema";
 import { LegalForm } from "@prisma/client";
 
-describe('organizationSchema', () => {
+describe('Organization schema test', () => {
     
         it('accepts valid organization', () => {
-            const result = organizationSchema.safeParse({
+            const result = OrganizationSchema.safeParse({
                 name: 'Tiszatáj',
                 legalForm: LegalForm.FOUNDATION,
             });
@@ -14,7 +14,7 @@ describe('organizationSchema', () => {
         });
 
         it('rejects empty name', () => {
-            const result = organizationSchema.safeParse({
+            const result = OrganizationSchema.safeParse({
                 name: '',
                 legalForm: 'LTD',
             });
@@ -23,7 +23,7 @@ describe('organizationSchema', () => {
         });
 
         it('rejects invalid legal form', () => {
-            const result = organizationSchema.safeParse({
+            const result = OrganizationSchema.safeParse({
                 name: 'Tiszatáj',
                 legalForm: 'INVALID'
             });
