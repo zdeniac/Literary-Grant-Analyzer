@@ -11,20 +11,20 @@ describe('OrganizationService', () => {
         name: 'Jelenkor Alapítvány',
         legalForm: LegalForm.LTD,
         address: '7621 Pécs, Széchenyi tér 7-8',
-        foundingDate: new Date('1990'),
+        foundingYear: 1990,
     };
 
     const createOrganization = async (overrides: { 
         name?:string, 
         legalForm?: LegalForm, 
         address?: string, 
-        foundingDate?: Date
+        foundingYear?: number
     } = {}): Promise<Organization> => {
         return organizationService.create({
             name: overrides.name ?? 'Jelenkor Alapítvány',
             legalForm: overrides.legalForm ?? LegalForm.LTD,
             address: overrides.address,
-            foundingDate: overrides.foundingDate,
+            foundingYear: overrides.foundingYear,
         });
     };
 
@@ -85,7 +85,7 @@ describe('OrganizationService', () => {
             id: created.id,
             name: 'Alapítvány upd',
             legalForm: LegalForm.OTHER,
-            foundingDate: created.foundingDate,
+            foundingYear: created.foundingYear,
             address: created.address,
             createdAt: created.createdAt,
         });

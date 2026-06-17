@@ -9,6 +9,8 @@ beforeEach(async () => {
   await prisma.organization.deleteMany();
 });
 
+const route = '/api/organizations';
+
 describe('Organization routes', () => {
 
     const createOrganization = async (data: {} = {
@@ -16,7 +18,7 @@ describe('Organization routes', () => {
         legalForm: LegalForm.FOUNDATION,
     }) => {
         const res = await request(app)
-            .post('/organizations')
+            .post(route)
             .send(data);
 
         return res;
@@ -24,9 +26,8 @@ describe('Organization routes', () => {
 
     it('POST /organization creates organization', async () => {
         const res = await createOrganization();
-
         expect(res.status).toBe(200);
-        expect(res.body.name).toBe('Tiszatáj Alapítvány');
+        expect(res.body.data.name).toBe('Tiszatáj Alapítvány');
     });
 
     it('POST /organization rejects invalid payload', async () => {
@@ -41,32 +42,33 @@ describe('Organization routes', () => {
 
     it('GET /organizations/:id returns organization', async () => {
         const created = await createOrganization();
+        const id = created.body.data.id;
 
         const res = await request(app)
-            .get(`/organizations/${created.body.id}`);
+            .get(`${route}/${id}`);
 
         expect(res.status).toBe(200);
-        expect(res.body.id).toBe(created.body.id);
+        expect(res.body.data.id).toBe(id);
     });
 
     it('PUT /organization/:id updates organization', async () => {
         const created = await createOrganization();
         const res = await request(app)
-            .put(`/organizations/${created.body.id}`)
+            .put(`${route}/${created.body.data.id}`)
             .send({
                 name: 'Tiszatáj Alapítvány upd',
                 legalForm: LegalForm.OTHER
             });
 
         expect(res.status).toBe(200);
-        expect(res.body.name).toBe('Tiszatáj Alapítvány upd');
-        expect(res.body.legalForm).toBe('OTHER');
+        expect(res.body.data.name).toBe('Tiszatáj Alapítvány upd');
+        expect(res.body.data.legalForm).toBe('OTHER');
     });
 
     it('PUT /organization/:id rejects invalid payload', async () => {
         const created = await createOrganization();
         const res = await request(app)
-            .put(`/organizations/${created.body.id}`)
+            .put(`${route}/${created.body.data.id}`)
             .send({
                 name: '',
                 legalForm: 'LegalForm.OTHER'
@@ -78,15 +80,15 @@ describe('Organization routes', () => {
 
     it('DELETE /organization deletes organization', async () => {
         const created = await createOrganization();
-        const id = created.body.id;
+        const id = created.body.data.id;
 
         const res = await request(app)
-            .delete(`/organizations/${id}`);
+            .delete(`${route}/${id}`);
 
         expect(res.status).toBe(204);
 
         const deleted = await request(app)
-            .get(`/organizations/${id}`);
+            .get(`${route}/${id}`);
         
         expect(deleted.status).toBe(404);
     });
