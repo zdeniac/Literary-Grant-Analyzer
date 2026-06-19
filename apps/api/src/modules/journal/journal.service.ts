@@ -5,13 +5,15 @@ import { IdParam } from "../../common/validation/common.schema";
 import { findOrThrow } from "../../db/helpers";
 
 export class JournalService {
-    async create(dto: CreateJournalDto): Promise<Journal> {
+    async create(dto: CreateJournalDto): Promise<Journal>
+    {
         return await prisma.journal.create({ 
             data: dto 
         });
     }
 
-    async findById(id: IdParam): Promise<Journal> {
+    async findById(id: IdParam): Promise<Journal>
+    {
         return findOrThrow(
             prisma.journal.findUnique({
                 where: {
@@ -21,12 +23,14 @@ export class JournalService {
         );
     }
 
-    async findAll(): Promise<Journal[]> {
+    async findAll(): Promise<Journal[]>
+    {
         return await prisma.journal.findMany();
     }
     
 
-    async update(id: IdParam, dto: UpdateJournalDto): Promise<Journal> {
+    async update(id: IdParam, dto: UpdateJournalDto): Promise<Journal>
+    {
         return findOrThrow(
             prisma.journal.update({
                 where: {
@@ -37,7 +41,8 @@ export class JournalService {
         );
     }
 
-    async delete(id: IdParam): Promise<Journal> {
+    async delete(id: IdParam): Promise<Journal>
+    {
         return findOrThrow(
             prisma.journal.delete({
                 where: {

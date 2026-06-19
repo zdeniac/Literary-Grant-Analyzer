@@ -5,12 +5,14 @@ import { validate } from "../../common/middleware/validate";
 import { OrganizationSchema } from "./validation/organization.schema";
 import { toOrganizationDto } from "./mapper/organization.mapper";
 import { idSchema } from "../../common/validation/common.schema";
+import { createDataImportModule } from "../dataImport/data-import.factory";
 
 const router = Router();
 const { service } = createOrganizationModule();
+const importer = createDataImportModule().service;
 
 router.get(
-    '/:id', 
+    '/:id',
     asyncHandler(async (req: Request, res: Response) => {
         const org = await service.findById(
             idSchema.parse(req.params.id)
