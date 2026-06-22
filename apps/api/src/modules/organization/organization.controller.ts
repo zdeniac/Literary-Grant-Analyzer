@@ -11,7 +11,7 @@ export class OrganizationController {
         private readonly model: string = 'organization',
     ) {}
 
-    async findById(req: Request, res: Response): Promise<void>
+    public async findById(req: Request, res: Response): Promise<void>
     {
         const org = await this.service.findById(
             idSchema.parse(req.params.id)
@@ -22,7 +22,7 @@ export class OrganizationController {
         });
     }
 
-    async findAll(req: Request, res: Response): Promise<void>
+    public async findAll(req: Request, res: Response): Promise<void>
     {
         const orgs = (await this.service.findAll())
             .map(toOrganizationDto);
@@ -33,7 +33,7 @@ export class OrganizationController {
         });
     }
 
-    async create(req: Request, res: Response): Promise<void>
+    public async create(req: Request, res: Response): Promise<void>
     {
         const org = await this.service.create(
             req.body
@@ -44,7 +44,7 @@ export class OrganizationController {
         });
     }
 
-    async update(req: Request, res: Response): Promise<void>
+    public async update(req: Request, res: Response): Promise<void>
     {
         const org = await this.service.update(
             idSchema.parse(req.params.id),
@@ -56,7 +56,7 @@ export class OrganizationController {
         });
     }
 
-    async delete(req: Request, res: Response): Promise<void>
+    public async delete(req: Request, res: Response): Promise<void>
     {
         await this.service.delete(
             idSchema.parse(req.params.id)
@@ -65,12 +65,13 @@ export class OrganizationController {
         res.sendStatus(204);
     }
 
-    async import(req: Request, res: Response): Promise<void>
+    public async import(req: Request, res: Response): Promise<void>
     {
-        // const importedRowsNum = await this.importer.import(this.model, req.params.file);
+        const totalImported = await this.importer.import(this.model, req.params.file);
 
         res.json({
-            success: true
+            success: true,
+            total: totalImported,
         });
     }
 }

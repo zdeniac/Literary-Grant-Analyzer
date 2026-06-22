@@ -15,3 +15,11 @@ export const JournalSchema = z.object({
     status: z.enum(JournalStatus),
     organizationId: z.int().positive(),
 });
+
+export const ImportJournalSchema = z.object({
+    name: z.string().min(1).max(maxStrLen),
+    issn: issnSchema.nullable().optional(),
+    foundingYear: z.number().optional(),
+    status: z.enum(JournalStatus).optional(),
+    organizationName: z.string().min(1).max(maxStrLen),
+});

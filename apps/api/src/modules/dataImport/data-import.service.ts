@@ -1,32 +1,44 @@
 import z from "zod";
-import { ModelBlueprint } from "./data-import.blueprints";
-import { ImportError, ImportFile } from "./data-import.types";
-import { ImportValidationError } from "./data-import.errors";
+import { isRelationalBlueprint, ModelBlueprint, RelationalBlueprint } from "./data-import.blueprints";
+import { ImportRowError, ImportFile } from "./data-import.types";
+import { ImportValidationError, ImportError } from "./data-import.errors";
 
 export class DataImportService {
     constructor(
-        private readonly blueprints: Record<string, ModelBlueprint>
+        private readonly blueprints: Record<string, ModelBlueprint | RelationalBlueprint>
     ) {}
 
-    async import(modelName: string, file: ImportFile): Promise<number>
+    public async import(modelName: string, file: ImportFile): Promise<number>
     {
         const blueprint = this.getBluePrint(modelName);
-        if (!blueprint) throw new Error();
+        
+        if (!blueprint) {
+            throw new ImportError(`Missing blueprint for ${modelName}.`);
+        }
 
         this.validateHeaders(file.header, blueprint.fields);
 
-        const validated = this.validateRows(file.rows, blueprint.schema);
-        const created = await blueprint.createMany(validated);
+        if (file.rows.length < 1) {
+            throw new ImportError(`Missing rows for ${modelName}.`);
+        }
+
+        let validatedRows = this.validateRows(file.rows, blueprint.schema);
+
+        if (isRelationalBlueprint(blueprint)) {
+            validatedRows = await this.resolveRelation(validatedRows, blueprint);
+        }
+
+        const created = await blueprint.createMany(validatedRows);
 
         return created.count;
     }
 
-    getBluePrint(modelName: string): ModelBlueprint | null
+    private getBluePrint(modelName: string): ModelBlueprint | RelationalBlueprint | null
     {
         return this.blueprints[modelName] ?? null;
     }
 
-    validateHeaders(headers: string[], fields: string[]): void
+    private validateHeaders(headers: string[], fields: string[]): void
     {
         const missing = fields.filter(
             field => !headers.includes(field)
@@ -36,7 +48,7 @@ export class DataImportService {
             field => !fields.includes(field)
         );
 
-        const errors: ImportError[] = [];
+        const errors: ImportRowError[] = [];
 
         if (missing.length) {
             errors.push({
@@ -61,15 +73,14 @@ export class DataImportService {
         }
     }
 
-    validateRows(
+    private validateRows(
         rows: Record<string, unknown>[],
         schema: z.ZodTypeAny
-    ): unknown[] {
-        const validated: unknown[] = [];
-        const errors: ImportError[] = [];
+    ): Record<string, unknown>[] {
+        const validated: Record<string, unknown>[] = [];
+        const errors: ImportRowError[] = [];
 
         rows.forEach((row, index) => {
-
             const result = schema.safeParse(row);
 
             if (!result.success) {
@@ -80,15 +91,62 @@ export class DataImportService {
 
                 return;
             }
-
-            validated.push(result.data);
+            
+            validated.push(result.data as Record<string, unknown>);
         });
-
 
         if (errors.length) {
             throw new ImportValidationError(errors);
         }
 
+        return validated;
+    }
+
+    private async resolveRelation(
+        validated: Record<string, unknown>[],
+        blueprint: RelationalBlueprint
+    ): Promise<Record<string, unknown>[]> {
+        const sourceField = blueprint.relation.sourceField;
+        const targetField = blueprint.relation.targetField;
+        const foreignKey = blueprint.relation.foreignKey;
+        const lookupField = blueprint.relation.lookupField;
+
+        // Get the foreign data by the given field's values
+        const foreignTableFields = validated.map(row => row[sourceField]);
+
+        // Check if they are in the db
+        const foreignData: Record<string, unknown>[] = await blueprint.checkRelation(foreignTableFields as string[]);
+
+        const found = new Set(
+            foreignData.map(
+                item => item[lookupField]
+            )
+        );
+
+        const missing = foreignTableFields.filter(
+            value => !found.has(value)
+        );
+
+        if (missing.length) {
+            throw new Error();
+        }
+
+        // Rework the validated data structure by switching the sourceField and its values
+        // to the foreignKey and its values
+        validated.forEach((row, index) => {
+            const relation = foreignData.find(
+                elem => elem[lookupField] === row[sourceField]
+            );
+
+            if (!relation) {
+                throw new Error();
+            }
+
+            delete row[sourceField];
+            row[foreignKey] = relation[targetField];
+
+        });
+        
         return validated;
     }
 }

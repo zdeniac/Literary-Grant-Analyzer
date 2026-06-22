@@ -1,11 +1,23 @@
 import { AppError } from "../../common/error/app.error";
-import { ImportError } from "./data-import.types";
+
+export type ImportRowError = {
+    row: number;
+    issues: unknown[];
+};
 
 export class ImportValidationError extends AppError {
-    constructor(public errors: ImportError[])
+    constructor(public errors: ImportRowError[])
     {
         super('IMPORT_VALIDATION_ERROR');
         // class name for tracing
         this.name = 'ImportValidationError';
+    }
+}
+
+export class ImportError extends AppError {
+    constructor(public message: string)
+    {
+        super(message);
+        this.name = 'ImportError';
     }
 }

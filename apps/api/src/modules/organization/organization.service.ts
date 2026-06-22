@@ -5,14 +5,14 @@ import { NotFoundError } from "../../common/error/http.error";
 import { IdParam } from "../../common/validation/common.schema";
 
 export class OrganizationService {
-    async create(dto: CreateOrganizationDto): Promise<Organization>
+    public async create(dto: CreateOrganizationDto): Promise<Organization>
     {
         return prisma.organization.create({
             data: dto,
         });
     }
 
-    async findById(id: IdParam): Promise<Organization> 
+    public async findById(id: IdParam): Promise<Organization> 
     {
         const org: Organization | null = await prisma.organization.findUnique({
             where: {
@@ -25,12 +25,12 @@ export class OrganizationService {
         return org;
     }
 
-    async findAll(): Promise<Organization[]>
+    public async findAll(): Promise<Organization[]>
     {
         return prisma.organization.findMany();
     }
 
-    async update(id: IdParam, dto: UpdateOrganizationDto): Promise<Organization>
+    public async update(id: IdParam, dto: UpdateOrganizationDto): Promise<Organization>
     {
         return prisma.organization.update({
             where: { 
@@ -40,7 +40,7 @@ export class OrganizationService {
         });
     }
 
-    async delete(id: IdParam): Promise<Organization>
+    public async delete(id: IdParam): Promise<Organization>
     {
         return prisma.organization.delete({
             where: { 
