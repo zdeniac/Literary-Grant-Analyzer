@@ -1,7 +1,7 @@
 import z from "zod";
 import { isRelationalBlueprint, ModelBlueprint, RelationalBlueprint } from "./data-import.blueprints";
-import { ImportRowError, ImportFile } from "./data-import.types";
-import { ImportValidationError, ImportError } from "./data-import.errors";
+import { ImportFile } from "./data-import.types";
+import { ImportValidationError, ImportError, ImportRowError } from "./data-import.errors";
 
 export class DataImportService {
     constructor(
