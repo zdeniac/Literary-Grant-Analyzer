@@ -1,20 +1,21 @@
 import { describe, expect, it } from "vitest";
 import { createDataImportModule } from "../../../src/modules/dataImport/data-import.factory";
-import { ImportFile } from "../../../src/modules/dataImport/data-import.types";
-import { LegalForm } from "@prisma/client";
-import { ImportError, ImportValidationError } from "../../../src/modules/dataImport/data-import.errors";
+import { ImportFile } from "../../../src/modules/dataImport/types/data-import.types";
+import { LegalForm, Organization } from "@prisma/client";
+import { ImportError, ImportValidationError } from "../../../src/modules/dataImport/error/data-import.errors";
+import { prisma } from "../../../src/db/prisma";
 
 describe('dataImporter', () => {
 
-    const dataImporter = createDataImportModule().service;
+    const dataImporter = createDataImportModule<Organization>(prisma.organization).service;
 
     const file: ImportFile = {
         name: 'organizations_import.csv',
         extension: 'csv',
         header: [
-            'name', 
-            'legalForm', 
-            'address', 
+            'name',
+            'legalForm',
+            'address',
             'foundingYear',
         ],
         rows: [
@@ -66,4 +67,7 @@ describe('dataImporter', () => {
         ).rejects.toThrow(ImportError);
     });
 
+    it('validates headers', async () => {
+
+    });
 });
