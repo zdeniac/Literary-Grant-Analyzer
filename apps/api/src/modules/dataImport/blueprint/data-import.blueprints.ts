@@ -12,8 +12,11 @@ export const dataImporterBlueprints: Record<string, ModelBlueprint | RelationalB
         fields: Object.keys(ImportJournalSchema.shape),
         schema: ImportJournalSchema,
         relation: {
+            repository: 'organization',
+
             sourceField: 'organizationName',
             lookupField: 'name',
+
             foreignKey: 'organizationId',
             targetField: 'id',
         },

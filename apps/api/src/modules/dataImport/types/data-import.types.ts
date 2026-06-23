@@ -15,8 +15,11 @@ export type ModelBlueprint = {
 
 export type RelationalBlueprint = ModelBlueprint & {
     relation: {
+        repository: string;
+
         sourceField: string;
         lookupField: string;
+
         foreignKey: string;
         targetField: string;
     };

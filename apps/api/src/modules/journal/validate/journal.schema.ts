@@ -5,7 +5,7 @@ const maxStrLen = 60;
 
 const issnSchema = z
     .string()
-    .transform(v => v.replace("-", ""))
+    .transform(v => v.replace('-', ''))
     .refine(v => /^\d{8}$/.test(v) || /^\d{7}X$/.test(v));
 
 export const JournalSchema = z.object({
@@ -13,6 +13,7 @@ export const JournalSchema = z.object({
     issn: issnSchema.nullable().optional(),
     foundingYear: z.number().optional(),
     status: z.enum(JournalStatus),
+    
     organizationId: z.int().positive(),
 });
 
@@ -21,5 +22,6 @@ export const ImportJournalSchema = z.object({
     issn: issnSchema.nullable().optional(),
     foundingYear: z.number().optional(),
     status: z.enum(JournalStatus).optional(),
+
     organizationName: z.string().min(1).max(maxStrLen),
 });

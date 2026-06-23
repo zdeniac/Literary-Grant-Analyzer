@@ -1,15 +1,6 @@
-import { Model } from "./types";
+import { Model, Repository } from "./types";
 
-export interface Repository {
-    createMany(data: unknown[]): Promise<number>;
-
-    findManyBy(
-        field: string,
-        values: unknown[]
-    ): Promise<Record<string, unknown>[]>;
-}
-
-export class PrismaRepository<T extends Record<string, unknown>> implements Repository {
+export class PrismaRepository implements Repository {
     constructor(
         private readonly model: Model
     ) {}
@@ -23,7 +14,7 @@ export class PrismaRepository<T extends Record<string, unknown>> implements Repo
         return result.count;
     }
 
-    public async findManyBy(field: string, values: unknown[]): Promise<T[]>
+    public async findManyBy(field: string, values: unknown[]): Promise<Record<string, unknown>[]>
     {
         return this.model.findMany({
             where: {

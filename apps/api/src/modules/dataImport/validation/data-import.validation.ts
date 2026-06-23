@@ -56,7 +56,6 @@ export function validateHeaders(headers: string[], fields: string[]): void
             }))
         });
     }
-
     if (errors.length > 0) throw new ImportValidationError(errors);
 }
 
