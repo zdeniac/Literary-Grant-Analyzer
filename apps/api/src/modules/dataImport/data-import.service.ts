@@ -14,15 +14,15 @@ export class DataImportService {
     {
         if (!this.repositories[modelName]) throw new ImportError(`Missing repository for ${modelName}`);
 
-        const blueprint = this.getBluePrint(modelName);
+        const blueprint = this.blueprints[modelName];
         
         if (!blueprint) throw new ImportError(`Missing blueprint for ${modelName}.`);
 
         validateHeaders(file.header, blueprint.fields);
 
-        if (file.rows.length < 1) throw new ImportError(`Missing rows for ${modelName}.`);
+        if (!file.rows.length) throw new ImportError(`Missing rows for ${modelName}.`);
 
-        let validatedRows = validateRows(file.rows, blueprint.schema);
+        let validatedRows: Record<string, unknown>[] = validateRows(file.rows, blueprint.schema);
         if (isRelationalBlueprint(blueprint)) {
             validatedRows = await this.resolveRelation(validatedRows, blueprint);
         }
@@ -55,31 +55,26 @@ export class DataImportService {
         const found = new Map();
 
         foreignData.map(
-            item => found.set(item.name, item)
+            item => found.set(item[lookupField], item)
         );
 
         const missing = foreignTableValues.filter(
             value => !found.has(value)
         );
 
-        if (missing.length) throw new Error(`Missing foreign record with data: ${missing.join(', ')}`);
+        if (missing.length) throw new ImportError(`Missing foreign record with data: ${missing.join(', ')}`);
 
         // Rework the validated data structure by switching the sourceField and its values
         // to the foreignKey and its values
         validated.forEach((row) => {
             const relation = found.get(row[sourceField]);
 
-            if (!relation) throw new Error(`Missing relation for source field ${sourceField}.`);
+            if (!relation) throw new ImportError(`Missing relation for source field ${sourceField}.`);
 
             delete row[sourceField];
             row[foreignKey] = relation[targetField];
         });
         
         return validated;
-    }
-
-    private getBluePrint(modelName: string): ModelBlueprint | RelationalBlueprint | null
-    {
-        return this.blueprints[modelName] ?? null;
     }
 }

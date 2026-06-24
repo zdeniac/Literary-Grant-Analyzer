@@ -1,4 +1,6 @@
 import { JournalStatus } from "@prisma/client"
+import z from "zod";
+import { JournalSchema } from "../validate/journal.schema";
 
 export type JournalDto = {
     id: number;
@@ -11,13 +13,7 @@ export type JournalDto = {
     updatedAt: Date | null;
 }
 
-export type CreateJournalDto = {
-    name: string;
-	issn?: string;
-	status: JournalStatus;
-    foundingYear?: number;
-    organizationId: number;
-};
+export type CreateJournalDto = z.infer<typeof JournalSchema>;
 
 export type UpdateJournalDto = {
     name?: string;

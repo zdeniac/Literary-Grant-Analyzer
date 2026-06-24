@@ -1,4 +1,6 @@
 import { LegalForm } from "@prisma/client";
+import z from "zod";
+import { OrganizationSchema } from "../validation/organization.schema";
 
 export type OrganizationDto = {
     id: number;
@@ -10,12 +12,7 @@ export type OrganizationDto = {
     updatedAt: Date | null;
 };
 
-export type CreateOrganizationDto = {
-    name: string;
-    legalForm: LegalForm;
-    address?: string;
-    foundingYear?: number;
-};
+export type CreateOrganizationDto = z.infer<typeof OrganizationSchema>
 
 export type UpdateOrganizationDto = {
     name?: string;
