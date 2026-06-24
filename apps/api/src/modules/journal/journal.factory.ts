@@ -1,5 +1,7 @@
 import { JournalService } from "./journal.service";
 
-export const createJournalModule = () => ({
-    service: new JournalService(),
-});
+export const createJournalModule = () => {
+    return {
+        service: new JournalService(),
+    }
+};

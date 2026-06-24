@@ -3,8 +3,12 @@ import { prisma } from "../../../src/db/prisma";
 import { OrganizationService } from "../../../src/modules/organization/organization.service";
 import { LegalForm, Organization } from "@prisma/client";
 import { createJournal } from "../journal/journal.service.test";
+import { OrganizationRepository } from "../../../src/modules/organization/organization.repository";
+import { NotFoundError } from "../../../src/common/error/http.error";
 
-const organizationService = new OrganizationService();
+const organizationService = new OrganizationService(
+    new OrganizationRepository<Organization>(prisma.organization)
+);
 
 export const createOrganization = async (overrides: { 
     name?:string, 
@@ -21,7 +25,6 @@ export const createOrganization = async (overrides: {
 };
 
 describe('OrganizationServiceTest', () => {
-    
     const input = {
         name: 'Jelenkor Alapítvány',
         legalForm: LegalForm.LTD,
@@ -95,10 +98,15 @@ describe('OrganizationServiceTest', () => {
 
     it('deletes organization', async () => {
         const created = await createOrganization();
-        const deleted = await organizationService.delete(created.id);
+        await organizationService.delete(created.id);
+
+        const deleted = await prisma.organization.findUnique({
+            where: {
+                id: created.id
+            }
+        });
         
-        // Returns the deleted org
-        expect(created.id).toBe(deleted.id)
+        expect(deleted).toBeNull();
     });
 
     it('cannot delete organization if it has journals', async () => {

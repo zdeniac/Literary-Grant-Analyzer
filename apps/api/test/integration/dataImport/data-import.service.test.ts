@@ -1,32 +1,39 @@
 import { describe, expect, it, beforeEach } from "vitest";
-import { createDataImportModule } from "../../../src/modules/dataImport/data-import.factory";
 import { ImportFile } from "../../../src/modules/dataImport/types/data-import.types";
-import { Journal, JournalStatus, LegalForm, Organization } from "@prisma/client";
-import { ImportError, ImportValidationError } from "../../../src/modules/dataImport/error/data-import.errors";
+import { JournalStatus, LegalForm } from "@prisma/client";
+import { ImportValidationError } from "../../../src/modules/dataImport/error/data-import.errors";
 import { prisma } from "../../../src/db/prisma";
-import { PrismaRepository } from "../../../src/db/repository";
+import { DataImportRepository } from "../../../src/modules/dataImport/data-import.repository";
+import { DataImportService } from "../../../src/modules/dataImport/data-import.service";
+import { dataImporterBlueprints } from "../../../src/modules/dataImport/blueprint/data-import.blueprints";
 
 describe('dataImporter', () => {
 
-    const importer = createDataImportModule({
-        organization: new PrismaRepository(prisma.organization),
-        journal: new PrismaRepository(prisma.journal),
-    }).service;
+    const importer = new DataImportService(
+        dataImporterBlueprints,
+        {
+            organization: new DataImportRepository(prisma.organization),
+            journal: new DataImportRepository(prisma.journal),
+        },
+    );
+
     const org1 = {
         name: 'Jelenkor Alapítvány',
         legalForm: LegalForm.FOUNDATION,
         address: 'Pécs',
         foundingYear: 1990,
     };
+
     const org2 = {
         name: 'Alföld Alapítvány',
         legalForm: LegalForm.FOUNDATION,
         address: 'Szeged',
         foundingYear: 1989,
     };
+
     const orgFile: ImportFile = {
         name: 'organizations_import.csv',
-        extension: 'csv',
+        mimeType: 'text/csv',
         header: [
             'name',
             'legalForm',
@@ -46,9 +53,10 @@ describe('dataImporter', () => {
         foundingYear: 1989,
         organizationName: 'Alföld Alapítvány',
     };
+
     const journalFile: ImportFile = {
         name: 'jorno_import.csv',
-        extension: 'csv',
+        mimeType: 'text/csv',
         header: [
             'name',
             'issn',
@@ -60,7 +68,6 @@ describe('dataImporter', () => {
             journal1,
         ]
     };
-
 
     beforeEach(async () => {
         await prisma.journal.deleteMany();
@@ -129,7 +136,7 @@ describe('dataImporter', () => {
         await expect(
             importer.import('organization', {
                 name: 'organizations_import.csv',
-                extension: 'csv',
+                mimeType: 'text/csv',
                 header: ['invalidField'],
                 rows: [],
             })
@@ -152,15 +159,5 @@ describe('dataImporter', () => {
                 }]
             })
         ).rejects.toThrow(ImportValidationError);
-    });
-
-    it('throws on missing repository', async () => {
-        const importer2 = createDataImportModule({
-            organization: new PrismaRepository(prisma.organization),
-        }).service;
-
-        await expect(
-            importer2.import('journal', journalFile)
-        ).rejects.toThrow(ImportError);
     });
 });

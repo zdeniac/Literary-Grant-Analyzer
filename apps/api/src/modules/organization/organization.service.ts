@@ -1,51 +1,35 @@
-import { prisma } from "../../db/prisma";
 import { Organization } from "@prisma/client";
 import { CreateOrganizationDto, UpdateOrganizationDto } from "./dto/organization.dto";
-import { NotFoundError } from "../../common/error/http.error";
 import { IdParam } from "../../common/validation/common.schema";
+import { OrganizationRepository } from "./organization.repository";
 
 export class OrganizationService {
+    constructor(
+        private readonly repository: OrganizationRepository<Organization>
+    ) {}
+
     public async create(dto: CreateOrganizationDto): Promise<Organization>
     {
-        return prisma.organization.create({
-            data: dto,
-        });
+        return this.repository.create(dto);
     }
 
     public async findById(id: IdParam): Promise<Organization> 
     {
-        const org: Organization | null = await prisma.organization.findUnique({
-            where: {
-                id,
-            },
-        });
-
-        if (!org) throw new NotFoundError();
-
-        return org;
+        return this.repository.findByIdOrThrow(id);
     }
 
     public async findAll(): Promise<Organization[]>
     {
-        return prisma.organization.findMany();
+        return this.repository.findAll();
     }
 
     public async update(id: IdParam, dto: UpdateOrganizationDto): Promise<Organization>
     {
-        return prisma.organization.update({
-            where: { 
-                id 
-            },
-            data: dto,
-        });
+        return this.repository.update(id, dto)
     }
 
-    public async delete(id: IdParam): Promise<Organization>
+    public async delete(id: IdParam): Promise<void>
     {
-        return prisma.organization.delete({
-            where: { 
-                id 
-            },
-        });
+        return this.repository.delete(id)
     }
 }

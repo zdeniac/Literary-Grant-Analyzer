@@ -15,7 +15,7 @@ export class JournalService {
     public async findById(id: IdParam): Promise<Journal>
     {
         return findOrThrow(
-            prisma.journal.findUnique({
+            prisma.journal.findFirst({
                 where: {
                     id,
                 },

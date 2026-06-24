@@ -1,13 +1,13 @@
 import { isRelationalBlueprint, ModelBlueprint, RelationalBlueprint } from "./types/data-import.types";
 import { ImportFile } from "./types/data-import.types";
 import { ImportError } from "./error/data-import.errors";
-import { Repository } from "../../db/types";
+import { DataImportRepository } from "../../db/types";
 import { validateHeaders, validateRows } from "./validation/data-import.validation";
-// @todo: a beágyazott ciklusokat refaktorálni és hatékonyabbá tenni
+
 export class DataImportService {
     constructor(
         private readonly blueprints: Record<string, ModelBlueprint | RelationalBlueprint>,
-        private readonly repositories: Record<string, Repository>,
+        private readonly repositories: Record<string, DataImportRepository>,
     ) {}
 
     public async import(modelName: string, file: ImportFile): Promise<number>
@@ -30,11 +30,6 @@ export class DataImportService {
         return this.repositories[modelName].createMany(validatedRows);;
     }
 
-    private getBluePrint(modelName: string): ModelBlueprint | RelationalBlueprint | null
-    {
-        return this.blueprints[modelName] ?? null;
-    }
-
     private async resolveRelation(
         validated: Record<string, unknown>[],
         blueprint: RelationalBlueprint
@@ -48,22 +43,22 @@ export class DataImportService {
         const lookupField = blueprint.relation.lookupField;
 
         // Get the foreign data by the given field's values
-        const foreignTableData = validated.map(row => row[sourceField]);
+        const foreignTableValues = validated.map(row => row[sourceField]);
 
         // Check if they are in the db
         const foreignData: Record<string, unknown>[] = 
             await this.repositories[repository].findManyBy(
-                blueprint.relation.lookupField, 
-                foreignTableData
+                lookupField,
+                foreignTableValues
             );
 
-        const found = new Set(
-            foreignData.map(
-                item => item[lookupField]
-            )
+        const found = new Map();
+
+        foreignData.map(
+            item => found.set(item.name, item)
         );
 
-        const missing = foreignTableData.filter(
+        const missing = foreignTableValues.filter(
             value => !found.has(value)
         );
 
@@ -71,18 +66,20 @@ export class DataImportService {
 
         // Rework the validated data structure by switching the sourceField and its values
         // to the foreignKey and its values
-        validated.forEach((row, index) => {
-            const relation = foreignData.find(
-                elem => elem[lookupField] === row[sourceField]
-            );
+        validated.forEach((row) => {
+            const relation = found.get(row[sourceField]);
 
-            if (!relation) throw new Error(`Missing relation.`);
+            if (!relation) throw new Error(`Missing relation for source field ${sourceField}.`);
 
             delete row[sourceField];
             row[foreignKey] = relation[targetField];
-
         });
         
         return validated;
+    }
+
+    private getBluePrint(modelName: string): ModelBlueprint | RelationalBlueprint | null
+    {
+        return this.blueprints[modelName] ?? null;
     }
 }

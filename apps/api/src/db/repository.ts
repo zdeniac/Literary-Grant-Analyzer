@@ -1,27 +1,49 @@
-import { Model, Repository } from "./types";
+import { NotFoundError } from "../common/error/http.error";
+import { Repository } from "./types";
 
-export class PrismaRepository implements Repository {
+export abstract class PrismaRepository<T> implements Repository<T> {
     constructor(
-        private readonly model: Model
+        protected readonly model: any
     ) {}
 
-    public async createMany(data: unknown[]): Promise<number>
+    async create(data: Partial<T>): Promise<T>
     {
-        const result = await this.model.createMany({
-            data
-        });
-
-        return result.count;
+        return this.model.create({ data });
     }
 
-    public async findManyBy(field: string, values: unknown[]): Promise<Record<string, unknown>[]>
+    async update(id: number, data: Partial<T>): Promise<T>
     {
-        return this.model.findMany({
+        return this.model.update({
             where: {
-                [field]: {
-                    in: values
-                }
-            }
+                id,
+            },
+            data
+        });
+    }
+
+    async findAll(): Promise<T[]> {
+        return this.model.findMany();
+    }
+
+    async findById(id: number): Promise<T | null> {
+        return this.model.findUnique({
+            where: { id }
+        });
+    }
+
+    async findByIdOrThrow(id: number): Promise<T> {
+        const entity = await this.findById(id);
+
+        if (!entity) {
+            throw new NotFoundError();
+        }
+
+        return entity;
+    }
+
+    async delete(id: number): Promise<void> {
+        await this.model.delete({
+            where: { id }
         });
     }
 }

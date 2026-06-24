@@ -1,14 +1,19 @@
+import { prisma } from "../../db/prisma";
 import { dataImporterBlueprints } from "./blueprint/data-import.blueprints";
+import { DataImportController } from "./data-import.controller";
+import { DataImportRepository } from "./data-import.repository";
 import { DataImportService } from "./data-import.service";
 
-//@todo add param type?
-export const createDataImportModule = (repositories: {}) => {
+export const createDataImportModule = () => {
    const service = new DataImportService(
         dataImporterBlueprints,
-        repositories
+        {
+            journal: new DataImportRepository(prisma.journal),
+            organization: new DataImportRepository(prisma.organization),
+        }
     );
 
     return {
-        service,
+        controller: new DataImportController(service),
     }
 };

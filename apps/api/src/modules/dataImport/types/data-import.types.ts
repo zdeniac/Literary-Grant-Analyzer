@@ -2,7 +2,7 @@ import z from "zod";
 
 export type ImportFile = {
     name: string;
-    extension: string;
+    mimeType: string;
     // The header of the data table
     header: string[];
     rows: Record<string, unknown>[];

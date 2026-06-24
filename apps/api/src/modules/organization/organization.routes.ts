@@ -3,69 +3,35 @@ import { asyncHandler } from "../../common/middleware/asyncHandler";
 import { createOrganizationModule } from "./organization.factory";
 import { validate } from "../../common/middleware/validate";
 import { OrganizationSchema } from "./validation/organization.schema";
-import { toOrganizationDto } from "./mapper/organization.mapper";
-import { idSchema } from "../../common/validation/common.schema";
-import { createDataImportModule } from "../dataImport/data-import.factory";
 
 const router = Router();
-const { service } = createOrganizationModule();
-const importer = createDataImportModule().service;
+const { controller } = createOrganizationModule();
 
 router.get(
     '/:id',
-    asyncHandler(async (req: Request, res: Response) => {
-        const org = await service.findById(
-            idSchema.parse(req.params.id)
-        );
-        res.json({
-            data: toOrganizationDto(org)
-        });
-    }),
+    asyncHandler(controller.findById),
 );
 
 router.put(
     '/:id',
     validate(OrganizationSchema),
-    asyncHandler(async (req: Request, res: Response) => {
-        const org = await service.update(
-            idSchema.parse(req.params.id),
-            req.body
-        );
-        res.json({ 
-            data: toOrganizationDto(org)
-        });
-    }),
+    asyncHandler(controller.update),
 );
 
 router.delete(
     '/:id',
-    asyncHandler(async (req: Request, res: Response) => {
-        await service.delete(idSchema.parse(req.params.id));
-        res.sendStatus(204);
-    }),
+    asyncHandler(controller.delete),
 );
 
 router.post(
     '/',
     validate(OrganizationSchema),
-    asyncHandler(async (req: Request, res: Response) => {
-        const org = await service.create(req.body);
-        res.json({
-            data: toOrganizationDto(org)
-        });
-    }),
+    asyncHandler(controller.create),
 );
 
 router.get(
     '/',
-    asyncHandler (async (req: Request, res: Response) => {
-        const orgs = (await service.findAll())
-            .map(toOrganizationDto);
-        res.json({
-            data: orgs,
-            total: orgs.length,
-        });   
-    }),
+    asyncHandler (controller.findAll),
 );
 
 export default router;

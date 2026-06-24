@@ -2,14 +2,17 @@ import { Request, Response } from "express";
 import { OrganizationService } from "./organization.service";
 import { idSchema } from "../../common/validation/common.schema";
 import { toOrganizationDto } from "./mapper/organization.mapper";
-import { DataImportService } from "../dataImport/data-import.service";
 
 export class OrganizationController {
     constructor(
         private readonly service: OrganizationService,
-        private readonly importer: DataImportService,
-        private readonly model: string = 'organization',
-    ) {}
+    ) {
+        this.findById = this.findById.bind(this);
+        this.findAll = this.findAll.bind(this);
+        this.create = this.create.bind(this);
+        this.update = this.update.bind(this);
+        this.delete = this.delete.bind(this);
+    }
 
     public async findById(req: Request, res: Response): Promise<void>
     {
@@ -63,15 +66,5 @@ export class OrganizationController {
         );
 
         res.sendStatus(204);
-    }
-
-    public async import(req: Request, res: Response): Promise<void>
-    {
-        const totalImported = await this.importer.import(this.model, req.params.file);
-
-        res.json({
-            success: true,
-            total: totalImported,
-        });
     }
 }

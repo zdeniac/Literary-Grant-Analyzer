@@ -1,6 +1,7 @@
 import express from "express";
 import organizationRouter from "./modules/organization/organization.routes";
 import journalRouter from "./modules/journal/journal.routes";
+import dataImportRouter from "./modules/dataImport/data-import.routes";
 
 const app = express();
 
@@ -9,13 +10,12 @@ app.use((req, res, next) => {
   next();
 });
 
-
 app.use(
     express.json(),
 );
 
 app.use('/api/organizations', organizationRouter);
 app.use('/api/journals', journalRouter);
-
+app.use('/api/import', dataImportRouter);
 
 export default app;
