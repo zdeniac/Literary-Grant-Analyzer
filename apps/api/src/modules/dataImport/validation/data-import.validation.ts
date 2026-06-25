@@ -1,5 +1,6 @@
 import z from "zod";
 import { ImportRowError, ImportValidationError } from "../error/data-import.errors";
+import { ImportField } from "../types/data-import.types";
 
 export function validateRows(
     rows: Record<string, unknown>[],
@@ -28,13 +29,18 @@ export function validateRows(
     return validated;
 }
 
-export function validateHeaders(headers: string[], fields: string[]): void
+export function validateHeaders(headers: string[], fields: ImportField[]): void
 {
-    const missing = fields.filter(
+    const fieldNames = fields.map(
+        field => field.name
+    );
+    // Find the missing header fields compared to the fields
+    const missing = fieldNames.filter(
         field => !headers.includes(field)
     );
+    // Find the missing fields compared to the header
     const unknown = headers.filter(
-        field => !fields.includes(field)
+        header => !fieldNames.includes(header)
     );
 
     const errors: ImportRowError[] = [];

@@ -3,7 +3,7 @@ import { ImportFile } from "../../../src/modules/dataImport/types/data-import.ty
 import { JournalStatus, LegalForm } from "@prisma/client";
 import { ImportValidationError } from "../../../src/modules/dataImport/error/data-import.errors";
 import { prisma } from "../../../src/db/prisma";
-import { DataImportRepository } from "../../../src/modules/dataImport/data-import.repository";
+import { PrismaImportTargetRepository, } from "../../../src/modules/dataImport/prisma-import-target.repository";
 import { DataImportService } from "../../../src/modules/dataImport/data-import.service";
 import { dataImporterBlueprints } from "../../../src/modules/dataImport/blueprint/data-import.blueprints";
 
@@ -12,8 +12,8 @@ describe('dataImporter', () => {
     const importer = new DataImportService(
         dataImporterBlueprints,
         {
-            organization: new DataImportRepository(prisma.organization),
-            journal: new DataImportRepository(prisma.journal),
+            organization: new PrismaImportTargetRepository,(prisma.organization),
+            journal: new PrismaImportTargetRepository,(prisma.journal),
         },
     );
 

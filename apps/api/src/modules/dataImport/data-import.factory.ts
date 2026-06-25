@@ -1,19 +1,24 @@
 import { prisma } from "../../db/prisma";
 import { dataImporterBlueprints } from "./blueprint/data-import.blueprints";
-import { DataImportController } from "./data-import.controller";
-import { DataImportRepository } from "./data-import.repository";
-import { DataImportService } from "./data-import.service";
+import { DataImportController } from "./controller/data-import.controller";
+import { PrismaImportTargetRepository, } from "./prisma-import-target.repository";
+import { ImportBlueprintRegistry } from "./registry/import-blueprint.registry";
+import { DataImportService } from "./service/data-import.service";
+import { ImportSchemaService } from "./service/import-schema.service";
 
 export const createDataImportModule = () => {
-   const service = new DataImportService(
-        dataImporterBlueprints,
-        {
-            journal: new DataImportRepository(prisma.journal),
-            organization: new DataImportRepository(prisma.organization),
-        }
-    );
+    const registry = new ImportBlueprintRegistry(dataImporterBlueprints);
+    const repositories = {
+        journal: new PrismaImportTargetRepository(prisma.journal),
+        organization: new PrismaImportTargetRepository(prisma.organization),
+    };
+
+    const importService = new DataImportService(registry, repositories);
+    const schemaService = new ImportSchemaService(registry);
+
+    const controller = new DataImportController(importService, schemaService);
 
     return {
-        controller: new DataImportController(service),
+        controller,
     }
 };

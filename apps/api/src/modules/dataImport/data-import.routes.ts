@@ -14,4 +14,9 @@ router.post(
     controller.import.bind(controller),
 );
 
+router.get(
+    '/schema',
+    controller.getSchema.bind(controller),
+);
+
 export default router;

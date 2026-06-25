@@ -1,33 +1,33 @@
-import { isRelationalBlueprint, ModelBlueprint, RelationalBlueprint } from "./types/data-import.types";
-import { ImportFile } from "./types/data-import.types";
-import { ImportError } from "./error/data-import.errors";
-import { DataImportRepository } from "../../db/types";
-import { validateHeaders, validateRows } from "./validation/data-import.validation";
+import { isRelationalBlueprint, RelationalBlueprint } from "../types/data-import.types";
+import { ImportFile } from "../types/data-import.types";
+import { ImportError } from "../error/data-import.errors";
+import { ImportTargetRepository } from "../../../db/types";
+import { validateHeaders, validateRows } from "../validation/data-import.validation";
+import { ImportBlueprintRegistry } from "../registry/import-blueprint.registry";
 
 export class DataImportService {
     constructor(
-        private readonly blueprints: Record<string, ModelBlueprint | RelationalBlueprint>,
-        private readonly repositories: Record<string, DataImportRepository>,
+        private readonly registry: ImportBlueprintRegistry,
+        private readonly repositories: Record<string, ImportTargetRepository>,
     ) {}
 
-    public async import(modelName: string, file: ImportFile): Promise<number>
+    public async import(model: string, file: ImportFile): Promise<number>
     {
-        if (!this.repositories[modelName]) throw new ImportError(`Missing repository for ${modelName}`);
+        const blueprint = this.registry.getOrThrow(model);
+        const repository = this.repositories[model];
 
-        const blueprint = this.blueprints[modelName];
-        
-        if (!blueprint) throw new ImportError(`Missing blueprint for ${modelName}.`);
+        if (!repository) throw new ImportError(`Missing repository for ${model}`);
 
         validateHeaders(file.header, blueprint.fields);
 
-        if (!file.rows.length) throw new ImportError(`Missing rows for ${modelName}.`);
+        if (!file.rows.length) throw new ImportError(`Missing rows for ${model}.`);
 
-        let validatedRows: Record<string, unknown>[] = validateRows(file.rows, blueprint.schema);
+        let validatedRows = validateRows(file.rows, blueprint.schema);
         if (isRelationalBlueprint(blueprint)) {
             validatedRows = await this.resolveRelation(validatedRows, blueprint);
         }
 
-        return this.repositories[modelName].createMany(validatedRows);;
+        return repository.createMany(validatedRows);;
     }
 
     private async resolveRelation(
@@ -52,7 +52,7 @@ export class DataImportService {
                 foreignTableValues
             );
 
-        const found = new Map();
+        const found = new Map<unknown, Record<string, unknown>>();
 
         foreignData.map(
             item => found.set(item[lookupField], item)

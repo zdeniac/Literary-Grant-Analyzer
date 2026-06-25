@@ -1,10 +1,10 @@
-export type Model = {
+export type PrismaModelDelegate = {
     createMany: (args: any) => Promise<{ count: number }>;
     findMany: (args: any) => Promise<any[]>;
 };
 
-export interface DataImportRepository {
-    createMany(data: unknown[]): Promise<number>;
+export interface ImportTargetRepository {
+    createMany(data: Record<string, unknown>[]): Promise<number>;
     findManyBy(
         field: string,
         values: unknown[]

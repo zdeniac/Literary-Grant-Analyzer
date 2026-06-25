@@ -1,5 +1,4 @@
 import { Request, Response, Router } from "express";
-import { asyncHandler } from "../../common/middleware/asyncHandler";
 import { createOrganizationModule } from "./organization.factory";
 import { validate } from "../../common/middleware/validate";
 import { OrganizationSchema } from "./validation/organization.schema";
@@ -9,29 +8,29 @@ const { controller } = createOrganizationModule();
 
 router.get(
     '/:id',
-    asyncHandler(controller.findById),
+    controller.findById,
 );
 
 router.put(
     '/:id',
     validate(OrganizationSchema),
-    asyncHandler(controller.update),
+    controller.update,
 );
 
 router.delete(
     '/:id',
-    asyncHandler(controller.delete),
+    controller.delete,
 );
 
 router.post(
     '/',
     validate(OrganizationSchema),
-    asyncHandler(controller.create),
+    controller.create,
 );
 
 router.get(
     '/',
-    asyncHandler (controller.findAll),
+    controller.findAll,
 );
 
 export default router;

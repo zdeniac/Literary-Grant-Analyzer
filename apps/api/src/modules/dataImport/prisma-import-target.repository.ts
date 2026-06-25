@@ -1,0 +1,27 @@
+import { PrismaModelDelegate, ImportTargetRepository } from "../../db/types";
+
+export class PrismaImportTargetRepository implements ImportTargetRepository {
+    constructor(
+        private readonly delegate: PrismaModelDelegate
+    ) {}
+
+    public async createMany(data: Record<string, unknown>[]): Promise<number>
+    {
+        const result = await this.delegate.createMany({
+            data
+        });
+
+        return result.count;
+    }
+
+    public async findManyBy(field: string, values: unknown[]): Promise<Record<string, unknown>[]>
+    {
+        return this.delegate.findMany({
+            where: {
+                [field]: {
+                    in: values
+                }
+            }
+        });
+    }
+}

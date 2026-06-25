@@ -8,8 +8,18 @@ export type ImportFile = {
     rows: Record<string, unknown>[];
 };
 
+export type ImportField = {
+    name: string;
+    type: string;
+    required: boolean;
+    options?: string[];
+};
+
+export type Blueprint =
+    ModelBlueprint | RelationalBlueprint;
+
 export type ModelBlueprint = {
-    fields: string[];
+    fields: ImportField[];
     schema: z.ZodTypeAny;
 };
 
