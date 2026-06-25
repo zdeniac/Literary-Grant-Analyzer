@@ -15,8 +15,10 @@ export type ImportField = {
     options?: string[];
 };
 
-export type Blueprint =
-    ModelBlueprint | RelationalBlueprint;
+export type ImportSchema = {
+    fields: ImportField[],
+    acceptedFormats: string[],
+};
 
 export type ModelBlueprint = {
     fields: ImportField[];
@@ -34,6 +36,9 @@ export type RelationalBlueprint = ModelBlueprint & {
         targetField: string;
     };
 };
+
+export type Blueprint =
+    ModelBlueprint | RelationalBlueprint;
 
 // Type guard
 export function isRelationalBlueprint(
