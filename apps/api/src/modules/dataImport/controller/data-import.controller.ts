@@ -9,7 +9,7 @@ export class DataImportController {
         private readonly schemaService: ImportSchemaService,
     ) {
         this.import = this.import.bind(this);
-        this.getSchema = this.import.bind(this);
+        this.getSchema = this.getSchema.bind(this);
     }
 
     public async getSchema(req: Request, res: Response): Promise<void>
@@ -31,7 +31,7 @@ export class DataImportController {
     {
         const uploadedFile = req.file;
 
-        if (!uploadedFile) throw new Error();
+        if (!uploadedFile) throw new Error('No file uploaded.');
 
         const parsedFile = toImportFile(uploadedFile);
 

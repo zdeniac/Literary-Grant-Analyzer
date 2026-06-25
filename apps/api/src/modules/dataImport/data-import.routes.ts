@@ -8,15 +8,15 @@ const upload = multer({
     storage: multer.memoryStorage(),
 });
 
+router.get(
+    '/schema',
+    controller.getSchema.bind(controller),
+);
+
 router.post(
     '/:model',
     upload.single('file'),
     controller.import.bind(controller),
-);
-
-router.get(
-    '/schema',
-    controller.getSchema.bind(controller),
 );
 
 export default router;
