@@ -1,7 +1,7 @@
 import { prisma } from "../../db/prisma";
 import { dataImporterBlueprints } from "./blueprint/data-import.blueprints";
 import { DataImportController } from "./controller/data-import.controller";
-import { PrismaImportTargetRepository, } from "./prisma-import-target.repository";
+import { PrismaImportTargetRepository, } from "../../db/prisma-import-target.repository";
 import { ImportBlueprintRegistry } from "./registry/import-blueprint.registry";
 import { DataImportService } from "./service/data-import.service";
 import { ImportSchemaService } from "./service/import-schema.service";

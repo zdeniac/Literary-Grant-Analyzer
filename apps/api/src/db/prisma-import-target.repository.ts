@@ -1,8 +1,8 @@
-import { PrismaModelDelegate, ImportTargetRepository } from "../../db/types";
+import { ModelDelegate, ImportTargetRepository } from "./types";
 
 export class PrismaImportTargetRepository implements ImportTargetRepository {
     constructor(
-        private readonly delegate: PrismaModelDelegate
+        private readonly delegate: ModelDelegate
     ) {}
 
     public async createMany(data: Record<string, unknown>[]): Promise<number>

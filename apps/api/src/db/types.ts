@@ -1,4 +1,4 @@
-export type PrismaModelDelegate = {
+export type ModelDelegate = {
     createMany: (args: any) => Promise<{ count: number }>;
     findMany: (args: any) => Promise<any[]>;
 };
