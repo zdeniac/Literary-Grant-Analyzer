@@ -1,7 +1,7 @@
 import { Button, type ButtonProps } from "react-admin";
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 
-export const DownloadSchemaButton = ({
+export const DownloadImportSchemaButton = ({
     fileHeader,
     model,
     ...props
@@ -32,7 +32,7 @@ export const DownloadSchemaButton = ({
     };
 
     return (
-        <Button variant="contained" onClick={() => createFile(fileHeader)} {...props}>
+        <Button variant="text" onClick={() => createFile(fileHeader)} {...props}>
             <FileDownloadIcon />
             Importálási séma letöltése
         </Button>

@@ -1,34 +1,44 @@
-import { Button, FileInput, Form, required, type ButtonProps } from "react-admin";
+import { Button, FileInput, Form, required, useNotify, useRefresh, type ButtonProps } from "react-admin";
 import SaveIcon from '@mui/icons-material/Save';
-
-type ImportFormValues = {
-    file?: {
-        rawFile: File;
-    };
-};
+import type { AcceptedFormat, ImportFormValues } from "../types/import-field.types";
 
 export const ImportForm = ({ 
-    submitRoute, 
+    submitRoute,
+    acceptedFormats,
     ...props 
 }: { 
-    submitRoute: string 
+    submitRoute: string,
+    acceptedFormats: AcceptedFormat[],
 } & ButtonProps) => {
+    const refresh = useRefresh();
+    const notify = useNotify();
+
     const fileImport = async (params: ImportFormValues) => {
         if (!params.file?.rawFile) {
             return;
         }
+        try {
+            const formData = new FormData();
         
-        const formData = new FormData();
-        
-        formData.append('file', params.file?.rawFile);
+            formData.append('file', params.file?.rawFile);
 
-        const res = await fetch(submitRoute, {
-            method: 'POST',
-            body: formData
-        });
+            const res = await fetch(submitRoute, {
+                method: 'POST',
+                body: formData
+            });
 
-        if (!res.ok) {
-            throw new Error('Import failed');
+            if (!res.ok) {
+                throw new Error('Importálási hiba');
+            }
+
+            refresh();
+            notify('Sikeres importálás', {
+                type: 'success'
+            });
+        } catch (e: unknown) {
+            notify(e.message, {
+                type: 'error'
+            });
         }
     };
 
@@ -41,7 +51,6 @@ export const ImportForm = ({
                 multiple={false} 
                 accept={{'text/csv' : ['.csv']}}
             />
-
             <Button variant="contained" type="submit" {...props}>
                 <SaveIcon />
                 Importálás

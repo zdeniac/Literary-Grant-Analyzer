@@ -15,9 +15,14 @@ export type ImportField = {
     options?: string[];
 };
 
+export type AcceptedFormat = {
+    mimeType: 'text/csv',
+    extension: '.csv'
+};
+
 export type ImportSchema = {
     fields: ImportField[],
-    acceptedFormats: string[],
+    acceptedFormats: AcceptedFormat[],
 };
 
 export type ModelBlueprint = {

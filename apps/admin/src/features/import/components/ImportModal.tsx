@@ -15,9 +15,10 @@ import {
     Box,
     IconButton,
     LinearProgress,
+    Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { DownloadSchemaButton } from "./DownloadSchemaButton";
+import { DownloadImportSchemaButton } from "./DownloadImportSchemaButton";
 import { ImportForm } from "./ImportForm";
 
 export const ImportModal = ({ 
@@ -61,6 +62,7 @@ export const ImportModal = ({
 
     const fields = schema?.data?.fields ?? [];
     const header = fields?.map(field => field.name);
+    const acceptedFormats = schema?.data?.acceptedFormats ?? [];
 
     return isPending 
     ? (
@@ -83,6 +85,24 @@ export const ImportModal = ({
                 </IconButton>
             </DialogTitle>
             <DialogContent>
+                <Box
+                    sx={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        mb: 2
+                    }}
+                >
+                    <Typography variant="body2">
+                        Töltsd le a sablont, majd importáld az adatokat a lenti felületen keresztül.
+                    </Typography>
+
+                    <DownloadImportSchemaButton
+                        fileHeader={header}
+                        model={model}
+                    />
+                </Box>
+
                 <TableContainer
                     component={Paper}
                     sx={{
@@ -161,13 +181,10 @@ export const ImportModal = ({
 
             <DialogActions
                 sx={{
-                    justifyContent: "center",
-                    gap: 2,
-                    padding: 2,
+                    justifyContent: "center"
                 }}
             >
-                <DownloadSchemaButton fileHeader={header} model={model} />
-                <ImportForm submitRoute={submitRoute} />
+                <ImportForm submitRoute={submitRoute} acceptedFormats={acceptedFormats} />
             </DialogActions>
         </Dialog>
     );

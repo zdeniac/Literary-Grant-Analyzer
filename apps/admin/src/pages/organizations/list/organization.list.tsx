@@ -1,19 +1,10 @@
 import { DataTable, List } from "react-admin";
-import { HungarianDateField } from "../../components/inputs/HungarianDateField";
-import { ImportModal } from "../../features/import/components/ImportModal";
-import { useState } from "react";
+import { HungarianDateField } from "../../../components/inputs/HungarianDateField";
+import { OrganizationListActions } from "./organization.list.actions";
 
 export const OrganizationList = () => {
-    const [open, setOpen] = useState(false);
-
     return (
-        <List>
-            <button onClick={() => setOpen(true)}>
-                Import
-            </button>
-
-            <ImportModal model="organization" open={open} onClose={() => setOpen(false)} />
-
+        <List actions={<OrganizationListActions />}>
             <DataTable>
                 <DataTable.Col source="id" />
                 <DataTable.Col source="name" />

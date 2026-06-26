@@ -13,7 +13,10 @@ export class ImportSchemaService {
         return {
             fields: blueprint.fields,
             acceptedFormats: [
-                "csv"
+                {
+                    mimeType: 'text/csv',
+                    extension: '.csv'
+                }
             ],
         };
     }

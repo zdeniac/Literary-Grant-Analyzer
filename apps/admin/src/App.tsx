@@ -1,5 +1,5 @@
 import { Admin, Resource, type CreateParams, type CreateResult, type DataProvider, type DeleteManyParams, type DeleteManyResult, type DeleteParams, type DeleteResult, type GetListParams, type GetListResult, type GetManyParams, type GetManyReferenceParams, type GetManyReferenceResult, type GetManyResult, type GetOneParams, type GetOneResult, type Identifier, type QueryFunctionContext, type RaRecord, type UpdateManyParams, type UpdateManyResult, type UpdateParams, type UpdateResult } from 'react-admin';
-import { OrganizationList } from './pages/organizations/organization.list';
+import { OrganizationList } from './pages/organizations/list/organization.list';
 import { OrganizationEdit } from './pages/organizations/organization.edit';
 import { OrganizationCreate } from './pages/organizations/organization.create';
 import { JournalList } from './pages/journals/journal.list';
