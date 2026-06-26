@@ -14,11 +14,13 @@ import {
     DialogActions,
     Box,
     IconButton,
+    LinearProgress,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { Button } from "react-admin";
+import { DownloadSchemaButton } from "./DownloadSchemaButton";
+import { ImportForm } from "./ImportForm";
 
-export const DataImportModal = ({ 
+export const ImportModal = ({ 
     model, 
     open,
     onClose,
@@ -28,31 +30,50 @@ export const DataImportModal = ({
     onClose: () => void,
 }) => {
     const [schema, setSchema] = useState(null);
+    const [isPending, setIsPending] = useState(false);
+    const submitRoute = `api/import/${model}`;
 
     useEffect(() => {
         if (!open) {
             return;
         }
 
-        fetch(`/api/import/schema?model=${model}`)
-            .then(res => res.json())
-            .then(setSchema);
-        // render töltőjel
-    }, [open]);
+        const loadSchema = async () => {
+            setSchema(null);
+            setIsPending(true);
+
+            try {
+                const res = await fetch(`/api/import/schema?model=${model}`);
+                const data = await res.json();
+
+                setSchema(data);
+            } finally {
+                setIsPending(false);
+            }
+        };
+        
+        loadSchema();    
+    }, [open, model]);
 
     if (!open) {
         return null;
     }
 
     const fields = schema?.data?.fields ?? [];
+    const header = fields?.map(field => field.name);
 
-    return (
+    return isPending 
+    ? (
+        <Dialog open={open} maxWidth="lg" fullWidth>
+            <LinearProgress aria-label="Betöltés..." />
+        </Dialog> 
+    ): (
         <Dialog open={open} maxWidth="lg" fullWidth>
             <DialogTitle
                 sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
                 }}
             >
                 Import: {model}
@@ -68,6 +89,7 @@ export const DataImportModal = ({
                         mt: 2,
                         maxHeight: 500
                     }}
+                    className=""
                 >
                     <Table stickyHeader>
                         <TableHead>
@@ -102,17 +124,17 @@ export const DataImportModal = ({
                                     </TableCell>
                                     <TableCell>
                                         {field.required
-                                            ? "Igen"
-                                            : "Nem"
+                                            ? 'Igen'
+                                            : 'Nem'
                                         }
                                     </TableCell>
                                     <TableCell>
                                         {field.options?.length ? (
                                             <Box
                                                 sx={{
-                                                    display: "flex",
+                                                    display: 'flex',
                                                     gap: 1,
-                                                    flexWrap: "wrap"
+                                                    flexWrap: 'wrap'
                                                 }}
                                             >
                                                 {field.options.map(
@@ -137,10 +159,15 @@ export const DataImportModal = ({
                 </TableContainer>
             </DialogContent>
 
-            <DialogActions>
-                <Button variant="contained">
-                    Importálás
-                </Button>
+            <DialogActions
+                sx={{
+                    justifyContent: "center",
+                    gap: 2,
+                    padding: 2,
+                }}
+            >
+                <DownloadSchemaButton fileHeader={header} model={model} />
+                <ImportForm submitRoute={submitRoute} />
             </DialogActions>
         </Dialog>
     );

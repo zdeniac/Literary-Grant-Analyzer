@@ -1,6 +1,6 @@
 import { DataTable, List } from "react-admin";
 import { HungarianDateField } from "../../components/inputs/HungarianDateField";
-import { DataImportModal } from "../../features/data-import/components/DataImportModal";
+import { ImportModal } from "../../features/import/components/ImportModal";
 import { useState } from "react";
 
 export const OrganizationList = () => {
@@ -12,7 +12,7 @@ export const OrganizationList = () => {
                 Import
             </button>
 
-            <DataImportModal model="organization" open={open} onClose={() => setOpen(false)} />
+            <ImportModal model="organization" open={open} onClose={() => setOpen(false)} />
 
             <DataTable>
                 <DataTable.Col source="id" />

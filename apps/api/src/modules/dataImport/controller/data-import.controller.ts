@@ -2,6 +2,7 @@ import { DataImportService } from "../service/data-import.service";
 import { Request, Response } from "express";
 import { toImportFile } from "../mapper/data-import.mapper";
 import { ImportSchemaService } from "../service/import-schema.service";
+import { ImportValidationError } from "../error/data-import.errors";
 
 export class DataImportController {
     constructor(
@@ -29,17 +30,40 @@ export class DataImportController {
 
     public async import(req: Request, res: Response): Promise<void>
     {
-        const uploadedFile = req.file;
+        try {
+            const uploadedFile = req.file;
 
-        if (!uploadedFile) throw new Error('No file uploaded.');
+            if (!uploadedFile) {
+                res.status(400).json({
+                    error: 'No file uploaded'
+                });
+                return;
+            }
 
-        const parsedFile = toImportFile(uploadedFile);
+            const parsedFile = toImportFile(uploadedFile);
 
-        const total = await this.importService.import(
-            req.params.model as string, 
-            parsedFile
-        );
+            const total = await this.importService.import(
+                req.params.model as string,
+                parsedFile
+            );
 
-        res.json({ total });
+            res.json({
+                data: {
+                    total
+                }
+            });
+
+        } catch (error) {
+            if (error instanceof ImportValidationError) {
+                res.status(422).json({
+                    error: error.message,
+                    errors: error.errors
+                });
+
+                return;
+            }
+
+            throw error;
+        }    
     }
 }

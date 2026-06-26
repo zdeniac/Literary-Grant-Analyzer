@@ -9,3 +9,7 @@ export const OrganizationSchema = z.object({
     address: z.optional(z.string().min(4).max(maxStrLen)),
     foundingYear: z.number().optional(),
 });
+
+export const ImportOrganizationSchema = OrganizationSchema.extend({
+    foundingYear: z.coerce.number().optional(),
+});

@@ -19,5 +19,6 @@ export const JournalSchema = JournalBaseSchema.extend({
 });
 
 export const ImportJournalSchema = JournalBaseSchema.extend({
+    foundingYear: z.coerce.number().optional(),
     organizationName: OrganizationSchema.shape.name,
 });
