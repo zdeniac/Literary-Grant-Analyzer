@@ -1,12 +1,12 @@
-import z from "zod";
-import { ImportRowError, ImportValidationError } from "../error/data-import.errors";
-import { ImportField } from "../types/data-import.types";
+import { ZodType } from "zod";
+import { ImportRowError, ImportValidationError } from "../error/import.errors";
+import { ImportField, ImportHeader, ImportRow } from "../types/import.types";
 
-export function validateRows(
-    rows: Record<string, unknown>[],
-    schema: z.ZodTypeAny
-): Record<string, unknown>[] {
-    const validated: Record<string, unknown>[] = [];
+export function validateRows<T extends ImportRow>(
+    rows: ImportRow[],
+    schema: ZodType<T>
+): ImportRow[] {
+    const validated: ImportRow[] = [];
     const errors: ImportRowError[] = [];
 
     rows.forEach((row, index) => {
@@ -21,7 +21,7 @@ export function validateRows(
             return;
         }
         
-        validated.push(result.data as Record<string, unknown>);
+        validated.push(result.data);
     });
 
     if (errors.length) throw new ImportValidationError(errors);
@@ -29,7 +29,7 @@ export function validateRows(
     return validated;
 }
 
-export function validateHeaders(headers: string[], fields: ImportField[]): void
+export function validateHeaders(headers: ImportHeader, fields: ImportField[]): void
 {
     const fieldNames = fields.map(
         field => field.name

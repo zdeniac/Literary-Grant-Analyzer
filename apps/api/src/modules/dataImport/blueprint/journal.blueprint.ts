@@ -1,9 +1,10 @@
 import { JournalStatus } from "@prisma/client";
 import { ImportJournalSchema } from "../../journal/validate/journal.schema";
-import { RelationalBlueprint } from "../types/data-import.types";
+import { RelationalBlueprint } from "../types/import.types";
 
 export const journalBlueprint: RelationalBlueprint = 
     {
+        model: 'journal',
         fields: [
             {
                 name: 'name',

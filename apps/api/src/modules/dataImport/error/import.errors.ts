@@ -1,4 +1,4 @@
-import { AppError } from "../../../common/error/app.error";
+import { AppError } from "../../../common/errors/app.error";
 
 export type ImportRowError = {
     row: number;

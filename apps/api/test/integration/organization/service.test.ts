@@ -2,9 +2,8 @@ import { describe, it, expect, beforeEach } from "vitest";
 import { prisma } from "../../../src/db/prisma";
 import { OrganizationService } from "../../../src/modules/organization/organization.service";
 import { LegalForm, Organization } from "@prisma/client";
-import { createJournal } from "../journal/journal.service.test";
+import { createJournal } from "../journal/service.test";
 import { OrganizationRepository } from "../../../src/modules/organization/organization.repository";
-import { NotFoundError } from "../../../src/common/error/http.error";
 
 const organizationService = new OrganizationService(
     new OrganizationRepository<Organization>(prisma.organization)

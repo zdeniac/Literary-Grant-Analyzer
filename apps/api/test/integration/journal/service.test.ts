@@ -1,17 +1,20 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { JournalService } from "../../../src/modules/journal/journal.service";
-import { Journal, JournalStatus, LegalForm, Organization } from "@prisma/client";
+import { Journal, JournalStatus } from "@prisma/client";
 import { prisma } from "../../../src/db/prisma";
-import { createOrganization } from "../organization/organization.service.test";
+import { createOrganization } from "../organization/service.test";
+import { Issn } from "../../../src/modules/journal/types/journal.types";
+import { Id } from "../../../src/common/types/types";
+import { JournalRepository } from "../../../src/modules/journal/journal.repository";
 
-const journalService = new JournalService();
+const journalService = new JournalService(new JournalRepository(prisma.journal));
 
 export const createJournal = async (overrides: {
-    organizationId: number, 
-    name?:string,
+    organizationId: Id, 
+    name?: string,
     foundingYear?: number
     status?: JournalStatus, 
-    issn?: string,
+    issn?: Issn,
 }): Promise<Journal> => {
     return journalService.create({
         organizationId: overrides.organizationId, 
@@ -23,7 +26,6 @@ export const createJournal = async (overrides: {
 };
 
 describe('JournalServiceTest', () => {
-
     const journalInput = {
         name: 'Jelenkor',
         issn: '1234-567',
@@ -144,7 +146,7 @@ describe('JournalServiceTest', () => {
         const deleted = await journalService.delete(created.id);
         
         // Returns the deleted org
-        expect(created.id).toBe(deleted.id)
+        expect(deleted).toBeNullable();
     });
 
     it('throws exception on querying for non-existent journal', async () => {

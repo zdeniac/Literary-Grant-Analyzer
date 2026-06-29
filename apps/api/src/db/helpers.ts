@@ -1,4 +1,4 @@
-import { NotFoundError } from "../common/error/http.error";
+import { NotFoundError } from "../common/errors/http.error";
 
 export async function findOrThrow<T>(promise: Promise<T | null>): Promise<T> {
     const result = await promise;

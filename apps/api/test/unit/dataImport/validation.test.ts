@@ -1,17 +1,19 @@
 import { describe, expect, it } from "vitest";
 import { validateHeaders, validateRows } from "../../../src/modules/dataImport/validation/data-import.validation";
-import { ImportValidationError } from "../../../src/modules/dataImport/error/data-import.errors";
+import { ImportValidationError } from "../../../src/modules/dataImport/error/import.errors";
 import z from "zod";
 
 describe('data import validation', () => {
 
     describe('validateHeaders', () => {
-
         it('throws when header misses fields', () => {
             expect(() =>
                 validateHeaders(
                     ['name'],
-                    ['name', 'email']
+                    [
+                        { name: 'name', type: 'string', required: true },
+                        { name: 'email', type: 'email', required: true },
+                    ],
                 )
             ).toThrow(ImportValidationError);
         });
@@ -19,8 +21,8 @@ describe('data import validation', () => {
         it('throws when header contains unknown fields', () => {
             expect(() =>
                 validateHeaders(
-                    ['name", "foo'],
-                    ['name']
+                    ['name', 'foo'],
+                    [{ name: 'asd', type: 'string', required: true }],
                 )
             ).toThrow(ImportValidationError);
         });
@@ -29,24 +31,20 @@ describe('data import validation', () => {
             expect(() =>
                 validateHeaders(
                     ['name'],
-                    ['name']
+                    [{ name: 'name', type: 'string', required: true }],
                 )
             ).not.toThrow();
         });
-
     });
 
     describe('validateRows', () => {
-
         it('returns parsed rows', () => {
             const schema = z.object({
                 name: z.string()
             });
 
             const result = validateRows(
-                [
-                    { name: 'test' }
-                ],
+                [{ name: 'test' }],
                 schema
             );
 
@@ -63,12 +61,7 @@ describe('data import validation', () => {
             });
 
             expect(() =>
-                validateRows(
-                    [
-                        { name: 123 }
-                    ],
-                    schema
-                )
+                validateRows([{ name: 123 }], schema)
             ).toThrow(ImportValidationError);
 
         });
@@ -79,18 +72,10 @@ describe('data import validation', () => {
             });
 
             expect(() =>
-                validateRows(
-                    [
-                        {}
-                    ],
-                    schema
-                )
+                validateRows([{}], schema)
             ).toThrow(ImportValidationError);
 
         });
-
-
-
     });
 
 });

@@ -1,53 +1,35 @@
-import { prisma } from "../../db/prisma";
 import { Journal } from "@prisma/client";
 import { CreateJournalDto, UpdateJournalDto } from "./dto/journal.dto";
-import { IdParam } from "../../common/validation/common.schema";
-import { findOrThrow } from "../../db/helpers";
+import { IdParam } from "../../common/types/types";
+import { JournalRepository } from "./journal.repository";
 
 export class JournalService {
+    constructor(
+        private readonly repository: JournalRepository<Journal>
+    ) {}
+
     public async create(dto: CreateJournalDto): Promise<Journal>
     {
-        return await prisma.journal.create({ 
-            data: dto 
-        });
+        return this.repository.create(dto);
     }
 
-    public async findById(id: IdParam): Promise<Journal>
+    public async findById(id: IdParam): Promise<Journal> 
     {
-        return findOrThrow(
-            prisma.journal.findFirst({
-                where: {
-                    id,
-                },
-            })
-        );
+        return this.repository.findByIdOrThrow(id);
     }
 
     public async findAll(): Promise<Journal[]>
     {
-        return await prisma.journal.findMany();
-    }
-    
-    public async update(id: IdParam, dto: UpdateJournalDto): Promise<Journal>
-    {
-        return findOrThrow(
-            prisma.journal.update({
-                where: {
-                    id,
-                },
-                data: dto
-            })
-        );
+        return this.repository.findAll();
     }
 
-    public async delete(id: IdParam): Promise<Journal>
+    public async update(id: IdParam, dto: UpdateJournalDto): Promise<Journal>
     {
-        return findOrThrow(
-            prisma.journal.delete({
-                where: {
-                    id,
-                }
-            })
-        );
+        return this.repository.update(id, dto)
+    }
+
+    public async delete(id: IdParam): Promise<void>
+    {
+        return this.repository.delete(id)
     }
 }

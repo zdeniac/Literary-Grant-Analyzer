@@ -1,14 +1,21 @@
-import { ImportError } from "../error/data-import.errors";
-import { Blueprint } from "../types/data-import.types";
+import { ImportError } from "../error/import.errors";
+import { Blueprint } from "../types/import.types";
 
 export class ImportBlueprintRegistry {
-    constructor(
-        private readonly blueprints: Record<string, Blueprint>
-    ) {}
+    private readonly blueprints = new Map<string, Blueprint>();
+
+    constructor(...blueprints: Blueprint[])
+    {
+        blueprints.forEach(
+            blueprint => {
+                this.blueprints.set(blueprint.model, blueprint);
+            }
+        );
+    }
 
     get(model: string): Blueprint | undefined
     {
-        return this.blueprints[model];
+        return this.blueprints.get(model);
     }
 
     has(model: string): boolean

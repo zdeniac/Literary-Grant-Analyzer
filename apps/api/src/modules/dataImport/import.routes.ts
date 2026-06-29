@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { createDataImportModule } from "./data-import.factory";
+import { createImportModule } from "./import.factory";
 import multer from "multer";
 
 const router = Router();
-const { controller } = createDataImportModule();
+const { controller } = createImportModule();
 const upload = multer({
     storage: multer.memoryStorage(),
 });

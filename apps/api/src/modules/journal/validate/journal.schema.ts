@@ -2,7 +2,7 @@ import { JournalStatus } from "@prisma/client";
 import z from "zod";
 import { OrganizationSchema } from "../../organization/validation/organization.schema";
 
-const issnSchema = z
+export const issnSchema = z
     .string()
     .transform(v => v.replace('-', ''))
     .refine(v => /^\d{8}$/.test(v) || /^\d{7}X$/.test(v));

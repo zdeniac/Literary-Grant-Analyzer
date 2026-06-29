@@ -1,6 +1,6 @@
 import { Organization } from "@prisma/client";
 import { CreateOrganizationDto, UpdateOrganizationDto } from "./dto/organization.dto";
-import { IdParam } from "../../common/validation/common.schema";
+import { IdParam } from "../../common/types/types";
 import { OrganizationRepository } from "./organization.repository";
 
 export class OrganizationService {

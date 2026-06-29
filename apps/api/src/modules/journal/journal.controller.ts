@@ -1,12 +1,12 @@
 import { Request, Response } from "express";
-import { OrganizationService } from "./organization.service";
+import { JournalService } from "./journal.service";
 import { idSchema } from "../../common/validation/schema";
-import { toOrganizationDto } from "./mapper/organization.mapper";
+import { toJournalDto } from "./mapper/journal.mapper";
 import { sendData } from "../../common/http/response";
 
-export class OrganizationController {
+export class JournalController {
     constructor(
-        private readonly service: OrganizationService,
+        private readonly service: JournalService,
     ) {
         this.findById = this.findById.bind(this);
         this.findAll = this.findAll.bind(this);
@@ -17,37 +17,36 @@ export class OrganizationController {
 
     public async findById(req: Request, res: Response): Promise<void>
     {
-        const org = await this.service.findById(
+        const journal = await this.service.findById(
             idSchema.parse(req.params.id)
         );
-        sendData(res, toOrganizationDto(org));
+        sendData(res, toJournalDto(journal))
     }
 
     public async findAll(req: Request, res: Response): Promise<void>
     {
-        const orgs = (await this.service.findAll())
-            .map(toOrganizationDto);
-
-        sendData(res, orgs, {
-            total: orgs.length
+        const journal = (await this.service.findAll())
+            .map(toJournalDto);
+        sendData(res, journal, {
+            total: journal.length
         });
     }
 
     public async create(req: Request, res: Response): Promise<void>
     {
-        const org = await this.service.create(
+        const journal = await this.service.create(
             req.body
         );
-        sendData(res, toOrganizationDto(org));
+        sendData(res, toJournalDto(journal))
     }
 
     public async update(req: Request, res: Response): Promise<void>
     {
-        const org = await this.service.update(
+        const journal = await this.service.update(
             idSchema.parse(req.params.id),
             req.body
         );
-        sendData(res, toOrganizationDto(org));
+        sendData(res, toJournalDto(journal))
     }
 
     public async delete(req: Request, res: Response): Promise<void>
@@ -55,7 +54,6 @@ export class OrganizationController {
         await this.service.delete(
             idSchema.parse(req.params.id)
         );
-
         res.sendStatus(204);
     }
 }

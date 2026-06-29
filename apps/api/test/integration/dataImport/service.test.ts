@@ -1,20 +1,29 @@
 import { describe, expect, it, beforeEach } from "vitest";
-import { ImportFile } from "../../../src/modules/dataImport/types/data-import.types";
+import { ImportFile } from "../../../src/modules/dataImport/types/import.types";
 import { JournalStatus, LegalForm } from "@prisma/client";
-import { ImportValidationError } from "../../../src/modules/dataImport/error/data-import.errors";
+import { ImportValidationError } from "../../../src/modules/dataImport/error/import.errors";
 import { prisma } from "../../../src/db/prisma";
 import { PrismaImportTargetRepository, } from "../../../src/db/prisma-import-target.repository";
-import { DataImportService } from "../../../src/modules/dataImport/data-import.service";
-import { dataImporterBlueprints } from "../../../src/modules/dataImport/blueprint/data-import.blueprints";
+import { ImportService } from "../../../src/modules/dataImport/service/import.service";
+import { RelationResolver } from "../../../src/modules/dataImport/resolver/relation.resolver";
+import { ImportBlueprintRegistry } from "../../../src/modules/dataImport/registry/import-blueprint.registry";
+import { journalBlueprint } from "../../../src/modules/dataImport/blueprint/journal.blueprint";
+import { organizationBlueprint } from "../../../src/modules/dataImport/blueprint/organization.blueprint";
 
 describe('dataImporter', () => {
+    const orgRepo = new PrismaImportTargetRepository(prisma.organization);
+    const journalRepo = new PrismaImportTargetRepository(prisma.journal);
 
-    const importer = new DataImportService(
-        dataImporterBlueprints,
-        {
-            organization: new PrismaImportTargetRepository,(prisma.organization),
-            journal: new PrismaImportTargetRepository,(prisma.journal),
-        },
+    const blueprintRegistry = new ImportBlueprintRegistry(journalBlueprint, organizationBlueprint);
+    const repositories = {
+            organization: orgRepo,
+            journal: journalRepo,
+        };
+    
+    const importer = new ImportService(
+        blueprintRegistry,
+        repositories,
+        new RelationResolver(repositories)
     );
 
     const org1 = {

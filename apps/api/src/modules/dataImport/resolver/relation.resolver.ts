@@ -1,39 +1,17 @@
-import { isRelationalBlueprint, RelationalBlueprint } from "../types/data-import.types";
-import { ImportFile } from "../types/data-import.types";
-import { ImportError } from "../error/data-import.errors";
 import { ImportTargetRepository } from "../../../db/types";
-import { validateHeaders, validateRows } from "../validation/data-import.validation";
-import { ImportBlueprintRegistry } from "../registry/import-blueprint.registry";
+import { ImportError } from "../error/import.errors";
+import { RelationalBlueprint } from "../types/import.types";
 
-export class DataImportService {
+export class RelationResolver {
     constructor(
-        private readonly registry: ImportBlueprintRegistry,
         private readonly repositories: Record<string, ImportTargetRepository>,
     ) {}
 
-    public async import(model: string, file: ImportFile): Promise<number>
-    {
-        const blueprint = this.registry.getOrThrow(model);
-        const repository = this.repositories[model];
-
-        if (!repository) throw new ImportError(`Missing repository for ${model}`);
-
-        validateHeaders(file.header, blueprint.fields);
-
-        if (!file.rows.length) throw new ImportError(`Missing rows for ${model}.`);
-
-        let validatedRows = validateRows(file.rows, blueprint.schema);
-        if (isRelationalBlueprint(blueprint)) {
-            validatedRows = await this.resolveRelation(validatedRows, blueprint);
-        }
-
-        return repository.createMany(validatedRows);;
-    }
-
-    private async resolveRelation(
+    public async resolve(
         validated: Record<string, unknown>[],
-        blueprint: RelationalBlueprint
-    ): Promise<Record<string, unknown>[]> {
+        blueprint: RelationalBlueprint,
+    ): Promise<Record<string, unknown>[]> 
+    {
         const repository = blueprint.relation.repository;
 
         const sourceField = blueprint.relation.sourceField;

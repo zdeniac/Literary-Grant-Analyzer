@@ -1,5 +1,5 @@
 import { ImportBlueprintRegistry } from "../registry/import-blueprint.registry";
-import { ImportSchema } from "../types/data-import.types";
+import { ImportSchema } from "../types/import.types";
 
 export class ImportSchemaService {
     constructor(

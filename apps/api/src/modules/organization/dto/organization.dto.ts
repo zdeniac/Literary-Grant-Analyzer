@@ -1,13 +1,14 @@
 import { LegalForm } from "@prisma/client";
 import z from "zod";
 import { OrganizationSchema } from "../validation/organization.schema";
+import { Id, Year } from "../../../common/types/types";
 
 export type OrganizationDto = {
-    id: number;
+    id: Id;
     name: string;
     legalForm: LegalForm;
     address: string | null;
-    foundingYear: number | null;
+    foundingYear: Year | null;
     createdAt: Date;
     updatedAt: Date | null;
 };
@@ -18,5 +19,5 @@ export type UpdateOrganizationDto = {
     name?: string;
     legalForm?: LegalForm;
     address?: string;
-    foundingYear?: number;
+    foundingYear?: Year;
 };

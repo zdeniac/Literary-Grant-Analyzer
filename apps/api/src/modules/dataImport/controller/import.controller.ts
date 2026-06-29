@@ -1,12 +1,12 @@
-import { DataImportService } from "../service/data-import.service";
+import { ImportService } from "../service/import.service";
 import { Request, Response } from "express";
-import { toImportFile } from "../mapper/data-import.mapper";
+import { toImportFile } from "../mapper/import.mapper";
 import { ImportSchemaService } from "../service/import-schema.service";
-import { ImportValidationError } from "../error/data-import.errors";
+import { ImportValidationError } from "../error/import.errors";
 
 export class DataImportController {
     constructor(
-        private readonly importService: DataImportService,
+        private readonly importService: ImportService,
         private readonly schemaService: ImportSchemaService,
     ) {
         this.import = this.import.bind(this);

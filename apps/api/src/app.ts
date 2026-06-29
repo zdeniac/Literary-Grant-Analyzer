@@ -1,7 +1,7 @@
 import express from "express";
 import organizationRouter from "./modules/organization/organization.routes";
 import journalRouter from "./modules/journal/journal.routes";
-import dataImportRouter from "./modules/dataImport/data-import.routes";
+import dataImportRouter from "./modules/dataImport/import.routes";
 
 const app = express();
 

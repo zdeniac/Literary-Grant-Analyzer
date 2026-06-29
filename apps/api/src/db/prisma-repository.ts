@@ -1,4 +1,4 @@
-import { NotFoundError } from "../common/error/http.error";
+import { NotFoundError } from "../common/errors/http.error";
 import { Repository } from "./types";
 
 export abstract class PrismaRepository<T> implements Repository<T> {

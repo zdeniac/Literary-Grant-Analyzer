@@ -1,4 +1,4 @@
-import { ImportFile } from "../types/data-import.types";
+import { ImportFile } from "../types/import.types";
 import { parse } from "csv-parse/sync";
 
 export const toImportFile = (file: Express.Multer.File): ImportFile => {
