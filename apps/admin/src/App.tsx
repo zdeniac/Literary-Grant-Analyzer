@@ -2,7 +2,7 @@ import { Admin, Resource, type CreateParams, type CreateResult, type DataProvide
 import { OrganizationList } from './pages/organizations/list/organization.list';
 import { OrganizationEdit } from './pages/organizations/organization.edit';
 import { OrganizationCreate } from './pages/organizations/organization.create';
-import { JournalList } from './pages/journals/journal.list';
+import { JournalList } from './pages/journals/list/journal.list';
 import { JournalCreate } from './pages/journals/journal.create';
 import { JournalEdit } from './pages/journals/journal.edit';
 import { CustomLayout } from './CustomLayout';

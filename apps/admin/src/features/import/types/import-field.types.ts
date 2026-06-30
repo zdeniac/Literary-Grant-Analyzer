@@ -5,6 +5,6 @@ export type ImportFormValues = {
 };
 
 export type AcceptedFormat = {
-    mimeType: string,
+    mimeType: 'text/csv',
     extension: string
 };

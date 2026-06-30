@@ -5,7 +5,7 @@ import { OrganizationRepository } from "./organization.repository";
 
 export class OrganizationService {
     constructor(
-        private readonly repository: OrganizationRepository<Organization>
+        private readonly repository: OrganizationRepository
     ) {}
 
     public async create(dto: CreateOrganizationDto): Promise<Organization>

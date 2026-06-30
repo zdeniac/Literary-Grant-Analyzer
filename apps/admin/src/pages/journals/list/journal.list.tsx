@@ -1,8 +1,9 @@
 import { DataTable, List, ReferenceField } from "react-admin";
-import { HungarianDateField } from "../../components/inputs/HungarianDateField";
+import { HungarianDateField } from "../../../components/inputs/HungarianDateField";
+import { JournalListActions } from "./journal.list.actions";
 
 export const JournalList = () => (
-    <List>
+    <List actions={<JournalListActions />}>
         <DataTable>
             <DataTable.Col source="id" />
             <DataTable.Col source="name" />

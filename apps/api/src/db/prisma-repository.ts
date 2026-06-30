@@ -1,9 +1,9 @@
 import { NotFoundError } from "../common/errors/http.error";
-import { Repository } from "./types";
+import { PrismaModel, Repository } from "./types";
 
 export abstract class PrismaRepository<T> implements Repository<T> {
     constructor(
-        protected readonly model: any
+        protected readonly model: PrismaModel<T>
     ) {}
 
     async create(data: Partial<T>): Promise<T>

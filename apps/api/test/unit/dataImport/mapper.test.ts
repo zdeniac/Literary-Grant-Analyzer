@@ -8,7 +8,6 @@ name,address,year
 Jelenkor,Pécs,1990
 Alföld,Szeged,1989
 `;
-
         const file = {
             originalname: 'organizations.csv',
             mimetype: 'text/csv',

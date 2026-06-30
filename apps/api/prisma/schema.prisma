@@ -19,6 +19,8 @@ model Organization {
 	foundingYear 	Int?
 	
 	journals		Journal[]
+	decisionBodies	DecisionBody[]
+	awardSchemes	AwardScheme[]
 
 	createdAt 		DateTime 	@default(now())
 	updatedAt 		DateTime 	@updatedAt
@@ -32,10 +34,41 @@ model Journal {
 	foundingYear	Int?
 	
 	organizationId	Int
-	organization	Organization @relation(fields: [organizationId], references: [id])
+	organization	Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
 
 	createdAt 		DateTime 	@default(now())
 	updatedAt 		DateTime 	@updatedAt
+}
+
+// Döntési testületeket, szervezetek, pl. NKA Szépirodalom Kollégium
+model DecisionBody {
+	id				Int			@id @default(autoincrement())
+	name			String
+
+	organizationId	Int?
+    organization    Organization? @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+
+	createdAt 		DateTime 	@default(now())
+	updatedAt 		DateTime 	@updatedAt
+}
+
+// Támogatási konstrukciók, pl. Kossuth-díj, irodalmi laptámogatás
+model AwardScheme {
+	id				Int			@id @default(autoincrement())
+	name			String
+	type			AwardSchemeType
+
+	organizationId 	Int
+	organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+
+	createdAt 		DateTime 	@default(now())
+	updatedAt 		DateTime 	@updatedAt
+}
+
+enum AwardSchemeType {
+	GRANT
+	SCHOLARSHIP
+	AWARD
 }
 
 enum JournalStatus {

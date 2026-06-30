@@ -6,11 +6,14 @@ import { Id, Year } from "../../../common/types/types";
 
 export type JournalDto = {
     id: Id;
+    
     name: string;
 	issn: Issn | null;
 	status: JournalStatus;
     foundingYear: Year | null;
+
     organizationId: Id;
+
     createdAt: Date;
     updatedAt: Date | null;
 }

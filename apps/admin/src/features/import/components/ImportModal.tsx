@@ -94,7 +94,7 @@ export const ImportModal = ({
                     }}
                 >
                     <Typography variant="body2">
-                        Töltsd le a sablont, majd importáld az adatokat a lenti felületen keresztül.
+                        Töltsd le a sablont, majd importáld az adatokat a lenti beviteli mezővel.
                     </Typography>
 
                     <DownloadImportSchemaButton

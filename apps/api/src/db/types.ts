@@ -17,3 +17,12 @@ export interface Repository<T> {
     create(data: Partial<T>): Promise<T>;
     delete(id: number): Promise<void>;
 };
+
+export type PrismaModel<T> = {
+    create(args: any): Promise<T>;
+    findUnique(args: any): Promise<T | null>;
+    findMany(args: any): Promise<T[]>;
+    update(args: any): Promise<T>;
+    delete(args: any): Promise<T>;
+    findMany(): Promise<T[]>;
+};

@@ -1,11 +1,11 @@
 import { Journal } from "@prisma/client";
 import { CreateJournalDto, UpdateJournalDto } from "./dto/journal.dto";
-import { IdParam } from "../../common/types/types";
+import { CrudService, IdParam } from "../../common/types/types";
 import { JournalRepository } from "./journal.repository";
 
-export class JournalService {
+export class JournalService implements CrudService<Journal> {
     constructor(
-        private readonly repository: JournalRepository<Journal>
+        private readonly repository: JournalRepository
     ) {}
 
     public async create(dto: CreateJournalDto): Promise<Journal>
