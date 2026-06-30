@@ -1,27 +1,9 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, afterAll } from "vitest";
 import { prisma } from "../../../src/db/prisma";
-import { OrganizationService } from "../../../src/modules/organization/organization.service";
-import { LegalForm, Organization } from "@prisma/client";
-import { createJournal } from "../journal/service.test";
-import { OrganizationRepository } from "../../../src/modules/organization/organization.repository";
-
-const organizationService = new OrganizationService(
-    new OrganizationRepository<Organization>(prisma.organization)
-);
-
-export const createOrganization = async (overrides: { 
-    name?:string, 
-    legalForm?: LegalForm, 
-    address?: string, 
-    foundingYear?: number
-} = {}): Promise<Organization> => {
-    return organizationService.create({
-        name: overrides.name ?? 'Jelenkor Alapítvány',
-        legalForm: overrides.legalForm ?? LegalForm.LTD,
-        address: overrides.address ?? '1234',
-        foundingYear: overrides.foundingYear ?? 1990,
-    });
-};
+import { LegalForm } from "@prisma/client";
+import { wipeDatabase } from "../helpers/db.helper";
+import { createOrganization, deleteOrganization, findEveryOrganization, findOrganizationById, updateOrganization } from "../factories/organization.factory";
+import { createJournal } from "../factories/journal.factory";
 
 describe('OrganizationServiceTest', () => {
     const input = {
@@ -31,11 +13,10 @@ describe('OrganizationServiceTest', () => {
         foundingYear: 1990,
     };
 
-    beforeEach(async () => {
-        await prisma.journal.deleteMany();
-        await prisma.organization.deleteMany();
-    });
-
+    beforeEach(wipeDatabase);
+    
+    afterAll(wipeDatabase);
+    
     it('creates organization', async () => {
         const organization = await createOrganization(input);
 
@@ -47,8 +28,8 @@ describe('OrganizationServiceTest', () => {
     });
 
     it('finds organization by id', async () => {
-        const created = await createOrganization();
-        const found = await organizationService.findById(created.id);
+        const created = await createOrganization({ name: 'Teszt' });
+        const found = await findOrganizationById(created.id);
 
         expect(found).not.toBeNull();
         expect(found?.name).toBe(created.name);
@@ -70,7 +51,7 @@ describe('OrganizationServiceTest', () => {
             legalForm: LegalForm.PLC,
         });
 
-        const found = await organizationService.findAll();
+        const found = await findEveryOrganization();
 
         expect(found.length).toBe(3);
         expect(found).toEqual(
@@ -81,8 +62,8 @@ describe('OrganizationServiceTest', () => {
     });
 
     it('updates organization', async () => {
-        const created = await createOrganization({ legalForm: LegalForm.OTHER });
-        const updated = await organizationService.update(created.id, { name: 'Alapítvány upd' });
+        const created = await createOrganization({ name: 'Teszt', legalForm: LegalForm.OTHER });
+        const updated = await updateOrganization(created.id, { name: 'Alapítvány upd' });
 
         expect(updated.updatedAt).toBeDefined();
         expect(updated).toMatchObject({
@@ -96,8 +77,8 @@ describe('OrganizationServiceTest', () => {
     });
 
     it('deletes organization', async () => {
-        const created = await createOrganization();
-        await organizationService.delete(created.id);
+        const created = await createOrganization({ name: 'Teszt' });
+        await deleteOrganization(created.id);
 
         const deleted = await prisma.organization.findUnique({
             where: {
@@ -109,14 +90,14 @@ describe('OrganizationServiceTest', () => {
     });
 
     it('cannot delete organization if it has journals', async () => {
-        const org = await createOrganization();
+        const org = await createOrganization({ name: 'Teszt' });
 
         await createJournal({
             organizationId: org.id,
         });
 
         await expect(
-            organizationService.delete(org.id)
+            deleteOrganization(org.id)
         ).rejects.toThrow();
 
         const exists = await prisma.organization.findUnique({
@@ -130,19 +111,21 @@ describe('OrganizationServiceTest', () => {
 
     it('throws exception on querying for non-existent organization', async () => {
         await expect(
-            organizationService.findById(999)
+            findOrganizationById(999)
         ).rejects.toThrow();
     });
 
     it('throws exception on deleting non-existent organization', async () => {
         await expect(
-            organizationService.delete(999)
-        ).rejects.toThrow();
+            findOrganizationById(999)
+        )
+            .rejects
+            .toThrow();
     });
 
     it('throws exception on updating non-existent organization', async () => {
         await expect(
-            organizationService.update(999, { name: 'Alapítvány' })
+            updateOrganization(999, { name: 'Alapítvány' })
         ).rejects.toThrow();
     });
 });

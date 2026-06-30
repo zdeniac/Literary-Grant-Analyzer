@@ -1,29 +1,8 @@
-import { describe, it, expect, beforeEach } from "vitest";
-import { JournalService } from "../../../src/modules/journal/journal.service";
-import { Journal, JournalStatus } from "@prisma/client";
-import { prisma } from "../../../src/db/prisma";
-import { createOrganization } from "../organization/service.test";
-import { Issn } from "../../../src/modules/journal/types/journal.types";
-import { Id } from "../../../src/common/types/types";
-import { JournalRepository } from "../../../src/modules/journal/journal.repository";
-
-const journalService = new JournalService(new JournalRepository(prisma.journal));
-
-export const createJournal = async (overrides: {
-    organizationId: Id, 
-    name?: string,
-    foundingYear?: number
-    status?: JournalStatus, 
-    issn?: Issn,
-}): Promise<Journal> => {
-    return journalService.create({
-        organizationId: overrides.organizationId, 
-        name: overrides.name ?? 'Tiszatáj',
-        foundingYear: overrides.foundingYear ?? 1980,
-        status: overrides.status ?? JournalStatus.PAUSE,
-        issn: overrides.issn ?? '1234-567',
-    });
-};
+import { describe, it, expect, beforeEach, afterAll } from "vitest";
+import { JournalStatus } from "@prisma/client";
+import { wipeDatabase } from "../helpers/db.helper";
+import { createJournal, deleteJournal, findEveryJournal, findJournalById, updateJournal } from "../factories/journal.factory";
+import { createOrganization } from "../factories/organization.factory";
 
 describe('JournalServiceTest', () => {
     const journalInput = {
@@ -33,13 +12,11 @@ describe('JournalServiceTest', () => {
         foundingYear: 1990,
     };
 
-    beforeEach(async () => {
-        await prisma.journal.deleteMany();
-        await prisma.organization.deleteMany();
-    });
+    beforeEach(wipeDatabase);
+    afterAll(wipeDatabase);
 
     it('creates journal', async () => {
-        const org = await createOrganization();
+        const org = await createOrganization({ name: 'Teszt' });
         const journal = await createJournal({ 
             ...journalInput,
             organizationId: org.id 
@@ -55,33 +32,33 @@ describe('JournalServiceTest', () => {
     });
 
     it('finds journal by id', async () => {
-        const org = await createOrganization();
+        const org = await createOrganization({ name: 'Teszt 2' });
         const created = await createJournal({ 
             ...journalInput,
             organizationId: org.id 
         });
 
-        const found = await journalService.findById(created.id);
+        const found = await findJournalById(created.id);
 
         expect(found).not.toBeNull();
         expect(found?.name).toBe(created.name);
     });
 
     it('journal belongs to correct organization', async () => {
-        const org = await createOrganization();
+        const org = await createOrganization({ name: 'Teszt 3' });
         const created = await createJournal({ 
             ...journalInput,
             organizationId: org.id 
         });
 
-        const found = await journalService.findById(created.id);
+        const found = await findJournalById(created.id);
 
         expect(found).not.toBeNull();
         expect(found?.organizationId).toBe(org.id);
     });
 
     it('finds all journals', async () => {
-        const org = await createOrganization();
+        const org = await createOrganization({ name: 'Teszt 4' });
         const j1 = await createJournal({
             name: 'Alföld',
             status: JournalStatus.ACTIVE,
@@ -100,7 +77,7 @@ describe('JournalServiceTest', () => {
             organizationId: org.id
         });
 
-        const found = await journalService.findAll();
+        const found = await findEveryJournal();
 
         expect(found.length).toBe(3);
         expect(found).toEqual(
@@ -111,16 +88,16 @@ describe('JournalServiceTest', () => {
     });
 
     it('updates journal', async () => {
-        const org = await createOrganization();
+        const org = await createOrganization({ name: 'Teszt 5' });
 
         const created = await createJournal({ 
             organizationId: org.id,
             status: JournalStatus.ACTIVE 
         });
 
-        const org2 = await createOrganization();
+        const org2 = await createOrganization({ name: 'Teszt 6' });
 
-        const updated = await journalService.update(
+        const updated = await updateJournal(
             created.id, 
             { 
                 name: 'Teszt upd',
@@ -140,10 +117,10 @@ describe('JournalServiceTest', () => {
     });
 
     it('deletes journal', async () => {
-        const org = await createOrganization();
+        const org = await createOrganization({ name: 'Teszt 7' });
 
         const created = await createJournal({ organizationId: org.id });
-        const deleted = await journalService.delete(created.id);
+        const deleted = await deleteJournal(created.id);
         
         // Returns the deleted org
         expect(deleted).toBeNullable();
@@ -151,19 +128,23 @@ describe('JournalServiceTest', () => {
 
     it('throws exception on querying for non-existent journal', async () => {
         await expect(
-            journalService.findById(999)
-        ).rejects.toThrow();
+            findJournalById(999)
+        )
+            .rejects
+            .toThrow();
     });
 
     it('throws exception on deleting non-existent journal', async () => {
-        await expect(
-            journalService.delete(999)
-        ).rejects.toThrow();
+        await expect(findJournalById(999))
+            .rejects
+            .toThrow();
     });
 
     it('throws exception on updating non-existent journal', async () => {
         await expect(
-            journalService.update(999, { name: 'Teszt' })
-        ).rejects.toThrow();
+            updateJournal(999, { name: 'Teszt' }
+        ))
+            .rejects
+            .toThrow();
     });
 });

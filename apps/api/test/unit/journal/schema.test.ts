@@ -2,9 +2,9 @@ import { describe, it, expect } from "vitest";
 import { JournalStatus } from "@prisma/client";
 import { JournalSchema } from "../../../src/modules/journal/validate/journal.schema";
 
-describe('Organization schema test', () => {
+describe('Journal schema test', () => {
     
-        it('accepts valid organization', () => {
+        it('accepts valid organization id', () => {
             const result = JournalSchema.safeParse({
                 name: 'Alföld',
                 status: JournalStatus.ACTIVE,

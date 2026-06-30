@@ -1,9 +1,10 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, afterAll } from "vitest";
 import request from "supertest";
 import app from "../../../src/app";
 import { LegalForm } from "@prisma/client";
 import { prisma } from "../../../src/db/prisma";
 import { beforeEach } from "node:test";
+import { wipeDatabase } from "../helpers/db.helper";
 
 describe('Organization routes test', () => {
 
@@ -20,9 +21,9 @@ describe('Organization routes test', () => {
         return res;
     };
 
-    beforeEach(async () => {
-        await prisma.organization.deleteMany();
-    });
+    beforeEach(wipeDatabase);
+    
+    afterAll(wipeDatabase);
 
     it('POST /organization creates organization', async () => {
         const res = await createOrganization();

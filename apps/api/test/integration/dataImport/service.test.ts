@@ -1,4 +1,4 @@
-import { describe, expect, it, beforeEach } from "vitest";
+import { describe, expect, it, beforeEach, afterAll } from "vitest";
 import { ImportFile } from "../../../src/modules/dataImport/types/import.types";
 import { JournalStatus, LegalForm } from "@prisma/client";
 import { ImportValidationError } from "../../../src/modules/dataImport/error/import.errors";
@@ -9,8 +9,10 @@ import { RelationResolver } from "../../../src/modules/dataImport/resolver/relat
 import { ImportBlueprintRegistry } from "../../../src/modules/dataImport/registry/import-blueprint.registry";
 import { journalBlueprint } from "../../../src/modules/dataImport/blueprint/journal.blueprint";
 import { organizationBlueprint } from "../../../src/modules/dataImport/blueprint/organization.blueprint";
+import { wipeDatabase } from "../helpers/db.helper";
+import { createOrganization } from "../factories/organization.factory";
 
-describe('dataImporter', () => {
+describe('dataImport', () => {
     const orgRepo = new PrismaImportTargetRepository(prisma.organization);
     const journalRepo = new PrismaImportTargetRepository(prisma.journal);
 
@@ -78,10 +80,9 @@ describe('dataImporter', () => {
         ]
     };
 
-    beforeEach(async () => {
-        await prisma.journal.deleteMany();
-        await prisma.organization.deleteMany();
-    });
+    beforeEach(wipeDatabase);
+
+    afterAll(wipeDatabase);
 
     it('imports data on model without relation', async() => {
         const imported = await importer.import('organization', orgFile);
@@ -111,9 +112,8 @@ describe('dataImporter', () => {
     });
 
     it('imports data on model with 1:N relation', async() => {
-        const org3 = await prisma.organization.create({
-            data: org2
-        });
+        const org3 = await createOrganization(org2);
+        
         const importedJ = await importer.import('journal', journalFile);
 
         expect(importedJ).toBe(1);

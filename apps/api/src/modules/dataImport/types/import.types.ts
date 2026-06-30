@@ -1,16 +1,18 @@
 import { ZodObject } from "zod";
 
+export type ImportHeader = string[];
+export type ImportRow = Record<string, unknown>;
+
 export type ImportFile = {
     name: string;
     mimeType: string;
     // The header of the data table
-    header: string[];
-    rows: Record<string, unknown>[];
+    header: ImportHeader;
+    rows: ImportRow[];
 };
 
-export type ImportHeader = string[];
-export type ImportRow = Record<string, unknown>;
 export type ImportFieldType = 'string' | 'number' | 'email' | 'enum' | 'boolean' | 'date';
+
 export type ImportField = {
     name: string;
     type: ImportFieldType;
