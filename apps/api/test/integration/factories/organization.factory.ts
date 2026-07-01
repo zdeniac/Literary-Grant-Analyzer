@@ -6,7 +6,7 @@ import { UpdateOrganizationDto } from "../../../src/modules/organization/dto/org
 import { Id } from "../../../src/common/types/types";
 
 const organizationService = new OrganizationService(
-    new OrganizationRepository<Organization>(prisma.organization)
+    new OrganizationRepository(prisma.organization)
 );
 
 export const createOrganization = async (overrides: { 

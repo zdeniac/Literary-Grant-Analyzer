@@ -6,7 +6,7 @@ import { Id } from "../../../src/common/types/types";
 import { prisma } from "../../../src/db/prisma";
 import { UpdateJournalDto } from "../../../src/modules/journal/dto/journal.dto";
 
-const journalService = new JournalService(new JournalRepository<Journal>(prisma.journal));
+const journalService = new JournalService(new JournalRepository(prisma.journal));
 
 export const createJournal = async (overrides: {
     organizationId: Id, 

@@ -1,10 +1,10 @@
 import { Router } from "express";
-import { createOrganizationModule } from "./organization.factory";
+import { createDecisionBodyModule } from "./decision-body.factory";
+import { DecisionBodySchema } from "./validation/decision-body.schema";
 import { validate } from "../../common/middleware/validate";
-import { OrganizationSchema } from "./validation/organization.schema";
 
 const router = Router();
-const { controller } = createOrganizationModule();
+const { controller } = createDecisionBodyModule();
 
 router.get(
     '/:id',
@@ -13,7 +13,7 @@ router.get(
 
 router.put(
     '/:id',
-    validate(OrganizationSchema),
+    validate(DecisionBodySchema),
     controller.update,
 );
 
@@ -24,7 +24,7 @@ router.delete(
 
 router.post(
     '/',
-    validate(OrganizationSchema),
+    validate(DecisionBodySchema),
     controller.create,
 );
 

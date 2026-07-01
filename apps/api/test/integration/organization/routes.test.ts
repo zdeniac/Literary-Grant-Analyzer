@@ -1,17 +1,19 @@
-import { describe, it, expect, afterAll } from "vitest";
+import { describe, it, expect, afterAll, beforeEach } from "vitest";
 import request from "supertest";
 import app from "../../../src/app";
 import { LegalForm } from "@prisma/client";
-import { prisma } from "../../../src/db/prisma";
-import { beforeEach } from "node:test";
 import { wipeDatabase } from "../helpers/db.helper";
 
 describe('Organization routes test', () => {
 
     const route = '/api/organizations';
+    const orgName = 'Tiszatáj Alapítvány';
+    
+    beforeEach(wipeDatabase);
+    afterAll(wipeDatabase);
 
     const createOrganization = async (data: {} = {
-        name: 'Tiszatáj Alapítvány',
+        name: orgName,
         legalForm: LegalForm.FOUNDATION,
     }) => {
         const res = await request(app)
@@ -21,14 +23,10 @@ describe('Organization routes test', () => {
         return res;
     };
 
-    beforeEach(wipeDatabase);
-    
-    afterAll(wipeDatabase);
-
     it('POST /organization creates organization', async () => {
         const res = await createOrganization();
         expect(res.status).toBe(200);
-        expect(res.body.data.name).toBe('Tiszatáj Alapítvány');
+        expect(res.body.data.name).toBe(orgName);
     });
 
     it('POST /organization rejects invalid payload', async () => {

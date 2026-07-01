@@ -62,19 +62,22 @@ describe('JournalServiceTest', () => {
         const j1 = await createJournal({
             name: 'Alföld',
             status: JournalStatus.ACTIVE,
-            organizationId: org.id
+            organizationId: org.id,
+            issn: '1234-568',
         });
 
         const j2 = await createJournal({
             name: 'Tiszatáj',
             status: JournalStatus.PAUSE,
-            organizationId: org.id
+            organizationId: org.id,
+            issn: '1234-569',
         });
 
         const j3 = await createJournal({
             name: 'Jelenkor',
             status: JournalStatus.CLOSED,
-            organizationId: org.id
+            organizationId: org.id,
+            issn: '1234-510',
         });
 
         const found = await findEveryJournal();

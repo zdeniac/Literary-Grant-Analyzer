@@ -1,13 +1,15 @@
 import { describe, it, expect, afterAll, beforeEach } from "vitest";
 import request from "supertest";
 import app from "../../../src/app";
-import { JournalStatus, LegalForm } from "@prisma/client";
+import { LegalForm } from "@prisma/client";
 import { wipeDatabase } from "../helpers/db.helper";
+import { Id } from "../../../src/common/types/types";
 import { OrganizationDto } from "../../../src/modules/organization/dto/organization.dto";
-describe('Journal routes test', () => {
 
-    const route = '/api/journals';
-    const journalName = 'Tiszatáj';
+describe('Decision body routes test', () => {
+
+    const route = '/api/decision-bodies';
+    const decisionBodyName = 'Szépirodalom Kollégium';
 
     beforeEach(wipeDatabase);
     afterAll(wipeDatabase);
@@ -16,102 +18,94 @@ describe('Journal routes test', () => {
         const res = await request(app)
             .post('/api/organizations')
             .send({
-                name: `Tiszatáj Alapítvány_${Date.now()}`,
+                name: 'Nemzeti Kulturális Alapítvány',
                 legalForm: LegalForm.FOUNDATION
             });
+
         return res.body.data;
     };
 
-    const createJournal = async (data: {
-        name?: string,
-        status?: JournalStatus | string
-    } = {}): Promise<request.Response> => {
+    const createDecisionBody = async (
+        overrides: Partial<{
+            organizationId: Id;
+            name: string;
+        }> = {}
+    ) => {
         const org = await createOrganization();
-        const res = await request(app)
+
+        return request(app)
             .post(route)
             .send({
-                name: journalName ?? data.name,
-                status: data.status ?? JournalStatus.ACTIVE,
-                organizationId: org.id
+                name: decisionBodyName,
+                organizationId: org.id,
+                ...overrides,
             });
-        return res;
     };
 
-    const getJournal = (id: number) =>
+    const getDecisionBody = (id: Id) =>
         request(app)
             .get(`${route}/${id}`);
 
-    const updateJournal = (
-        id: number,
-        data: object
-    ) =>
+    const updateDecisionBody = (id: Id, data: object) =>
         request(app)
             .put(`${route}/${id}`)
             .send(data);
 
-    const deleteJournal = (id: number) =>
+    const deleteDecisionBody = (id: Id) =>
         request(app)
             .delete(`${route}/${id}`);
 
-    it('POST / creates journal', async () => {
-        const org = await createOrganization();
-        const res = await createJournal();
+    it('POST / creates decisionBody', async () => {
+        const res = await createDecisionBody();
 
         expect(res.status).toBe(200);
-        expect(res.body.data.name)
-            .toBe('Tiszatáj');
+        expect(res.body.data.name).toBe(decisionBodyName);
     });
 
+
     it('POST / rejects invalid payload', async () => {
-        const res = await createJournal({
+        const res = await createDecisionBody({
             name: '',
-            status: 'invalid',
         });
 
         expect(res.status).toBe(400);
-        expect(res.body.error)
-            .toBe('VALIDATION_ERROR');
+        expect(res.body.error).toBe('VALIDATION_ERROR');
     });
 
-    it('GET /:id returns journal', async () => {
-        const created = await createJournal();
+    it('GET /:id returns decisionBody', async () => {
+        const created = await createDecisionBody();
 
         const id = created.body.data.id;
 
-        const res = await getJournal(id);
+        const res = await getDecisionBody(id);
 
         expect(res.status).toBe(200);
         expect(res.body.data.id)
             .toBe(id);
     });
 
-    it('PUT /:id updates journal', async () => {
-        const created = await createJournal();
+    it('PUT /:id updates decisionBody', async () => {
+        const created = await createDecisionBody();
 
         const id = created.body.data.id;
 
-        const res = await updateJournal(id, {
-            name: 'Tiszatáj upd',
-            status: JournalStatus.CLOSED,
+        const res = await updateDecisionBody(id, {
+            name: decisionBodyName,
             organizationId: created.body.data.organizationId,
         });
 
         expect(res.status).toBe(200);
         expect(res.body.data.name)
-            .toBe('Tiszatáj upd');
-
-        expect(res.body.data.status)
-            .toBe('CLOSED');
+            .toBe(decisionBodyName);
     });
 
     it('PUT /:id rejects invalid payload', async () => {
-        const created = await createJournal();
+        const created = await createDecisionBody();
 
-        const res = await updateJournal(
+        const res = await updateDecisionBody(
             created.body.data.id,
             {
                 name: '',
-                status: 'invalid',
             }
         );
 
@@ -120,16 +114,14 @@ describe('Journal routes test', () => {
             .toBe('VALIDATION_ERROR');
     });
 
-    it('DELETE /:id deletes journal', async () => {
-        const created = await createJournal();
-
+    it('DELETE /:id deletes decisionBody', async () => {
+        const created = await createDecisionBody();
         const id = created.body.data.id;
-
-        const res = await deleteJournal(id);
+        const res = await deleteDecisionBody(id);
 
         expect(res.status).toBe(204);
 
-        const deleted = await getJournal(id);
+        const deleted = await getDecisionBody(id);
 
         expect(deleted.status)
             .toBe(404);

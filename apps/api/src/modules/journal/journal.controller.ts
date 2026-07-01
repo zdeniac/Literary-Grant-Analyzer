@@ -1,59 +1,14 @@
-import { Request, Response } from "express";
+import { Journal } from "@prisma/client";
+import { CrudController } from "../../common/contollers/crud.controller";
 import { JournalService } from "./journal.service";
-import { idSchema } from "../../common/validation/schema";
-import { toJournalDto } from "./mapper/journal.mapper";
-import { sendData } from "../../common/http/response";
+import { JournalDto } from "./dto/journal.dto";
+import { Mapper } from "../../common/types/types";
 
-export class JournalController {
+export class JournalController extends CrudController<Journal, JournalDto> {
     constructor(
-        private readonly service: JournalService,
+        service: JournalService,
+        mapper: Mapper<Journal, JournalDto>
     ) {
-        this.findById = this.findById.bind(this);
-        this.findAll = this.findAll.bind(this);
-        this.create = this.create.bind(this);
-        this.update = this.update.bind(this);
-        this.delete = this.delete.bind(this);
-    }
-
-    public async findById(req: Request, res: Response): Promise<void>
-    {
-        const journal = await this.service.findById(
-            idSchema.parse(req.params.id)
-        );
-        sendData(res, toJournalDto(journal))
-    }
-
-    public async findAll(req: Request, res: Response): Promise<void>
-    {
-        const journal = (await this.service.findAll())
-            .map(toJournalDto);
-        sendData(res, journal, {
-            total: journal.length
-        });
-    }
-
-    public async create(req: Request, res: Response): Promise<void>
-    {
-        const journal = await this.service.create(
-            req.body
-        );
-        sendData(res, toJournalDto(journal))
-    }
-
-    public async update(req: Request, res: Response): Promise<void>
-    {
-        const journal = await this.service.update(
-            idSchema.parse(req.params.id),
-            req.body
-        );
-        sendData(res, toJournalDto(journal))
-    }
-
-    public async delete(req: Request, res: Response): Promise<void>
-    {
-        await this.service.delete(
-            idSchema.parse(req.params.id)
-        );
-        res.sendStatus(204);
+        super(service, mapper);
     }
 }

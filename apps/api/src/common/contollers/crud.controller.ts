@@ -23,7 +23,6 @@ export abstract class CrudController<TModel, TDto> {
         sendData(res, this.mapper(entity));
     }
 
-
     public async findAll(req: Request, res: Response): Promise<void> 
     {
         const entities = (await this.service.findAll())
