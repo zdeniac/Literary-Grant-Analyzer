@@ -14,7 +14,6 @@ describe('OrganizationServiceTest', () => {
     };
 
     beforeEach(wipeDatabase);
-    
     afterAll(wipeDatabase);
     
     it('creates organization', async () => {

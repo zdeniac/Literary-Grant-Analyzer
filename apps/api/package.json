@@ -6,7 +6,8 @@
   "scripts": {
     "db:test:migrate": "NODE_ENV=test npx prisma migrate deploy",
     "test": "NODE_ENV=test vitest",
-    "test:full": "npm run db:test:migrate && npm run test"
+    "test:full": "npm run db:test:migrate && npm run test",
+    "generate:crud": "tsx scripts/generator/generate-crud.ts"
   },
   "keywords": [],
   "author": "József Zdenyák",
