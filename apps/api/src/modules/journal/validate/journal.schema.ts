@@ -1,7 +1,7 @@
 import { JournalStatus } from "@prisma/client";
 import z from "zod";
 import { OrganizationSchema } from "../../organization/validation/organization.schema";
-import { idSchema, yearSchema } from "../../../common/validation/schema";
+import { idSchema, nameSchema, yearSchema } from "../../../common/validation/schema";
 
 export const issnSchema = z
     .string()
@@ -9,7 +9,7 @@ export const issnSchema = z
     .refine(v => /^\d{8}$/.test(v) || /^\d{7}X$/.test(v));
 
 const JournalBaseSchema = z.object({
-    name: z.string().trim().min(1).max(60),
+    name: nameSchema,
     issn: issnSchema.nullable().optional(),
     foundingYear: yearSchema.nullable().optional(),
     status: z.enum(JournalStatus).optional(),

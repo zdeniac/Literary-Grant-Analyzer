@@ -1,13 +1,12 @@
 import { LegalForm } from "@prisma/client";
 import * as z from "zod";
-
-const maxStrLen = 60;
+import { nameSchema, yearSchema } from "../../../common/validation/schema";
 
 export const OrganizationSchema = z.object({
-    name: z.string().trim().min(1).max(maxStrLen),
+    name: nameSchema,
     legalForm: z.enum(LegalForm),
-    address: z.optional(z.string().min(4).max(maxStrLen)),
-    foundingYear: z.number().optional(),
+    address: z.optional(z.string().min(4).max(70)),
+    foundingYear: yearSchema.optional(),
 });
 
 export const ImportOrganizationSchema = OrganizationSchema.extend({

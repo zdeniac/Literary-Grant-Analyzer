@@ -1,10 +1,10 @@
 import z from "zod";
-import { Id } from "../../../common/types/types";
+import { Id, Name } from "../../../common/types/types";
 import { DecisionBodySchema } from "../validation/decision-body.schema";
 
 export type DecisionBodyDto = {
     id: Id;
-    name: string;
+    name: Name;
     organizationId: Id | null;
 
     createdAt: Date;
@@ -14,6 +14,6 @@ export type DecisionBodyDto = {
 export type CreateDecisionBodyDto = z.infer<typeof DecisionBodySchema>;
 
 export type UpdateDecisionBodyDto = {
-    name?: string;
+    name?: Name;
     organizationId?: Id;
 };
