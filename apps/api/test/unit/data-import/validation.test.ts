@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { validateHeaders, validateRows } from "../../../src/modules/dataImport/validation/data-import.validation";
-import { ImportValidationError } from "../../../src/modules/dataImport/error/import.errors";
+import { validateHeaders, validateRows } from "../../../src/modules/data-import/validation/data-import.validation";
+import { ImportValidationError } from "../../../src/modules/data-import/error/import.errors";
 import z from "zod";
 
 describe('data import validation', () => {

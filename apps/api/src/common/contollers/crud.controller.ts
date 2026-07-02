@@ -1,12 +1,13 @@
 import { Request, Response } from "express";
 import { sendData } from "../http/response";
 import { idSchema } from "../validation/schema";
-import { CrudService, Mapper } from "../types/types";
+import { DtoMapper } from "../types/types";
+import { CrudService } from "../services/crud.service";
 
 export abstract class CrudController<TModel, TDto> {
     constructor(
-        protected readonly service: CrudService<TModel>,
-        protected readonly mapper: Mapper<TModel, TDto>,
+        protected readonly service: CrudService<TModel, any, any>,
+        protected readonly toDto: DtoMapper<TModel, TDto>,
     ) {
         this.findById = this.findById.bind(this);
         this.findAll = this.findAll.bind(this);
@@ -20,13 +21,13 @@ export abstract class CrudController<TModel, TDto> {
         const entity = await this.service.findById(
             idSchema.parse(req.params.id)
         );
-        sendData(res, this.mapper(entity));
+        sendData(res, this.toDto(entity));
     }
 
     public async findAll(req: Request, res: Response): Promise<void> 
     {
         const entities = (await this.service.findAll())
-            .map(this.mapper);
+            .map(this.toDto);
         sendData(res, entities, {
             total: entities.length
         });
@@ -37,7 +38,7 @@ export abstract class CrudController<TModel, TDto> {
         const entity = await this.service.create(
             req.body
         );
-        sendData(res, this.mapper(entity));
+        sendData(res, this.toDto(entity));
     }
 
     public async update(req: Request, res: Response): Promise<void> 
@@ -46,7 +47,7 @@ export abstract class CrudController<TModel, TDto> {
             idSchema.parse(req.params.id),
             req.body
         );
-        sendData(res, this.mapper(entity));
+        sendData(res, this.toDto(entity));
     }
 
     public async delete(req: Request, res: Response): Promise<void> 

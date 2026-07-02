@@ -1,4 +1,3 @@
-import { Organization } from "@prisma/client";
 import { OrganizationRepository } from "./organization.repository";
 import { OrganizationService } from "./organization.service";
 import { prisma } from "../../db/prisma";

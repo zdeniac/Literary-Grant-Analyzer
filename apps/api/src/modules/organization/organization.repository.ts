@@ -1,8 +1,9 @@
 import { Organization } from "@prisma/client";
-import { PrismaRepository } from "../../db/prisma-repository";
+import { PrismaCrudRepository } from "../../db/prisma-crud-repository";
 import { PrismaModel } from "../../db/types";
+import { CreateOrganizationDto, UpdateOrganizationDto } from "./dto/organization.dto";
 
-export class OrganizationRepository extends PrismaRepository<Organization> {
+export class OrganizationRepository extends PrismaCrudRepository<Organization, CreateOrganizationDto, UpdateOrganizationDto> {
     constructor(model: PrismaModel<Organization>) {
         super(model);
     }

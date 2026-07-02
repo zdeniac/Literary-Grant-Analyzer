@@ -11,11 +11,13 @@ export interface ImportTargetRepository {
     ): Promise<Record<string, unknown>[]>;
 };
 
-export interface Repository<T> {
-    findById(id: number): Promise<T | null>;
-    findAll(): Promise<T[]>;
-    create(data: Partial<T>): Promise<T>;
+export interface CrudRepository<TModel, TCreate, TUpdate> {
+    findById(id: number): Promise<TModel | null>;
+    findAll(): Promise<TModel[]>;
+    create(data: TCreate): Promise<TModel>;
     delete(id: number): Promise<void>;
+    findByIdOrThrow(id: number): Promise<TModel>;
+    update(id: number, data: TUpdate): Promise<TModel>;
 };
 
 export type PrismaModel<T> = {

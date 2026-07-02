@@ -1,8 +1,8 @@
 import { DecisionBody } from "@prisma/client";
-import { Mapper } from "../../../common/types/types";
+import { DtoMapper } from "../../../common/types/types";
 import { DecisionBodyDto } from "../dto/decision-body.dto";
 
-export const toDecisionBodyDto: Mapper<DecisionBody, DecisionBodyDto> = (
+export const toDecisionBodyDto: DtoMapper<DecisionBody, DecisionBodyDto> = (
     decisionBody
 ) => ({
     id: decisionBody.id,

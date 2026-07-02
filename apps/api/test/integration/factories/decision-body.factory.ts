@@ -1,9 +1,9 @@
 import { DecisionBody } from "@prisma/client";
 import { Id } from "../../../src/common/types/types";
 import { prisma } from "../../../src/db/prisma";
-import { DecisionBodyRepository } from "../../../src/modules/decisionBody/decision-body.repository";
-import { DecisionBodyService } from "../../../src/modules/decisionBody/decision-body.service";
-import { UpdateDecisionBodyDto } from "../../../src/modules/decisionBody/dto/decision-body.dto";
+import { DecisionBodyRepository } from "../../../src/modules/decision-body/decision-body.repository";
+import { DecisionBodyService } from "../../../src/modules/decision-body/decision-body.service";
+import { UpdateDecisionBodyDto } from "../../../src/modules/decision-body/dto/decision-body.dto";
 
 const decisionBodyService = new DecisionBodyService(new DecisionBodyRepository(prisma.decisionBody));
 

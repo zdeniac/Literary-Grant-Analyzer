@@ -1,14 +1,14 @@
 import { describe, expect, it, beforeEach, afterAll } from "vitest";
-import { ImportFile } from "../../../src/modules/dataImport/types/import.types";
+import { ImportFile } from "../../../src/modules/data-import/types/import.types";
 import { JournalStatus, LegalForm } from "@prisma/client";
-import { ImportValidationError } from "../../../src/modules/dataImport/error/import.errors";
+import { ImportValidationError } from "../../../src/modules/data-import/error/import.errors";
 import { prisma } from "../../../src/db/prisma";
 import { PrismaImportTargetRepository, } from "../../../src/db/prisma-import-target.repository";
-import { ImportService } from "../../../src/modules/dataImport/service/import.service";
-import { RelationResolver } from "../../../src/modules/dataImport/resolver/relation.resolver";
-import { ImportBlueprintRegistry } from "../../../src/modules/dataImport/registry/import-blueprint.registry";
-import { journalBlueprint } from "../../../src/modules/dataImport/blueprint/journal.blueprint";
-import { organizationBlueprint } from "../../../src/modules/dataImport/blueprint/organization.blueprint";
+import { ImportService } from "../../../src/modules/data-import/service/import.service";
+import { RelationResolver } from "../../../src/modules/data-import/resolver/relation.resolver";
+import { ImportBlueprintRegistry } from "../../../src/modules/data-import/registry/import-blueprint.registry";
+import { journalBlueprint } from "../../../src/modules/data-import/blueprint/journal.blueprint";
+import { organizationBlueprint } from "../../../src/modules/data-import/blueprint/organization.blueprint";
 import { wipeDatabase } from "../helpers/db.helper";
 import { createOrganization } from "../factories/organization.factory";
 

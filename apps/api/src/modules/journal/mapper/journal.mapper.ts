@@ -1,8 +1,8 @@
 import { Journal } from "@prisma/client";
 import { JournalDto } from "../dto/journal.dto";
-import { Mapper } from "../../../common/types/types";
+import { DtoMapper } from "../../../common/types/types";
 
-export const toJournalDto: Mapper<Journal, JournalDto> = (
+export const toJournalDto: DtoMapper<Journal, JournalDto> = (
     journal
 ) => ({
     id: journal.id,

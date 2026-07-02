@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { toImportFile } from "../../../src/modules/dataImport/mapper/import.mapper";
+import { toImportFile } from "../../../src/modules/data-import/mapper/import.mapper";
 
 describe('toImportFile', () => {
     it('converts uploaded csv file to ImportFile', () => {

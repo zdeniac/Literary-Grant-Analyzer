@@ -1,8 +1,8 @@
 import express from "express";
 import organizationRouter from "./modules/organization/organization.routes";
 import journalRouter from "./modules/journal/journal.routes";
-import dataImportRouter from "./modules/dataImport/import.routes";
-import decisionBodyRouter from "./modules/decisionBody/decision-body.routes";
+import dataImportRouter from "./modules/data-import/import.routes";
+import decisionBodyRouter from "./modules/decision-body/decision-body.routes";
 
 const app = express();
 
