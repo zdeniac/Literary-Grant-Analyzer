@@ -20,13 +20,14 @@ import {
 import { useEffect, useState } from "react";
 import { DownloadImportSchemaButton } from "./DownloadImportSchemaButton";
 import { ImportForm } from "./ImportForm";
+import type { ModelName } from "../types/import-button.types";
 
 export const ImportModal = ({ 
     model, 
     open,
     onClose,
 }: { 
-    model: string, 
+    model: ModelName, 
     open: boolean,
     onClose: () => void,
 }) => {

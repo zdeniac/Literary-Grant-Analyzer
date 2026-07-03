@@ -7,7 +7,7 @@ export abstract class CrudService<TModel, TCreateDto, TUpdateDto> {
     ) {}
 
     public async create(dto: TCreateDto): Promise<TModel>
-    {
+    {   
         return this.repository.create(dto);
     }
 

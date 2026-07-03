@@ -14,11 +14,11 @@ describe('Decision body routes test', () => {
     beforeEach(wipeDatabase);
     afterAll(wipeDatabase);
 
-    const createOrganization = async (): Promise<OrganizationDto> => {
+    const createOrganization = async (input: { name: string }): Promise<OrganizationDto> => {
         const res = await request(app)
             .post('/api/organizations')
             .send({
-                name: 'Nemzeti Kulturális Alapítvány',
+                name: input.name,
                 legalForm: LegalForm.FOUNDATION
             });
 
@@ -31,7 +31,7 @@ describe('Decision body routes test', () => {
             name: string;
         }> = {}
     ) => {
-        const org = await createOrganization();
+        const org = await createOrganization({ name: 'Nemzeti Kulturális Alap'});
 
         return request(app)
             .post(route)
@@ -62,7 +62,6 @@ describe('Decision body routes test', () => {
         expect(res.body.data.name).toBe(decisionBodyName);
     });
 
-
     it('POST / rejects invalid payload', async () => {
         const res = await createDecisionBody({
             name: '',
@@ -80,23 +79,23 @@ describe('Decision body routes test', () => {
         const res = await getDecisionBody(id);
 
         expect(res.status).toBe(200);
-        expect(res.body.data.id)
-            .toBe(id);
+        expect(res.body.data.id).toBe(id);
     });
 
     it('PUT /:id updates decisionBody', async () => {
         const created = await createDecisionBody();
+        const org = await createOrganization({ name: 'NKA' });
 
         const id = created.body.data.id;
 
         const res = await updateDecisionBody(id, {
-            name: decisionBodyName,
-            organizationId: created.body.data.organizationId,
+            name: 'asd',
+            organizationId: org.id,
         });
 
         expect(res.status).toBe(200);
-        expect(res.body.data.name)
-            .toBe(decisionBodyName);
+        expect(res.body.data.name).toBe('asd');
+        expect(res.body.data.organizationId).toBe(org.id);
     });
 
     it('PUT /:id rejects invalid payload', async () => {
@@ -110,8 +109,7 @@ describe('Decision body routes test', () => {
         );
 
         expect(res.status).toBe(400);
-        expect(res.body.error)
-            .toBe('VALIDATION_ERROR');
+        expect(res.body.error).toBe('VALIDATION_ERROR');
     });
 
     it('DELETE /:id deletes decisionBody', async () => {
@@ -123,7 +121,6 @@ describe('Decision body routes test', () => {
 
         const deleted = await getDecisionBody(id);
 
-        expect(deleted.status)
-            .toBe(404);
+        expect(deleted.status).toBe(404);
     });
 });

@@ -1,13 +1,45 @@
-import { Admin, Resource, type CreateParams, type CreateResult, type DataProvider, type DeleteManyParams, type DeleteManyResult, type DeleteParams, type DeleteResult, type GetListParams, type GetListResult, type GetManyParams, type GetManyReferenceParams, type GetManyReferenceResult, type GetManyResult, type GetOneParams, type GetOneResult, type Identifier, type QueryFunctionContext, type RaRecord, type UpdateManyParams, type UpdateManyResult, type UpdateParams, type UpdateResult } from 'react-admin';
-import { OrganizationList } from './pages/organizations/list/organization.list';
-import { OrganizationEdit } from './pages/organizations/organization.edit';
-import { OrganizationCreate } from './pages/organizations/organization.create';
-import { JournalList } from './pages/journals/list/journal.list';
-import { JournalCreate } from './pages/journals/journal.create';
-import { JournalEdit } from './pages/journals/journal.edit';
+import { 
+	Admin, 
+	Resource, 
+	type CreateParams, 
+	type CreateResult, 
+	type DataProvider, 
+	type DeleteManyParams, 
+	type DeleteManyResult, 
+	type DeleteParams, 
+	type DeleteResult, 
+	type GetListResult, 
+	type GetManyParams, 
+	type GetManyReferenceParams, 
+	type GetManyReferenceResult, 
+	type GetManyResult, 
+	type GetOneParams, 
+	type GetOneResult, 
+	type Identifier, 
+	type QueryFunctionContext, 
+	type RaRecord, 
+	type UpdateManyParams, 
+	type UpdateManyResult, 
+	type UpdateParams, 
+	type UpdateResult 
+} from 'react-admin';
+import { OrganizationList } from './pages/organizations/list/list';
+import { OrganizationEdit } from './pages/organizations/edit';
+import { OrganizationCreate } from './pages/organizations/create';
+import { JournalList } from './pages/journals/list/list';
+import { JournalCreate } from './pages/journals/create';
+import { JournalEdit } from './pages/journals/edit';
 import { CustomLayout } from './CustomLayout';
 import ArticleIcon from '@mui/icons-material/Article';
 import BusinessIcon from "@mui/icons-material/Business";
+import { DecisionBodyList } from './pages/decision-bodies/list/list';
+import { DecisionBodyCreate } from './pages/decision-bodies/create';
+import { DecisionBodyEdit } from './pages/decision-bodies/edit';
+import SupervisorAccountIcon from "@mui/icons-material/SupervisorAccount";
+import { AwardSchemeList } from './pages/award-schemes/list/list';
+import { AwardSchemeCreate } from './pages/award-schemes/create';
+import { AwardSchemeEdit } from './pages/award-schemes/edit';
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 
 const dataProvider: DataProvider = {
 	getList: async <RecordType extends RaRecord = RaRecord>(
@@ -134,6 +166,20 @@ const App = () => (
 			create={JournalCreate}
 			edit={JournalEdit}
 			icon={ArticleIcon}
+		/>
+		<Resource
+			name="decision-bodies"
+			list={DecisionBodyList}
+			create={DecisionBodyCreate}
+			edit={DecisionBodyEdit}
+			icon={SupervisorAccountIcon}
+		/>
+		<Resource
+			name="award-schemes"
+			list={AwardSchemeList}
+			create={AwardSchemeCreate}
+			edit={AwardSchemeEdit}
+			icon={EmojiEventsIcon}
 		/>
 	</Admin>
 );

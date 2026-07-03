@@ -54,7 +54,7 @@ const camelCase = pascalCase[0].toLowerCase() + pascalCase.slice(1);
 const files = {
     [`dto/${kebabCase}.dto.ts`]: 'dto.tpl',
     [`mapper/${kebabCase}.mapper.ts`]: 'mapper.tpl',
-    [`validate/${kebabCase}.schema.ts`]: 'schema.tpl',
+    [`validation/${kebabCase}.schema.ts`]: 'schema.tpl',
     [`${kebabCase}.repository.ts`]: 'repository.tpl',
     [`${kebabCase}.service.ts`]: 'service.tpl',
     [`${kebabCase}.controller.ts`]: 'controller.tpl',

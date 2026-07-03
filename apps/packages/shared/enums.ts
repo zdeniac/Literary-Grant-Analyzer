@@ -16,3 +16,9 @@ export enum LegalForm {
     // Egyéb
     OTHER = 'OTHER',
 }
+
+export enum AwardSchemeType {
+    GRANT = 'GRANT',
+    SCHOLARSHIP = 'SCHOLARSHIP',
+    AWARD = 'AWARD',
+}

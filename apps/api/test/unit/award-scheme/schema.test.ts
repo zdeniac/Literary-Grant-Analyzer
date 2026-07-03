@@ -1,4 +1,4 @@
-import { AwardSchemeSchema } from "../../../src/modules/award-scheme/validate/award-scheme.schema";
+import { AwardSchemeSchema } from "../../../src/modules/award-scheme/validation/award-scheme.schema";
 import { AwardSchemeType } from "@prisma/client";
 import { describe, expect, it } from "vitest";
 

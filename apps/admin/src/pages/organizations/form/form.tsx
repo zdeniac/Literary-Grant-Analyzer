@@ -1,10 +1,11 @@
-import { Create, required, SelectInput, SimpleForm, TextInput } from "react-admin";
-import { YearInput } from "../../components/inputs/YearInput";
-import { legalForms } from "./organization.constants";
+import { required, SelectInput, SimpleForm, TextInput } from "react-admin";
+import { YearInput } from "../../../components/inputs/YearInput";
+import { legalForms } from "../constants";
 
-export const OrganizationCreate = () => (
-    <Create>
+export const OrganizationForm = () => {
+    return (
         <SimpleForm>
+
             <TextInput source="name" validate={[required()]} />
             <TextInput source="address" />
 
@@ -15,7 +16,7 @@ export const OrganizationCreate = () => (
             />
 
             <YearInput source="foundingYear" />
-
+            
         </SimpleForm>
-    </Create>
-);
+    );
+}

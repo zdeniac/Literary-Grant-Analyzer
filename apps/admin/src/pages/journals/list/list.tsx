@@ -1,6 +1,6 @@
 import { DataTable, List, ReferenceField } from "react-admin";
-import { HungarianDateField } from "../../../components/inputs/HungarianDateField";
-import { JournalListActions } from "./journal.list.actions";
+import { JournalListActions } from "./actions";
+import { AuditColumns } from "../../../features/import/components/AuditColumns";
 
 export const JournalList = () => (
     <List actions={<JournalListActions />}>
@@ -15,8 +15,7 @@ export const JournalList = () => (
                 <ReferenceField source="organizationId" reference="organizations" />
             </DataTable.Col>
 
-            <DataTable.Col source="createdAt" field={HungarianDateField}/>
-            <DataTable.Col source="updatedAt" field={HungarianDateField} />
+            <AuditColumns />
         </DataTable>
     </List>
 );
