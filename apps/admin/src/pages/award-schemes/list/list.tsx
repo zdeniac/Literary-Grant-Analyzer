@@ -1,5 +1,5 @@
 import { DataTable, List, ReferenceField } from "react-admin";
-import { AuditColumns } from "../../../features/import/components/AuditColumns";
+import { AuditColumns } from "../../../components/table/AuditColumns";
 import { AwardSchemeListActions } from "./actions";
 
 export const AwardSchemeList = () => (

@@ -1,7 +1,9 @@
-import { ZodObject } from "zod";
+import z, { ZodObject } from "zod";
+import { modelNameSchema } from "../validation/data-import.validation";
 
 export type ImportHeader = string[];
 export type ImportRow = Record<string, unknown>;
+export type ModelName = z.infer<typeof modelNameSchema>;
 
 export type ImportFile = {
     name: string;
@@ -12,7 +14,6 @@ export type ImportFile = {
 };
 
 export type ImportFieldType = 'string' | 'number' | 'email' | 'enum' | 'boolean' | 'date';
-
 export type ImportField = {
     name: string;
     type: ImportFieldType;
@@ -20,10 +21,8 @@ export type ImportField = {
     options?: string[];
 };
 
-export type AcceptedFormat = {
-    mimeType: 'text/csv',
-    extension: '.csv'
-};
+export type AcceptedFormat =  
+    | { mimeType: 'text/csv'; extension: '.csv' };
 
 export type ImportSchema = {
     fields: ImportField[],
@@ -31,30 +30,29 @@ export type ImportSchema = {
 };
 
 export type ModelBlueprint = {
-    model: string;
+    model: ModelName;
     fields: ImportField[];
     schema: ZodObject;
 };
 
-export type RelationalBlueprint = 
-    ModelBlueprint & {
-        relation: {
-            repository: string;
+export type RelationBlueprint = {
+    model: ModelName;
 
-            sourceField: string;
-            lookupField: string;
+    sourceField: string;
+    lookupField: string;
 
-            foreignKey: string;
-            targetField: string;
-        };
-    };
+    foreignKey: string;
+    targetField: string;
+};
 
-export type Blueprint =
-    ModelBlueprint | RelationalBlueprint;
+export type RelationalModelBlueprint = ModelBlueprint & {
+    relations: RelationBlueprint[];
+};
+
+export type Blueprint = ModelBlueprint | RelationalModelBlueprint;
 
 // Type guard
-export function isRelationalBlueprint(
-    blueprint: Blueprint
-): blueprint is RelationalBlueprint {
-    return 'relation' in blueprint;
+export function isRelationalModelBlueprint(blueprint: Blueprint): blueprint is RelationalModelBlueprint 
+{
+    return 'relations' in blueprint;
 }

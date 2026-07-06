@@ -1,10 +1,10 @@
-import { isRelationalBlueprint } from "../types/import.types";
+import { isRelationalModelBlueprint, RelationBlueprint } from "../types/import.types";
 import { ImportFile } from "../types/import.types";
 import { ImportError } from "../error/import.errors";
 import { ImportTargetRepository } from "../../../db/types";
 import { validateHeaders, validateRows } from "../validation/data-import.validation";
 import { ImportBlueprintRegistry } from "../registry/import-blueprint.registry";
-import { RelationResolver } from "../resolver/relation.resolver";
+import { RelationResolver } from "../resolver/relation-resolver";
 
 export class ImportService {
     constructor(
@@ -25,10 +25,15 @@ export class ImportService {
         if (!file.rows.length) throw new ImportError(`Missing rows for ${model}.`);
 
         let validatedRows = validateRows(file.rows, blueprint.schema);
-        if (isRelationalBlueprint(blueprint)) {
-            validatedRows = await this.relationResolver.resolve(validatedRows, blueprint);
+        if (isRelationalModelBlueprint(blueprint)) {
+            for (const relationBlueprint of blueprint.relations) {
+                validatedRows = await this.relationResolver.resolve(
+                    validatedRows,
+                    relationBlueprint
+                ); 
+            }        
         }
 
-        return repository.createMany(validatedRows);;
+        return repository.createMany(validatedRows);
     }
 }

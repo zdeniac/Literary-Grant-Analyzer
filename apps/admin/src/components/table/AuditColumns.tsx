@@ -1,5 +1,5 @@
 import { DataTable } from "react-admin";
-import { HungarianDateField } from "../../../components/inputs/HungarianDateField";
+import { HungarianDateField } from "../inputs/HungarianDateField";
 
 export const AuditColumns = () => {
     return (

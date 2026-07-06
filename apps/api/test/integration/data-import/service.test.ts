@@ -5,7 +5,7 @@ import { ImportValidationError } from "../../../src/modules/data-import/error/im
 import { prisma } from "../../../src/db/prisma";
 import { PrismaImportTargetRepository, } from "../../../src/db/prisma-import-target.repository";
 import { ImportService } from "../../../src/modules/data-import/service/import.service";
-import { RelationResolver } from "../../../src/modules/data-import/resolver/relation.resolver";
+import { RelationResolver } from "../../../src/modules/data-import/resolver/relation-resolver";
 import { ImportBlueprintRegistry } from "../../../src/modules/data-import/registry/import-blueprint.registry";
 import { journalBlueprint } from "../../../src/modules/data-import/blueprint/journal.blueprint";
 import { organizationBlueprint } from "../../../src/modules/data-import/blueprint/organization.blueprint";
@@ -81,7 +81,6 @@ describe('dataImport', () => {
     };
 
     beforeEach(wipeDatabase);
-
     afterAll(wipeDatabase);
 
     it('imports data on model without relation', async() => {

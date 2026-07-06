@@ -1,6 +1,6 @@
 import { DataTable, List } from "react-admin";
 import { OrganizationListActions } from "./actions";
-import { AuditColumns } from "../../../features/import/components/AuditColumns";
+import { AuditColumns } from "../../../components/table/AuditColumns";
 
 export const OrganizationList = () => {
     return (

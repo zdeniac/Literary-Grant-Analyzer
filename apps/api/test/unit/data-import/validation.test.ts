@@ -3,7 +3,7 @@ import { validateHeaders, validateRows } from "../../../src/modules/data-import/
 import { ImportValidationError } from "../../../src/modules/data-import/error/import.errors";
 import z from "zod";
 
-describe('data import validation', () => {
+describe('Data import validation', () => {
 
     describe('validateHeaders', () => {
         it('throws when header misses fields', () => {

@@ -1,5 +1,6 @@
-import { Button, type ButtonProps } from "react-admin";
+import { Button } from "react-admin";
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import type { ImportButtonProps } from "../types/import-button.types";
 
 export const DownloadImportSchemaButton = ({
     fileHeader,
@@ -7,10 +8,7 @@ export const DownloadImportSchemaButton = ({
     ...props
 }: { 
     fileHeader: string[],
-    model: string,
-} & ButtonProps) => {
-    // @todo: add 2nd row if options are set
-    // @todo: add select for valid types
+} & ImportButtonProps) => {
     const createFile = (header: string[]) => {
         const file = new File(
             [header.join(",") + "\n"],

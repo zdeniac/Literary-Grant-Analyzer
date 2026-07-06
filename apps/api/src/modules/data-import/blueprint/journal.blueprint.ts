@@ -1,8 +1,8 @@
 import { JournalStatus } from "@prisma/client";
 import { ImportJournalSchema } from "../../journal/validate/journal.schema";
-import { RelationalBlueprint } from "../types/import.types";
+import { RelationalModelBlueprint } from "../types/import.types";
 
-export const journalBlueprint: RelationalBlueprint = 
+export const journalBlueprint: RelationalModelBlueprint = 
     {
         model: 'journal',
         fields: [
@@ -34,13 +34,15 @@ export const journalBlueprint: RelationalBlueprint =
             },
         ],
         schema: ImportJournalSchema,
-        relation: {
-            repository: 'organization',
+        relations: [
+            {
+                model: 'organization',
 
-            sourceField: 'organizationName',
-            lookupField: 'name',
+                sourceField: 'organizationName',
+                lookupField: 'name',
 
-            foreignKey: 'organizationId',
-            targetField: 'id',
-        },
+                foreignKey: 'organizationId',
+                targetField: 'id',
+            },
+        ],
     };

@@ -4,7 +4,5 @@ export type ImportFormValues = {
     };
 };
 
-export type AcceptedFormat = {
-    mimeType: 'text/csv',
-    extension: string
-};
+export type AcceptedFormat = 
+    | { mimeType: 'text/csv', extension: '.csv' };

@@ -4,7 +4,7 @@ import { PrismaImportTargetRepository, } from "../../db/prisma-import-target.rep
 import { ImportBlueprintRegistry } from "./registry/import-blueprint.registry";
 import { ImportService as ImportService } from "./service/import.service";
 import { ImportSchemaService } from "./service/import-schema.service";
-import { RelationResolver } from "./resolver/relation.resolver";
+import { RelationResolver } from "./resolver/relation-resolver";
 import { journalBlueprint } from "./blueprint/journal.blueprint";
 import { organizationBlueprint } from "./blueprint/organization.blueprint";
 

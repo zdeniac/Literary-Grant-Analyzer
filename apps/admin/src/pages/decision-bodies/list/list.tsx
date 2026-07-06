@@ -1,6 +1,6 @@
 import { DataTable, List, ReferenceField } from "react-admin";
 import { DecisionBodyListActions } from "./actions";
-import { AuditColumns } from "../../../features/import/components/AuditColumns";
+import { AuditColumns } from "../../../components/table/AuditColumns";
 
 export const DecisionBodyList = () => (
     <List actions={<DecisionBodyListActions />}>

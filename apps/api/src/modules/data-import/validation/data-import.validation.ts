@@ -1,6 +1,13 @@
-import { ZodType } from "zod";
+import z, { ZodType } from "zod";
 import { ImportRowError, ImportValidationError } from "../error/import.errors";
 import { ImportField, ImportHeader, ImportRow } from "../types/import.types";
+
+export const modelNameSchema = z
+    .string()
+    .regex(
+        /^[a-z][a-zA-Z0-9]*$/, 
+        'ModelName must be camelCase'
+    );
 
 export function validateRows<T extends ImportRow>(
     rows: ImportRow[],
