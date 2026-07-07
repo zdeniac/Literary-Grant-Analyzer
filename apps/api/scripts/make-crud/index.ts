@@ -6,7 +6,7 @@ import { stdin as input, stdout as output } from "node:process";
 const modelName: string | undefined = process.argv[2];
 
 if (!modelName) {
-    console.error('Usage: npm run generate:crud <model-name>');
+    console.error('Usage: npm run make:crud <model-name>');
     process.exit(1);
 }
 // kebab-case name for the filenames
@@ -87,3 +87,4 @@ for (const [file, content] of Object.entries(files)) {
 }
 
 console.log(`${green}Created CRUD module: ${pascalCase}${resetColor} \n${yellow}Now add the routes to the application, and you are done!${resetColor}`);
+process.exit(0);
