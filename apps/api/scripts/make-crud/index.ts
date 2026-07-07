@@ -77,7 +77,7 @@ for (const [file, content] of Object.entries(files)) {
 
     fs.mkdirSync(
         path.dirname(target),
-        { recursive:true }
+        { recursive: true }
     );
 
     fs.writeFileSync(
