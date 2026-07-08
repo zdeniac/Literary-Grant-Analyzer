@@ -11,10 +11,37 @@ const colors = {
     yellow: '\x1b[33m',
 } as const;
 
+type RelationInput = {
+    model?: string;
+    type?: string;
+    field?: string;
+    reference?: string;
+};
+
 type ModelInput = {
     name: string;
     props: Map<string, string>;
+    relations: RelationInput[];
 };
+
+const relationTypes = {
+    oneToMany: '1:N',
+    manyToOne: 'N:1',
+} as const;
+
+const prismaTypes = {
+    string: 'String',
+    boolean: 'Boolean',
+    int: 'Int',
+    bigint: 'BigInt',
+    float: 'Float',
+    decimal: 'Decimal',
+    datetime: 'DateTime',
+    bytes: 'Bytes',
+    json: 'Json',
+    relation: 'Relation',
+    enum: 'Enum',
+} as const;
 
 // we get the location of the prisma schema from the prisma config, check if there is a prisma
 const prismaSchema = prismaConfig?.schema;
@@ -24,57 +51,65 @@ if (!prismaSchema) {
     closeProcess(1);
 }
 
+const modelsPath = prismaSchema.replace('schema.prisma', 'models');
+const enumsPath = prismaSchema.replace('schema.prisma', 'enums');
+
 // we open the prompt for the name of the model and save to an object
 const rl = readline.createInterface({
     input: stdin,
     output: stdout
 });
 
-const modelInput = { 
+const modelToCreate: ModelInput = { 
     name: '',
-    props: new Map<string, string>(),
+    props: new Map(),
+    relations: [],
 };
 
-const modelName = await waitingForInput('Model name (e.g. AwardScheme): ', modelInput);
+const modelName = await askInput('Model name (e.g. AwardScheme): ');
 
 if (!modelName) {
     error('The model name cannot be empty.');
     closeProcess(1);
 }
 
-modelInput.name = modelName;
 
-rl.write(
-    colorize(
-        '\nNote: the Id field will be added to the model by default as an autoincrement field.\n', 
-        'yellow'
-    )
+modelToCreate.name = modelName;
+
+writeLine(
+    '\nNote: the Id field will be added to the model by default as an autoincrement field.\n', 
+    'yellow'
 );
 
-await addProperty(modelInput);
+writeLine(
+    '       For relations add only the model name.\n', 
+    'yellow'
+);
 
-async function waitingForInput(question: string, model: ModelInput): Promise<string>
+await addProperty(modelToCreate);
+
+async function askInput(question: string): Promise<string>
 {
     while (true) {
-        rl.write(`${colorize(question, 'green')}\n`);
+        writeLine(question, 'green');
+
         const input = (await rl.question('')).trim();
 
-        if (input === 'y') {
-            createModelFile(model);
+        if (input) {
+            return input;
         }
 
-        if (!input) {
-            const answer = await rl.question(
-                colorize(
-                    `Are you done with your model? (y/n): `,
-                    'yellow'
-                )
-            );
+        error('Input cannot be empty.');
+    }
+}
 
-            if (answer.toLowerCase() === 'y') {
-                createModelFile(model);
-            }
+async function waitingForPropertyName(modelInput: ModelInput): Promise<string>
+{
+    while (true) {
+        const input = await askInput('Property name (e.g. name): ');
 
+        if (modelInput.props.has(input)) {
+            error(`${input} already exists.`);
             continue;
         }
 
@@ -82,85 +117,156 @@ async function waitingForInput(question: string, model: ModelInput): Promise<str
     }
 }
 
-async function addProperty(model: ModelInput): Promise<void>
+async function askIfFinished(): Promise<boolean>
 {
-    const propName = await waitingForInput(
-        'Property name (e.g. type):  ', 
-        model
+    const answer = await askInput('Are you done with your model? (y/n): ');
+
+    return answer.toLowerCase() === 'y';
+}
+
+async function addProperty(modelInput: ModelInput): Promise<void> {
+    const propName = await waitingForPropertyName(modelInput);
+
+    writeLine(
+        `Valid types are: ${Object.values(prismaTypes).join(', ')}`,
+        'yellow'
     );
 
-    if (modelInput.props.get(propName)) {
-        error(`${propName} is already added to the model.`);
-        return addProperty(model);
-    }
+    const rawType = await askInput(`${propName}'s type: `);
 
-    // @todo: relations
-
-    const prismaTypes = {
-        string: 'String',
-        boolean: 'Boolean',
-        int: 'Int',
-        bigint: 'BigInt',
-        float: 'Float',
-        decimal: 'Decimal',
-        datetime: 'DateTime',
-        bytes: 'Bytes',
-        json: 'Json',
-        relation: 'Relation',
-        enum: 'Enum',
-    } as const;
-
-    rl.write(
-        `${colorize(
-            `Valid types are: ${Object.values(prismaTypes).join(', ')}`,
-            'yellow'
-        )}\n`
-    );
-
-    const rawType = await waitingForInput(
-        `${propName}'s type: `,
-        model
-    );
-
-    const propType = prismaTypes[rawType.toLowerCase() as keyof typeof prismaTypes];
+    const propType = prismaTypes[
+        rawType.toLowerCase() as keyof typeof prismaTypes
+    ];
 
     if (!propType) {
-        error('Invalid input data.');
+        error(`Invalid property type: ${rawType}.`);
         return closeProcess(1);
-    }
-
-    if (propType === 'Relation') {
-        // add input
-    }
-
-    if (propType === 'Enum') {
-        // add input
     }
 
     modelInput.props.set(propName, propType);
 
-    return addProperty(model);
+    if (propType === prismaTypes.relation) {
+        const relation = await addRelation(propName);
+        modelInput.relations.push(relation);
+    }
+
+    if (propType === prismaTypes.enum) {
+        // TODO
+    }
+
+    if (await askIfFinished()) {
+        return createModelFile(modelInput);
+    }
+
+    return addProperty(modelInput);
 }
 
-function createModelFile(model: ModelInput): never
+async function addRelation(foreignModel: string): Promise<RelationInput>
 {
-    const prismaPath = prismaSchema!.replace('schema.prisma', 'models')
+    if (!hasModel(foreignModel)) {
+        error(`No ${foreignModel} exists`);
+        return closeProcess(1);
+    }
 
-    const target = path.join(process.cwd(), prismaPath);
+    writeLine(
+        `Valid relation types are: ${Object.values(relationTypes).join(', ')}`,
+        'yellow'
+    );
+
+    const rawType = await askInput(
+        `What type of relation is ${foreignModel}:  `, 
+    );
+
+    const relationType = Object.values(relationTypes).find(
+        value => value === rawType
+    );
+
+    if (!relationType) {
+        error(`Invalid property type: ${rawType}.`);
+        return closeProcess(1);
+    }
+
+    const field = await askInput(
+        `Foreign field for ${foreignModel} (e.g. ${foreignModel}Id):  `, 
+    );
+    
+    const reference = await askInput(
+        `Which field does ${field} references on ${foreignModel}? `, 
+    );
+
+    // @todo: check wether the model has these values and get their types
+
+    return {
+        model: foreignModel,
+        field, 
+        reference, 
+        type: relationType 
+    };
+}
+
+function getResources(filesPath: string, resourceType: 'model' | 'enum'): string[]
+{
+    const files = fs.readdirSync(filesPath)
+        .filter(file => file.endsWith('.prisma'));
+    
+    const fileContents = files.map(
+        file => fs.readFileSync(
+            path.join(filesPath, file),
+            'utf8'
+        )
+    );
+
+    const regex = new RegExp(
+        `${resourceType}\\s+(\\w+)\\s*\\{`,
+        'g'
+    );
+
+    const resources = fileContents.flatMap(
+        file => [...file.matchAll(regex)]
+        .map(match => match[1])    
+    );
+
+    return resources;
+}
+
+function hasModel(model: string): boolean
+{
+    return getResources(modelsPath, 'model').includes(model);
+}
+
+function hasEnum(enumInput: string): boolean
+{
+    return getResources(enumsPath, 'enum').includes(enumInput);
+}
+
+function createModelFile(modelInput: ModelInput): never
+{
+    const target = path.join(process.cwd(), modelsPath);
 
     let templateContent = fs.readFileSync(
         new URL(`./model.tpl.ts`, import.meta.url),
         'utf8'
     );
-    const modelName = model.name;
+
+    const modelName = modelInput.name;
 
     templateContent = templateContent.replace('{{ modelName }}', modelName);
 
-    const fieldStr = [...model.props]
+    let contentStr = [...modelInput.props]
         .map(([fieldName, type]) => `  ${fieldName} ${type}`)
         .join('\n');
 
-    templateContent = templateContent.replace('{{ fieldList }}', fieldStr);
+    const relations = modelInput.relations;
+    // create relation string
+    // @todo: make Int changeable! make method part changeable
+    if (relations.length) {
+        for (const relation of relations) {
+            contentStr += `  ${relation.field} Int`;
+            contentStr += `  ${relation.model} @relation(fields: [${relation.field}], references[${relation.reference}] onDelete: Restrict)`;
+        }
+    }
+
+    templateContent = templateContent.replace('{{ fieldList }}', contentStr);
 
     fs.mkdirSync(
         target,
@@ -169,17 +275,13 @@ function createModelFile(model: ModelInput): never
 
     const fileName = `${toKebabCase(modelName)}.prisma`;
     const filePath = path.join(target, fileName);
+
     fs.writeFileSync(
         filePath,
         templateContent.trim()
     );
 
-    rl.write(
-        colorize(
-            `File has been created at ${filePath}`, 
-            'yellow'
-        )
-    );
+    writeLine(`File has been created at ${filePath}`, 'yellow');
 
     return closeProcess();
 }
@@ -202,10 +304,19 @@ function colorize(text: string, color: keyof typeof colors): string
     return `${colors[color]}${text}${colors.reset}`;
 }
 
-function error(text: string): void {
+function error(text: string): void
+{
     console.error(colorize(text, 'red'));
 }
 
+function writeLine(text: string, color?: keyof typeof colors): void
+{
+    if (color) {
+        colorize(text, color);
+    }
+
+    rl.write(`${text}\n`);
+}
 
 
 
