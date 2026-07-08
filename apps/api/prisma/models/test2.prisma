@@ -1,9 +1,0 @@
-model Test2 {
-	id				Int			@id @default(autoincrement())
-	name			String
-	status			JournalStatus
-	foundingYear	Int?
-	
-	createdAt 		DateTime 	@default(now())
-	updatedAt 		DateTime 	@updatedAt
-}

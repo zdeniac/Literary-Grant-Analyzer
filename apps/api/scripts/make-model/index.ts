@@ -11,16 +11,40 @@ const colors = {
     yellow: '\x1b[33m',
 } as const;
 
+const referentialActions = {
+    cascade: 'Cascade',
+    restrict: 'Restrict',
+    noAction: 'NoAction',
+    setNull: 'SetNull',
+    setDefault: 'SetDefault',
+} as const;
+
+type ReferentialAction =
+    typeof referentialActions[keyof typeof referentialActions];
+
 type RelationInput = {
-    model?: string;
-    type?: string;
-    field?: string;
-    reference?: string;
+    model: string;
+    property: {
+        singular: string;
+        plural: string | null;
+    };
+    type: string;
+    field: string;
+    reference: string;
+    referentialActions: {
+        onDelete: ReferentialAction;
+        onUpdate: ReferentialAction;
+    };
+};
+
+type PropertyInput = {
+    type: string;
+    isOptional: boolean;
 };
 
 type ModelInput = {
     name: string;
-    props: Map<string, string>;
+    props: Map<string, PropertyInput>;
     relations: RelationInput[];
 };
 
@@ -73,16 +97,10 @@ if (!modelName) {
     closeProcess(1);
 }
 
-
 modelToCreate.name = modelName;
 
 writeLine(
-    '\nNote: the Id field will be added to the model by default as an autoincrement field.\n', 
-    'yellow'
-);
-
-writeLine(
-    '       For relations add only the model name.\n', 
+    '\nNote: the id field will be added to the model by default as an autoincrement field.\n', 
     'yellow'
 );
 
@@ -119,12 +137,13 @@ async function waitingForPropertyName(modelInput: ModelInput): Promise<string>
 
 async function askIfFinished(): Promise<boolean>
 {
-    const answer = await askInput('Are you done with your model? (y/n): ');
+    const answer = await askInput('Do you want to add more properties? (y/n): ');
 
     return answer.toLowerCase() === 'y';
 }
 
-async function addProperty(modelInput: ModelInput): Promise<void> {
+async function addProperty(modelInput: ModelInput): Promise<void> 
+{
     const propName = await waitingForPropertyName(modelInput);
 
     writeLine(
@@ -143,7 +162,16 @@ async function addProperty(modelInput: ModelInput): Promise<void> {
         return closeProcess(1);
     }
 
-    modelInput.props.set(propName, propType);
+    let isOptional: string | boolean = await askInput(`Is ${propName} optional? (y/n)`);
+    isOptional = isOptional === 'y' ? true : false;
+    
+    modelInput.props.set(
+        propName, 
+        { 
+            type: propType, 
+            isOptional 
+        },
+    );
 
     if (propType === prismaTypes.relation) {
         const relation = await addRelation(propName);
@@ -161,10 +189,12 @@ async function addProperty(modelInput: ModelInput): Promise<void> {
     return addProperty(modelInput);
 }
 
-async function addRelation(foreignModel: string): Promise<RelationInput>
+async function addRelation(relationProp: string): Promise<RelationInput>
 {
-    if (!hasModel(foreignModel)) {
-        error(`No ${foreignModel} exists`);
+    const rawModel = await askInput(`Model name (e.g. Organization):`);
+
+    if (!hasModel(rawModel)) {
+        error(`No model exist with the given name: ${rawModel}.`);
         return closeProcess(1);
     }
 
@@ -174,7 +204,7 @@ async function addRelation(foreignModel: string): Promise<RelationInput>
     );
 
     const rawType = await askInput(
-        `What type of relation is ${foreignModel}:  `, 
+        `What type of relation is ${relationProp}:  `, 
     );
 
     const relationType = Object.values(relationTypes).find(
@@ -186,21 +216,41 @@ async function addRelation(foreignModel: string): Promise<RelationInput>
         return closeProcess(1);
     }
 
-    const field = await askInput(
-        `Foreign field for ${foreignModel} (e.g. ${foreignModel}Id):  `, 
-    );
+    const singular = rawModel.toLocaleLowerCase();
+    let plural: string | null = null;
+
+    // ask if plural is organizations
+    if (relationType === relationTypes.manyToOne) {
+        plural = await askInput(
+            `Is ${singular}'s plural ${singular}s? (y/n)`
+        );
+
+        if (plural === 'y') {
+            plural = `${singular}s`;
+        } else {
+            plural = await askInput(
+                `Plural form of ${singular}:`
+            );
+        }
+    }
     
     const reference = await askInput(
-        `Which field does ${field} references on ${foreignModel}? `, 
+        `Which field does ${relationProp} references on ${rawModel}? `, 
     );
 
-    // @todo: check wether the model has these values and get their types
-
     return {
-        model: foreignModel,
-        field, 
-        reference, 
-        type: relationType 
+        model: rawModel,
+        property: { 
+            singular,
+            plural,
+        },
+        field: relationProp, 
+        reference,
+        referentialActions: {
+            onDelete: referentialActions.cascade,
+            onUpdate: referentialActions.cascade,
+        },
+        type: relationType, 
     };
 }
 
@@ -249,28 +299,34 @@ function createModelFile(modelInput: ModelInput): never
     );
 
     const modelName = modelInput.name;
+    const relations = modelInput.relations;
 
     templateContent = templateContent.replace('{{ modelName }}', modelName);
 
-    let contentStr = [...modelInput.props]
-        .map(([fieldName, type]) => `  ${fieldName} ${type}`)
-        .join('\n');
-
-    const relations = modelInput.relations;
-    // create relation string
     // @todo: make Int changeable! make method part changeable
+    let contentStr = '';
     if (relations.length) {
         for (const relation of relations) {
-            contentStr += `  ${relation.field} Int`;
-            contentStr += `  ${relation.model} @relation(fields: [${relation.field}], references[${relation.reference}] onDelete: Restrict)`;
+            const isOptionalStr = modelInput.props.get(relation.field)!.isOptional ? '?' : '';
+
+            const relationProp = relation.type === relationTypes.manyToOne 
+                ? relation.property.plural
+                : relation.property.singular;
+
+            contentStr += `  ${relation.field}  Int${isOptionalStr}`;
+            contentStr += `  ${relationProp}    ${relation.model}${isOptionalStr} @relation(fields: [${relation.field}], references[${relation.reference}] onDelete: ${relation.referentialActions.onDelete} onUpdate: ${relation.referentialActions.onUpdate})`;
         }
+    } else {
+        contentStr = [...modelInput.props]
+            .map(([fieldName, prop]) => `  ${fieldName} ${prop.type}${prop.isOptional ? '?' : ''}`)
+            .join('\n');
     }
 
     templateContent = templateContent.replace('{{ fieldList }}', contentStr);
 
     fs.mkdirSync(
         target,
-        { recursive: true }
+        { recursive: true, }
     );
 
     const fileName = `${toKebabCase(modelName)}.prisma`;
@@ -311,13 +367,10 @@ function error(text: string): void
 
 function writeLine(text: string, color?: keyof typeof colors): void
 {
-    if (color) {
-        colorize(text, color);
-    }
-
-    rl.write(`${text}\n`);
+    rl.write(
+        color ? colorize(text, color) + '\n' : text + '\n'
+    );
 }
-
 
 
 
