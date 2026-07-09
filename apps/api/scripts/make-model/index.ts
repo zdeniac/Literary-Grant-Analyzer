@@ -4,6 +4,15 @@ import readline from "node:readline/promises";
 import { stdin, stdout } from 'node:process';
 import path from "node:path";
 
+/**
+ * @todo:
+ * - 0. FIX ISSUES
+ * - 1. onUpdate, onCreate questions
+ * - 2. createdAt, updatedAt fields,
+ * - 3. enum handling
+ * - 4. refaktor
+ */
+
 const colors = {
     reset: '\x1b[0m',
     green: '\x1b[32m',
@@ -11,7 +20,7 @@ const colors = {
     yellow: '\x1b[33m',
 } as const;
 
-const referentialActions = {
+const referenceActions = {
     cascade: 'Cascade',
     restrict: 'Restrict',
     noAction: 'NoAction',
@@ -20,7 +29,7 @@ const referentialActions = {
 } as const;
 
 type ReferentialAction =
-    typeof referentialActions[keyof typeof referentialActions];
+    typeof referenceActions[keyof typeof referenceActions];
 
 type RelationInput = {
     model: string;
@@ -30,16 +39,24 @@ type RelationInput = {
     };
     type: string;
     field: string;
-    reference: string;
+    reference: {
+        name: string;
+        type: ReferenceType;
+    };
     referentialActions: {
         onDelete: ReferentialAction;
         onUpdate: ReferentialAction;
     };
 };
 
+type ReferenceType = 
+    Exclude<keyof typeof prismaTypes, 'relation' | 'boolean' | 'datetime' | 'bytes'>;
+
 type PropertyInput = {
     type: string;
-    isOptional: boolean;
+    optional: boolean;
+    unique: boolean;
+    default?: string;
 };
 
 type ModelInput = {
@@ -78,56 +95,60 @@ if (!prismaSchema) {
 const modelsPath = prismaSchema.replace('schema.prisma', 'models');
 const enumsPath = prismaSchema.replace('schema.prisma', 'enums');
 
+const parsedSchema = parsePrismaFiles(modelsPath);
+
 // we open the prompt for the name of the model and save to an object
 const rl = readline.createInterface({
     input: stdin,
     output: stdout
 });
 
-const modelToCreate: ModelInput = { 
+const model: ModelInput = { 
     name: '',
     props: new Map(),
     relations: [],
 };
 
-const modelName = await askInput('Model name (e.g. AwardScheme): ');
+const modelName = await askInput('Model name (e.g. AwardScheme):');
 
 if (!modelName) {
     error('The model name cannot be empty.');
     closeProcess(1);
 }
 
-modelToCreate.name = modelName;
+model.name = modelName;
 
 writeLine(
     '\nNote: the id field will be added to the model by default as an autoincrement field.\n', 
     'yellow'
 );
 
-await addProperty(modelToCreate);
+await addProperty(model);
 
 async function askInput(question: string): Promise<string>
 {
-    while (true) {
-        writeLine(question, 'green');
+    writeLine(question, 'green');
 
-        const input = (await rl.question('')).trim();
+    const input = (await rl.question(''));
 
-        if (input) {
-            return input;
-        }
-
-        error('Input cannot be empty.');
-    }
+    return input;
 }
 
-async function waitingForPropertyName(modelInput: ModelInput): Promise<string>
+async function waitingForPropertyName(model: ModelInput): Promise<string>
 {
     while (true) {
-        const input = await askInput('Property name (e.g. name): ');
+        const input = ((await askInput("New property's name (e.g. name):")).trim());
 
-        if (modelInput.props.has(input)) {
+        if (model.props.has(input)) {
             error(`${input} already exists.`);
+            continue;
+        }
+
+        if (!input) {
+            if (await askIfFinished()) {
+                createModelFile(model);
+            }
+
             continue;
         }
 
@@ -135,23 +156,27 @@ async function waitingForPropertyName(modelInput: ModelInput): Promise<string>
     }
 }
 
-async function askIfFinished(): Promise<boolean>
+async function askYesNo(question: string): Promise<boolean>
 {
-    const answer = await askInput('Do you want to add more properties? (y/n): ');
-
-    return answer.toLowerCase() === 'y';
+    const input = (await askInput(`${question} (y/n)`)).toLowerCase();
+    return input === 'y';
 }
 
-async function addProperty(modelInput: ModelInput): Promise<void> 
+async function askIfFinished(): Promise<boolean>
 {
-    const propName = await waitingForPropertyName(modelInput);
+    return await askYesNo('Are you finished adding properties?');
+}
+
+async function addProperty(model: ModelInput): Promise<void> 
+{
+    const propName = await waitingForPropertyName(model);
 
     writeLine(
         `Valid types are: ${Object.values(prismaTypes).join(', ')}`,
         'yellow'
     );
 
-    const rawType = await askInput(`${propName}'s type: `);
+    const rawType = await askInput(`${propName}'s type:`);
 
     const propType = prismaTypes[
         rawType.toLowerCase() as keyof typeof prismaTypes
@@ -162,39 +187,49 @@ async function addProperty(modelInput: ModelInput): Promise<void>
         return closeProcess(1);
     }
 
-    let isOptional: string | boolean = await askInput(`Is ${propName} optional? (y/n)`);
-    isOptional = isOptional === 'y' ? true : false;
-    
-    modelInput.props.set(
-        propName, 
-        { 
-            type: propType, 
-            isOptional 
-        },
-    );
-
     if (propType === prismaTypes.relation) {
         const relation = await addRelation(propName);
-        modelInput.relations.push(relation);
+        model.relations.push(relation);
+        return addProperty(model);
     }
 
     if (propType === prismaTypes.enum) {
         // TODO
     }
 
-    if (await askIfFinished()) {
-        return createModelFile(modelInput);
-    }
+    const optional: boolean = await askYesNo(`Is ${propName} optional?`);
+    
+    writeLine(`Property: ${propName}`);
+    writeLine(`Type: ${propType}`);
+    writeLine(`Is optional? ${optional}`);
 
-    return addProperty(modelInput);
+    const unique: boolean = await askYesNo(`Is ${propName} unique?`);
+
+    const defaultVal = await askYesNo(`Has ${propName} a default value?`)
+        ? await askInput(`What is the default value of ${propName}?`)
+        : undefined;
+
+    model.props.set(propName, {
+        type: propType,
+        optional,
+        unique,
+        default: defaultVal,
+    });
+
+    writeLine(
+        `\nProperty ${propName} added!.\n`, 
+        'yellow'
+    );
+
+    return addProperty(model);
 }
 
 async function addRelation(relationProp: string): Promise<RelationInput>
 {
-    const rawModel = await askInput(`Model name (e.g. Organization):`);
+    const relationModelName = await askInput(`Model name (e.g. Organization):`);
 
-    if (!hasModel(rawModel)) {
-        error(`No model exist with the given name: ${rawModel}.`);
+    if (!hasModel(relationModelName)) {
+        error(`No model exist with the given name: ${relationModelName}.`);
         return closeProcess(1);
     }
 
@@ -204,7 +239,7 @@ async function addRelation(relationProp: string): Promise<RelationInput>
     );
 
     const rawType = await askInput(
-        `What type of relation is ${relationProp}:  `, 
+        `What type of relation is ${relationProp}?`, 
     );
 
     const relationType = Object.values(relationTypes).find(
@@ -216,80 +251,154 @@ async function addRelation(relationProp: string): Promise<RelationInput>
         return closeProcess(1);
     }
 
-    const singular = rawModel.toLocaleLowerCase();
-    let plural: string | null = null;
+    const singular = relationModelName.toLocaleLowerCase();
+    let plural = `${singular}s`;
 
-    // ask if plural is organizations
+    let isPluralSame = true;
+
     if (relationType === relationTypes.manyToOne) {
-        plural = await askInput(
-            `Is ${singular}'s plural ${singular}s? (y/n)`
+        isPluralSame = await askYesNo(
+            `Is ${singular}'s plural ${plural}?`
         );
 
-        if (plural === 'y') {
-            plural = `${singular}s`;
-        } else {
+        if (!isPluralSame) {
             plural = await askInput(
                 `Plural form of ${singular}:`
             );
         }
     }
-    
-    const reference = await askInput(
-        `Which field does ${relationProp} references on ${rawModel}? `, 
-    );
+    const suggested = findSuggestedReference(relationModelName, relationProp);
+    let ref;
+
+    if (suggested?.name && await askYesNo(`Does ${relationProp} references ${suggested} on ${relationModelName}?`)) {
+        ref = suggested.name;
+    } 
+    else {
+        ref = await askInput(
+            `Which field does ${relationProp} references on ${relationModelName}?`,
+        );
+    }
 
     return {
-        model: rawModel,
+        model: relationModelName,
         property: { 
             singular,
             plural,
         },
         field: relationProp, 
-        reference,
+        reference: {
+            name: ref,
+            type: suggested.type
+        },
         referentialActions: {
-            onDelete: referentialActions.cascade,
-            onUpdate: referentialActions.cascade,
+            onDelete: referenceActions.cascade,
+            onUpdate: referenceActions.cascade,
         },
         type: relationType, 
     };
 }
 
-function getResources(filesPath: string, resourceType: 'model' | 'enum'): string[]
+function findSuggestedReference(model: string, prop: string): { name: string; type: ReferenceType; }
+{
+    const relationModel = parsedSchema.get(model);
+    const propParts = prop.split(/(?=[A-Z])/);
+
+    const match: {name: string; type: ReferenceType;} = {
+        name: '',
+        type: 'Int',
+    };
+
+    if (!relationModel) {
+        return match;
+    }
+
+    for (const part of propParts) {
+        relationModel.values.forEach((field: { name: string, type: string}) => {
+            if(field.name.includes(part.toLowerCase())) {
+                match.name = field.name;
+                match.type = field.type;
+            }
+        });
+
+        if (match.name) break;
+    }
+    
+    return match;
+}
+
+function parsePrismaFiles(filesPath: string)
 {
     const files = fs.readdirSync(filesPath)
         .filter(file => file.endsWith('.prisma'));
-    
-    const fileContents = files.map(
-        file => fs.readFileSync(
-            path.join(filesPath, file),
-            'utf8'
-        )
+
+    const fileContents = files.map(file =>
+        fs.readFileSync(path.join(filesPath, file), 'utf8')
     );
 
-    const regex = new RegExp(
-        `${resourceType}\\s+(\\w+)\\s*\\{`,
-        'g'
-    );
+    const regex = /(model|enum)\s+(\w+)\s*\{([\s\S]*?)\}/g;
 
-    const resources = fileContents.flatMap(
-        file => [...file.matchAll(regex)]
-        .map(match => match[1])    
-    );
+    const parsedResources = new Map<string, Record<string, unknown>>();
 
-    return resources;
+    for (const file of fileContents) {
+        for (const match of file.matchAll(regex)) {
+            const resourceType = match[1];
+            const resourceName = match[2];
+            const body = match[3];
+
+            const lines = body
+                .split('\n')
+                .map(line => line.trim())
+                .filter(Boolean);
+
+            const fieldRegex = resourceType === 'model'
+                ? /^(\w+)\s+(\S+)(.*)$/
+                : /^(\w+)(.*)$/;
+
+            const values = [];
+
+            for (const line of lines) {
+                const lineMatch = line.match(fieldRegex);
+
+                if (!lineMatch) {
+                    continue;
+                }
+
+                if (resourceType === 'model') {
+                    values.push({
+                        name: lineMatch[1],
+                        type: lineMatch[2],
+                        attributes: lineMatch[3].trim(),
+                    });
+                } else {
+                    values.push({
+                        name: lineMatch[1],
+                        attributes: lineMatch[2].trim(),
+                    });
+                }
+            }
+
+            parsedResources.set(resourceName, {
+                file: file,
+                type: resourceType,
+                values,
+            });
+        }
+    }
+
+    return parsedResources;
 }
 
 function hasModel(model: string): boolean
 {
-    return getResources(modelsPath, 'model').includes(model);
+    return parsedSchema.has(model);
 }
 
-function hasEnum(enumInput: string): boolean
+function hasEnum(enumName: string): boolean
 {
-    return getResources(enumsPath, 'enum').includes(enumInput);
+    return parsedSchema.has(enumName);
 }
 
-function createModelFile(modelInput: ModelInput): never
+function createModelFile(model: ModelInput): never
 {
     const target = path.join(process.cwd(), modelsPath);
 
@@ -298,27 +407,32 @@ function createModelFile(modelInput: ModelInput): never
         'utf8'
     );
 
-    const modelName = modelInput.name;
-    const relations = modelInput.relations;
+    const modelName = model.name;
+    const relations = model.relations;
 
     templateContent = templateContent.replace('{{ modelName }}', modelName);
 
-    // @todo: make Int changeable! make method part changeable
     let contentStr = '';
     if (relations.length) {
         for (const relation of relations) {
-            const isOptionalStr = modelInput.props.get(relation.field)!.isOptional ? '?' : '';
+            const isOptionalStr = model.props.get(relation.field)!.optional ? '?' : '';
 
-            const relationProp = relation.type === relationTypes.manyToOne 
+            const relationProp = relation.type === relationTypes.oneToMany 
                 ? relation.property.plural
                 : relation.property.singular;
+            
+            const relationSymbol = relation.type === relationTypes.oneToMany
+                ? '[]'
+                : '';
+            
+            const modelStr = `${relation.model}${isOptionalStr}${relationSymbol}`;
 
-            contentStr += `  ${relation.field}  Int${isOptionalStr}`;
-            contentStr += `  ${relationProp}    ${relation.model}${isOptionalStr} @relation(fields: [${relation.field}], references[${relation.reference}] onDelete: ${relation.referentialActions.onDelete} onUpdate: ${relation.referentialActions.onUpdate})`;
+            contentStr += `  ${relation.field}  ${relation.reference.type}${isOptionalStr}`;
+            contentStr += `  ${relationProp}    ${modelStr} @relation(fields: [${relation.field}], references[${relation.reference.name}] onDelete: ${relation.referentialActions.onDelete} onUpdate: ${relation.referentialActions.onUpdate})`;
         }
     } else {
-        contentStr = [...modelInput.props]
-            .map(([fieldName, prop]) => `  ${fieldName} ${prop.type}${prop.isOptional ? '?' : ''}`)
+        contentStr = [...model.props]
+            .map(([fieldName, prop]) => `  ${fieldName} ${prop.type}${prop.optional ? '?' : ''} ${prop.unique ? '@unique' : ''} ${prop.default ? '@default(' + prop.default + ')' : ''}`)
             .join('\n');
     }
 
