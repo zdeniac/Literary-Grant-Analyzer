@@ -1,4 +1,7 @@
 model {{ modelName }} {
-	id 				Int 		@id @default(autoincrement())
-	{{ fieldList }}
+  id  Int  @id  @default(autoincrement())
+	
+{{ fieldList }}
+
+{{ auditFields }}
 }

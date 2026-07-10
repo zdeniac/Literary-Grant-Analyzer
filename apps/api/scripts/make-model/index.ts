@@ -7,7 +7,7 @@ import path from "node:path";
 /**
  * @todo:
  * - 0. FIX ISSUES
- * - 1. onUpdate, onCreate questions
+ * - 1. onUpdate, onDelete questions
  * - 2. createdAt, updatedAt fields,
  * - 3. enum handling
  * - 4. refaktor
@@ -20,6 +20,13 @@ const colors = {
     yellow: '\x1b[33m',
 } as const;
 
+const relationTypes = {
+    oneToMany: '1:N',
+    manyToOne: 'N:1',
+} as const;
+
+type RelationType = typeof relationTypes[keyof typeof relationTypes];
+
 const referenceActions = {
     cascade: 'Cascade',
     restrict: 'Restrict',
@@ -28,47 +35,7 @@ const referenceActions = {
     setDefault: 'SetDefault',
 } as const;
 
-type ReferentialAction =
-    typeof referenceActions[keyof typeof referenceActions];
-
-type RelationInput = {
-    model: string;
-    property: {
-        singular: string;
-        plural: string | null;
-    };
-    type: string;
-    field: string;
-    reference: {
-        name: string;
-        type: ReferenceType;
-    };
-    referentialActions: {
-        onDelete: ReferentialAction;
-        onUpdate: ReferentialAction;
-    };
-};
-
-type ReferenceType = 
-    Exclude<keyof typeof prismaTypes, 'relation' | 'boolean' | 'datetime' | 'bytes'>;
-
-type PropertyInput = {
-    type: string;
-    optional: boolean;
-    unique: boolean;
-    default?: string;
-};
-
-type ModelInput = {
-    name: string;
-    props: Map<string, PropertyInput>;
-    relations: RelationInput[];
-};
-
-const relationTypes = {
-    oneToMany: '1:N',
-    manyToOne: 'N:1',
-} as const;
+type ReferentialAction = typeof referenceActions[keyof typeof referenceActions];
 
 const prismaTypes = {
     string: 'String',
@@ -83,6 +50,46 @@ const prismaTypes = {
     relation: 'Relation',
     enum: 'Enum',
 } as const;
+
+type PrismaType = typeof prismaTypes[keyof typeof prismaTypes];
+
+type SupportedReferenceType = Exclude<PrismaType, 'boolean' | 'datetime' | 'bytes'>;
+
+type PropertyInput = {
+    type: PrismaType;
+    optional: boolean;
+    unique: boolean;
+    default?: string;
+};
+
+type ManyToOneRelationInput = RelationInput & ManyToOneOptions;
+type OneToManyRelationInput = RelationInput;
+
+type ManyToOneOptions = {
+    reference: {
+        name: string;
+        type: SupportedReferenceType;
+    };
+
+    referentialActions: {
+        onDelete: ReferentialAction;
+        onUpdate: ReferentialAction;
+    };
+};
+
+type RelationInput = {
+    model: string;
+    property: string;
+    type: RelationType;
+    field: string;
+};
+
+type ModelInput = {
+    name: string;
+    props: Map<string, PropertyInput>;
+    hasAuditFields: boolean;
+    relations: OneToManyRelationInput[] & ManyToOneRelationInput[];
+};
 
 // we get the location of the prisma schema from the prisma config, check if there is a prisma
 const prismaSchema = prismaConfig?.schema;
@@ -107,6 +114,7 @@ const model: ModelInput = {
     name: '',
     props: new Map(),
     relations: [],
+    hasAuditFields: false,
 };
 
 const modelName = await askInput('Model name (e.g. AwardScheme):');
@@ -119,9 +127,14 @@ if (!modelName) {
 model.name = modelName;
 
 writeLine(
-    '\nNote: the id field will be added to the model by default as an autoincrement field.\n', 
+    '\nNote: The id field will be added to the model by default as an autoincrement field.\n', 
     'yellow'
 );
+writeLine(
+    '      If you want, the wizard will add the audit fields (createdAt, updatedAt).\n', 
+    'yellow'
+);
+
 
 await addProperty(model);
 
@@ -146,6 +159,7 @@ async function waitingForPropertyName(model: ModelInput): Promise<string>
 
         if (!input) {
             if (await askIfFinished()) {
+                model.hasAuditFields = await askForAuditFields();
                 createModelFile(model);
             }
 
@@ -167,6 +181,11 @@ async function askIfFinished(): Promise<boolean>
     return await askYesNo('Are you finished adding properties?');
 }
 
+async function askForAuditFields(): Promise<boolean>
+{
+    return await askYesNo('Do you want to add audit fields for your model (createdAt, updatedAt)?');
+}
+
 async function addProperty(model: ModelInput): Promise<void> 
 {
     const propName = await waitingForPropertyName(model);
@@ -177,35 +196,29 @@ async function addProperty(model: ModelInput): Promise<void>
     );
 
     const rawType = await askInput(`${propName}'s type:`);
-
     const propType = prismaTypes[
         rawType.toLowerCase() as keyof typeof prismaTypes
     ];
 
     if (!propType) {
         error(`Invalid property type: ${rawType}.`);
-        return closeProcess(1);
+        return addProperty(model);
     }
 
     if (propType === prismaTypes.relation) {
         const relation = await addRelation(propName);
         model.relations.push(relation);
-        return addProperty(model);
     }
 
     if (propType === prismaTypes.enum) {
         // TODO
     }
 
-    const optional: boolean = await askYesNo(`Is ${propName} optional?`);
-    
-    writeLine(`Property: ${propName}`);
-    writeLine(`Type: ${propType}`);
-    writeLine(`Is optional? ${optional}`);
+    const optional: boolean = await askYesNo(`Is '${propName}' optional?`);
 
-    const unique: boolean = await askYesNo(`Is ${propName} unique?`);
+    const unique: boolean = await askYesNo(`Is '${propName}' unique?`);
 
-    const defaultVal = await askYesNo(`Has ${propName} a default value?`)
+    const defaultVal = await askYesNo(`Has '${propName}' a default value?`)
         ? await askInput(`What is the default value of ${propName}?`)
         : undefined;
 
@@ -217,113 +230,144 @@ async function addProperty(model: ModelInput): Promise<void>
     });
 
     writeLine(
-        `\nProperty ${propName} added!.\n`, 
+        `\n${propType} property '${propName}' added!\n`, 
         'yellow'
     );
 
     return addProperty(model);
 }
 
-async function addRelation(relationProp: string): Promise<RelationInput>
+async function addRelation(relationProp: string): Promise<ManyToOneRelationInput | RelationInput>
 {
-    const relationModelName = await askInput(`Model name (e.g. Organization):`);
+    const model = await askRelationModel();
+    const type = await askRelationType(relationProp);
 
-    if (!hasModel(relationModelName)) {
-        error(`No model exist with the given name: ${relationModelName}.`);
-        return closeProcess(1);
-    }
-
-    writeLine(
-        `Valid relation types are: ${Object.values(relationTypes).join(', ')}`,
-        'yellow'
-    );
-
-    const rawType = await askInput(
-        `What type of relation is ${relationProp}?`, 
-    );
-
-    const relationType = Object.values(relationTypes).find(
-        value => value === rawType
-    );
-
-    if (!relationType) {
-        error(`Invalid property type: ${rawType}.`);
-        return closeProcess(1);
-    }
-
-    const singular = relationModelName.toLocaleLowerCase();
-    let plural = `${singular}s`;
-
-    let isPluralSame = true;
-
-    if (relationType === relationTypes.manyToOne) {
-        isPluralSame = await askYesNo(
-            `Is ${singular}'s plural ${plural}?`
-        );
-
-        if (!isPluralSame) {
-            plural = await askInput(
-                `Plural form of ${singular}:`
-            );
-        }
-    }
-    const suggested = findSuggestedReference(relationModelName, relationProp);
-    let ref;
-
-    if (suggested?.name && await askYesNo(`Does ${relationProp} references ${suggested} on ${relationModelName}?`)) {
-        ref = suggested.name;
-    } 
-    else {
-        ref = await askInput(
-            `Which field does ${relationProp} references on ${relationModelName}?`,
-        );
-    }
+    const manyToOneOptions = type === relationTypes.manyToOne
+        ? await askManyToOneOptions(model, relationProp)
+        : {
+            reference: {},
+            referentialActions: {},
+        };
 
     return {
-        model: relationModelName,
-        property: { 
-            singular,
-            plural,
-        },
-        field: relationProp, 
-        reference: {
-            name: ref,
-            type: suggested.type
-        },
-        referentialActions: {
-            onDelete: referenceActions.cascade,
-            onUpdate: referenceActions.cascade,
-        },
-        type: relationType, 
+        model,
+        property: relationProp,
+        field: relationProp,
+        type,
+        ...manyToOneOptions,
     };
 }
 
-function findSuggestedReference(model: string, prop: string): { name: string; type: ReferenceType; }
+async function askRelationModel(): Promise<string>
+{
+    const model = await askInput('Model name (e.g. Organization):');
+
+    if (!hasModel(model)) {
+        error(`No model exists with the given name: ${model}.`);
+        return closeProcess(1);
+    }
+
+    return model;
+}
+
+async function askRelationType(relationProp: string): Promise<RelationType>
+{
+    writeLine(
+        `Valid relation types are: ${Object.values(relationTypes).join(', ')}`,
+        'yellow',
+    );
+
+    const rawType = await askInput(
+        `What type of relation is ${relationProp}?`,
+    );
+
+    const relationType = Object.values(relationTypes).find(
+        type => type === rawType,
+    );
+
+    if (!relationType) {
+        error(`Invalid relation type: ${rawType}.`);
+        return closeProcess(1);
+    }
+
+    return relationType;
+}
+
+async function askManyToOneOptions(model: string,relationProp: string): Promise<ManyToOneOptions>
+{
+    const suggested = findSuggestedReference(model, relationProp);
+
+    const referenceName = suggested?.name 
+        && await askYesNo(`Does ${relationProp} reference ${suggested.name} on ${model}?`)
+            ? suggested.name
+            : await askInput(`Which field does ${relationProp} reference on ${model}?`);
+
+    const actions = Object.values(referenceActions);
+
+    const onDelete = await askSelect(
+        'What should happen when the related object is deleted? Valid values', actions
+    ) as ReferentialAction;
+
+    const onUpdate = await askSelect(
+        'What should happen when the related object is updated?', actions
+    ) as ReferentialAction;
+
+    return {
+        reference: {
+            name: referenceName,
+            type: suggested?.type,
+        },
+        referentialActions: {
+            onDelete,
+            onUpdate,
+        },
+    };
+}
+
+async function askSelect(question: string, options: string[]): Promise<string> {
+    writeLine(question, 'green');
+
+    options.forEach((option, index) => {
+        console.log(`${index + 1}. ${option}`);
+    });
+
+    const answer = await askInput('Choose: ');
+    const index = Number(answer) - 1;
+
+    if (!options[index]) {
+        throw new Error('Invalid selection');
+    }
+
+    return options[index];
+}
+
+function findSuggestedReference(model: string, prop: string): { name: string; type: SupportedReferenceType; } | undefined
 {
     const relationModel = parsedSchema.get(model);
     const propParts = prop.split(/(?=[A-Z])/);
 
-    const match: {name: string; type: ReferenceType;} = {
-        name: '',
-        type: 'Int',
-    };
-
     if (!relationModel) {
-        return match;
+        return undefined;
     }
 
     for (const part of propParts) {
-        relationModel.values.forEach((field: { name: string, type: string}) => {
-            if(field.name.includes(part.toLowerCase())) {
-                match.name = field.name;
-                match.type = field.type;
-            }
-        });
+        const lowerCase = part.toLowerCase();
 
-        if (match.name) break;
+        const field = relationModel.values.find(
+            (field: { name: string; type: string }) =>
+                field.name.toLowerCase().endsWith(lowerCase) ||
+                field.name.toLowerCase().includes(lowerCase)
+        );
+
+        if (field) {
+            return {
+                name: field.name,
+                type: field.type as SupportedReferenceType,
+            };
+        }    
     }
-    
-    return match;
+
+    return undefined; 
 }
 
 function parsePrismaFiles(filesPath: string)
@@ -407,43 +451,28 @@ function createModelFile(model: ModelInput): never
         'utf8'
     );
 
-    const modelName = model.name;
-    const relations = model.relations;
-
-    templateContent = templateContent.replace('{{ modelName }}', modelName);
-
-    let contentStr = '';
-    if (relations.length) {
-        for (const relation of relations) {
-            const isOptionalStr = model.props.get(relation.field)!.optional ? '?' : '';
-
-            const relationProp = relation.type === relationTypes.oneToMany 
-                ? relation.property.plural
-                : relation.property.singular;
-            
-            const relationSymbol = relation.type === relationTypes.oneToMany
-                ? '[]'
-                : '';
-            
-            const modelStr = `${relation.model}${isOptionalStr}${relationSymbol}`;
-
-            contentStr += `  ${relation.field}  ${relation.reference.type}${isOptionalStr}`;
-            contentStr += `  ${relationProp}    ${modelStr} @relation(fields: [${relation.field}], references[${relation.reference.name}] onDelete: ${relation.referentialActions.onDelete} onUpdate: ${relation.referentialActions.onUpdate})`;
-        }
-    } else {
-        contentStr = [...model.props]
-            .map(([fieldName, prop]) => `  ${fieldName} ${prop.type}${prop.optional ? '?' : ''} ${prop.unique ? '@unique' : ''} ${prop.default ? '@default(' + prop.default + ')' : ''}`)
-            .join('\n');
-    }
-
-    templateContent = templateContent.replace('{{ fieldList }}', contentStr);
-
-    fs.mkdirSync(
-        target,
-        { recursive: true, }
+    templateContent = templateContent.replace(
+        '{{ modelName }}',
+        model.name
     );
 
-    const fileName = `${toKebabCase(modelName)}.prisma`;
+    templateContent = templateContent.replace(
+        '{{ auditFields }}',
+        model.hasAuditFields
+            ? formatAuditFields()
+            : ''
+    );
+
+    const fields = generateFields(model);
+
+    templateContent = templateContent.replace(
+        '{{ fieldList }}',
+        formatFields(fields)
+    );
+
+    fs.mkdirSync(target, { recursive: true });
+
+    const fileName = `${toKebabCase(model.name)}.prisma`;
     const filePath = path.join(target, fileName);
 
     fs.writeFileSync(
@@ -454,6 +483,103 @@ function createModelFile(model: ModelInput): never
     writeLine(`File has been created at ${filePath}`, 'yellow');
 
     return closeProcess();
+}
+
+function formatFields(fields: GeneratedField[]): string
+{
+    const maxNameLength = Math.max(
+        ...fields.map(field => field.name.length)
+    );
+
+    const maxTypeLength = Math.max(
+        ...fields.map(field => field.type.length)
+    );
+
+    return fields
+        .map(field => {
+            const name = field.name.padEnd(maxNameLength + 2);
+            const type = field.type.padEnd(maxTypeLength + 2);
+
+            return `  ${name}${type}${field.attributes ?? ''}`;
+        })
+        .join('\n');
+}
+
+
+function formatAuditFields(): string
+{
+    return formatFields([
+        {
+            name: 'createdAt',
+            type: 'DateTime',
+            attributes: '@default(now())',
+        },
+        {
+            name: 'updatedAt',
+            type: 'DateTime',
+            attributes: '@updatedAt',
+        },
+    ]);
+}
+
+type GeneratedField = {
+    name: string;
+    type: string;
+    attributes?: string;
+};
+
+function generateFields(model: ModelInput): GeneratedField[]
+{
+    const fields: GeneratedField[] = [];
+
+    for (const [name, prop] of model.props) {
+        const attributes = [
+            prop.unique ? '@unique' : '',
+            prop.default ? `@default(${prop.default})` : '',
+        ];
+
+        fields.push({
+            name,
+            type: `${prop.type}${prop.optional ? '?' : ''}`,
+            attributes: attributes
+                .filter(Boolean)
+                .join(' '),
+        });
+    }
+
+    for (const relation of model.relations) {
+        if (relation.type === relationTypes.manyToOne) {
+            fields.push({
+                name: relation.field,
+                type: `${relation.reference!.type}${
+                    model.props.get(relation.field)!.optional ? '?' : ''
+                }`,
+            });
+
+            fields.push({
+                name: relation.property,
+                type: `${relation.model}${
+                    model.props.get(relation.field)!.optional ? '?' : ''
+                }`,
+                attributes:
+                    `@relation(` +
+                    `fields: [${relation.field}], ` +
+                    `references: [${relation.reference!.name}], ` +
+                    `onDelete: ${relation.referentialActions!.onDelete}, ` +
+                    `onUpdate: ${relation.referentialActions!.onUpdate}` +
+                    `)`,
+            });
+        }
+
+        if (relation.type === relationTypes.oneToMany) {
+            fields.push({
+                name: relation.property,
+                type: `${relation.model}[]`,
+            });
+        }
+    }
+
+    return fields;
 }
 
 function toKebabCase(value: string): string
