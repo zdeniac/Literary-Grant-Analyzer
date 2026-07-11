@@ -1,11 +1,9 @@
 import prismaConfig from "../../prisma.config";
 import { ModelBuilder } from "./builders/ModelBuilder";
 import { RelationBuilder } from "./builders/RelationBuilder";
-import { getPrismaModelsPath } from "./config/prisma.";
 import { PrismaConfig } from "./config/PrismaConfig";
 import { FieldGenerator } from "./generator/FieldGenerator";
 import { ModelGenerator } from "./generator/ModelGenerator";
-import { parsePrismaFiles } from "./schema/parser/prisma-parser";
 import { PrismaSchema } from "./schema/PrismaSchema";
 import { Wizard } from "./Wizard";
 
