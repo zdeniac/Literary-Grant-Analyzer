@@ -6,7 +6,7 @@ export type RelationType = typeof relationTypes[keyof typeof relationTypes];
 
 export type ReferentialAction = typeof referenceActions[keyof typeof referenceActions];
 
-export type ForeignKeyType = Exclude<PrismaType, 'boolean' | 'datetime' | 'bytes'>;
+export type ScalarForeignKeyType = Extract<PrismaType, 'int' | 'bigint' | 'string'>;
 
 export type ParsedSchema = Map<string, Record<string, unknown>>;
 
@@ -22,14 +22,16 @@ export type BaseRelationInput = {
     property: string;
 };
 
+export type ReferenceField = {
+    name: string;
+    type: ScalarForeignKeyType;
+};
+
 export type OneToManyRelationInput = BaseRelationInput;
 export type ManyToOneRelationInput = BaseRelationInput & {
     foreignKey: string;
 
-    reference: {
-        name: string;
-        type: ForeignKeyType;
-    };
+    reference: ReferenceField;
 
     referentialActions: {
         onDelete: ReferentialAction;

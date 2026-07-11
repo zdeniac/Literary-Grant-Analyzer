@@ -1,5 +1,5 @@
 import { PrismaConfig } from "../config/PrismaConfig";
-import { ForeignKeyType, ParsedSchema } from "../domain/types";
+import { ParsedSchema, ReferenceField } from "../domain/types";
 import { parsePrismaFiles } from "./parser/prisma-parser";
 
 export class PrismaSchema
@@ -10,7 +10,7 @@ export class PrismaSchema
         this.parsed = parsePrismaFiles(prismaConfig.getModelsPath());
     }
 
-    findSuggestedReference(model: string, prop: string): {  name: string; type: ForeignKeyType; } | undefined 
+    findSuggestedReference(model: string, prop: string): ReferenceField | undefined 
     {
         const relationModel = this.parsed.get(model);
         const propParts = prop.split(/(?=[A-Z])/);
@@ -31,7 +31,7 @@ export class PrismaSchema
             if (field) {
                 return {
                     name: field.name,
-                    type: field.type as ForeignKeyType,
+                    type: field.type,
                 };
             }    
         }
@@ -41,11 +41,11 @@ export class PrismaSchema
 
     hasModel(model: string): boolean
     {
-        return this.parsed?.has(model) ?? false;
+        return this.parsed.has(model);
     }
 
     hasEnum(enumName: string): boolean
     {
-        return this.parsed?.has(enumName) ?? false;
+        return this.parsed.has(enumName);
     }
 }
