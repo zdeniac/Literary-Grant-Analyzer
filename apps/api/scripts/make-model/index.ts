@@ -9,14 +9,17 @@ import { Wizard } from "./Wizard";
 
 /**
  * @todo:
- * - 4. tesztek!
- * - 5. enum handling
- */
+1. enum builder
+2. meglévő model edit
+3. delete/overwrite kezelés
+4. migration futtatás opcionálisan
+5. tesztek 
+*/
 
 const config = new PrismaConfig(prismaConfig);
 const schema = new PrismaSchema(config);
 
-const modelGenerator = new ModelGenerator(new FieldGenerator());
+const modelGenerator = new ModelGenerator(new FieldGenerator(), config.getModelsPath());
 
 const relationBuilder = new RelationBuilder(schema);
 const modelBuilder = new ModelBuilder(relationBuilder);
@@ -28,21 +31,6 @@ wizard.run();
 
 
 
-
-
-
-
-
-
-
-
-// X we save it to a variable and open then next prompt window and save it into the object's param's variable
-
-// X we open the terminal for that param's type
-
-// X repeat
-
-// X if the user finishes the process we generate the model's structure to the folder structure
 
 // then ask him whether we should ran the prisma:migration and generate commands
 

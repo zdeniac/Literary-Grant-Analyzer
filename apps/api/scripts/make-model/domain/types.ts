@@ -24,7 +24,7 @@ export type BaseRelationInput = {
 
 export type OneToManyRelationInput = BaseRelationInput;
 export type ManyToOneRelationInput = BaseRelationInput & {
-    field: string;
+    foreignKey: string;
 
     reference: {
         name: string;

@@ -4,13 +4,13 @@ import { createDirectory, readFile, writeFile } from "../utils/filesystem";
 import { toKebabCase } from "../utils/strings";
 import { formatAuditFields, formatFields } from "../formatter/field-formatter";
 import { ModelInput } from "../domain/types";
-import { getPrismaModelsPath } from "../config/prisma.";
 import { FieldGenerator } from "./FieldGenerator";
 
 export class ModelGenerator
 {
     constructor(
         private readonly fieldGenerator: FieldGenerator,
+        private readonly path: string,
     ) {}
 
     generate(model: ModelInput): void
@@ -36,7 +36,7 @@ export class ModelGenerator
             ),
         );
 
-        const target = path.join(process.cwd(), getPrismaModelsPath());
+        const target = path.join(process.cwd(), this.path);
 
         createDirectory(target);
 

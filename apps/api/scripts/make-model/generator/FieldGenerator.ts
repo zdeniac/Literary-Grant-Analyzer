@@ -23,22 +23,15 @@ export class FieldGenerator
         }
     
         for (const relation of model.relations) {
-            if (isManyToOneRelationInput(relation)) {
-                fields.push({
-                    name: relation.field,
-                    type: `${relation.reference!.type}${
-                        model.props.get(relation.field)!.optional ? '?' : ''
-                    }`,
-                });
-    
+            if (isManyToOneRelationInput(relation)) {    
                 fields.push({
                     name: relation.property,
                     type: `${relation.model}${
-                        model.props.get(relation.field)!.optional ? '?' : ''
+                        model.props.get(relation.foreignKey)!.optional ? '?' : ''
                     }`,
                     attributes:
                         `@relation(` +
-                        `fields: [${relation.field}], ` +
+                        `fields: [${relation.foreignKey}], ` +
                         `references: [${relation.reference!.name}], ` +
                         `onDelete: ${relation.referentialActions!.onDelete}, ` +
                         `onUpdate: ${relation.referentialActions!.onUpdate}` +

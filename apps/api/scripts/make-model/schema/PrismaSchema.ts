@@ -1,4 +1,3 @@
-import { getPrismaModelsPath } from "../config/prisma.";
 import { PrismaConfig } from "../config/PrismaConfig";
 import { ForeignKeyType, ParsedSchema } from "../domain/types";
 import { parsePrismaFiles } from "./parser/prisma-parser";

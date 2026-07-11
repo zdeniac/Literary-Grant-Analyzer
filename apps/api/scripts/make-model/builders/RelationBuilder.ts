@@ -18,7 +18,7 @@ export class RelationBuilder
 
         if (type === relationTypes.manyToOne) {
             return {
-                field: relationProp,
+                foreignKey: relationProp,
                 model: relationModel,
                 property: relationModel.toLowerCase(),
                 ...await this.askManyToOneOptions(
@@ -103,7 +103,7 @@ export class RelationBuilder
             ) as ReferentialAction;
 
         return {
-            field: relationProp,
+            foreignKey: relationProp,
 
             reference: {
                 name: referenceName,

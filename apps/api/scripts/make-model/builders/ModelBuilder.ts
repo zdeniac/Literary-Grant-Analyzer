@@ -81,14 +81,20 @@ export class ModelBuilder
 
             this.model.relations.push(relation);
 
+            writeLine(
+                `\nRelation added!\n`,
+                'yellow'
+            );
+
+            // We only save ManyToOne relationships as props
             if (isManyToOneRelationInput(relation)) {
                 await this.addScalarProperty(
                     propName, 
                     relation.reference.type
                 );
-
-                return this.addProperty();
             }
+
+            return this.addProperty();
         }
 
         if (propType === prismaTypes.enum) {
