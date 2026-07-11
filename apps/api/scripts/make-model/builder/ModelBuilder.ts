@@ -98,7 +98,7 @@ export class ModelBuilder
         }
 
         if (propType === prismaTypes.enum) {
-            // TODO
+            /** @todo */
         }
 
         await this.addScalarProperty(propName, propType);

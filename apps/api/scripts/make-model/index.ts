@@ -1,6 +1,6 @@
 import prismaConfig from "../../prisma.config";
-import { ModelBuilder } from "./builders/ModelBuilder";
-import { RelationBuilder } from "./builders/RelationBuilder";
+import { ModelBuilder } from "./builder/ModelBuilder";
+import { RelationBuilder } from "./builder/RelationBuilder";
 import { PrismaConfig } from "./config/PrismaConfig";
 import { FieldGenerator } from "./generator/FieldGenerator";
 import { ModelGenerator } from "./generator/ModelGenerator";

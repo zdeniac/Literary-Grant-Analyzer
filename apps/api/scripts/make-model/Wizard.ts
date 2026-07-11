@@ -1,4 +1,4 @@
-import { ModelBuilder } from "./builders/ModelBuilder";
+import { ModelBuilder } from "./builder/ModelBuilder";
 import { closeProcess } from "./cli/process";
 import { ModelGenerator } from "./generator/ModelGenerator";
 
