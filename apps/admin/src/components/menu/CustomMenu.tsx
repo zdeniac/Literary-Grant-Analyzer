@@ -6,5 +6,6 @@ export const CustomMenu = () => (
         <Menu.ResourceItem name="journals" />
         <Menu.ResourceItem name="decision-bodies" />
         <Menu.ResourceItem name="award-schemes" />
+        <Menu.ResourceItem name="source-documents" />
     </Menu>
 );

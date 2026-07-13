@@ -1,0 +1,23 @@
+model Organization {
+	id 				Int 		@id @default(autoincrement())
+	name 			String		@unique
+	address 		String?
+	website			String?
+	legalForm 		LegalForm
+	foundingYear 	Int?
+	
+	journals		Journal[]
+	decisionBodies	DecisionBody[]
+	awardSchemes	AwardScheme[]
+
+	createdAt 		DateTime 	@default(now())
+	updatedAt 		DateTime 	@updatedAt
+}
+
+enum LegalForm {
+	LTD
+	PLC
+	FOUNDATION
+	ASSOCIATION
+	OTHER
+}

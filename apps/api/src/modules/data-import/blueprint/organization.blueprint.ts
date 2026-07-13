@@ -12,6 +12,11 @@ export const organizationBlueprint: ModelBlueprint =
                 required: true,
             },
             {
+                name: 'website',
+                type: 'string',
+                required: false,
+            },
+            {
                 name: 'legalForm',
                 type: 'enum',
                 required: true,

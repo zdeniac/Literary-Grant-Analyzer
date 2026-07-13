@@ -5,7 +5,14 @@ import { nameSchema, yearSchema } from "../../../common/validation/schema";
 export const OrganizationSchema = z.object({
     name: nameSchema,
     legalForm: z.enum(LegalForm),
-    address: z.optional(z.string().min(4).max(70)),
+    address: z.preprocess(
+        value => value === '' ? undefined : value,
+        z.string().min(4).max(70).optional()
+    ),
+    website: z.preprocess(
+        value => value === '' ? undefined : value,
+        z.httpUrl().optional()
+    ),
     foundingYear: yearSchema.optional(),
 });
 

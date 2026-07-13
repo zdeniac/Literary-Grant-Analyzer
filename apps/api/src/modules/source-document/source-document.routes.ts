@@ -1,10 +1,10 @@
 import { Router } from "express";
-import { create{{ pascalCase }}Module } from "./{{ kebabCase }}.factory";
+import { createSourceDocumentModule } from "./source-document.factory";
 import { validate } from "../../common/middleware/validate";
-import { {{ pascalCase }}Schema } from "./validation/{{ kebabCase }}.schema";
+import { SourceDocumentSchema } from "./validation/source-document.schema";
 
 const router = Router();
-const { controller } = create{{ pascalCase }}Module();
+const { controller } = createSourceDocumentModule();
 
 router.get(
     '/:id',
@@ -13,7 +13,7 @@ router.get(
 
 router.put(
     '/:id',
-    validate({{ pascalCase }}Schema),
+    validate(SourceDocumentSchema),
     controller.update,
 );
 
@@ -24,7 +24,7 @@ router.delete(
 
 router.post(
     '/',
-    validate({{ pascalCase }}Schema),
+    validate(SourceDocumentSchema),
     controller.create,
 );
 

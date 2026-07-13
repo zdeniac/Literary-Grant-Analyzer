@@ -46,7 +46,7 @@ export function validateHeaders(headers: ImportHeader, fields: ImportField[]): v
         field => !headers.includes(field)
     );
     // Find the missing fields compared to the header
-    const unknown = headers.filter(
+    const unexpectedFields = headers.filter(
         header => !fieldNames.includes(header)
     );
 
@@ -61,14 +61,15 @@ export function validateHeaders(headers: ImportHeader, fields: ImportField[]): v
         });
     }
 
-    if (unknown.length) {
+    if (unexpectedFields.length) {
         errors.push({
             row: 1,
-            issues: unknown.map(field => ({
+            issues: unexpectedFields.map(field => ({
                 message: `Unknown field: ${field}`
             }))
         });
     }
+
     if (errors.length) throw new ImportValidationError(errors);
 }
 

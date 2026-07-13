@@ -1,0 +1,11 @@
+// Döntési testületeket, szervezetek, pl. NKA Szépirodalom Kollégium
+model DecisionBody {
+	id				Int			@id @default(autoincrement())
+	name			String
+
+	organizationId	Int?
+    organization    Organization? @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+
+	createdAt 		DateTime 	@default(now())
+	updatedAt 		DateTime 	@updatedAt
+}

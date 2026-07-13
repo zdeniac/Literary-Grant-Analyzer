@@ -40,6 +40,10 @@ import { AwardSchemeList } from './pages/award-schemes/list/list';
 import { AwardSchemeCreate } from './pages/award-schemes/create';
 import { AwardSchemeEdit } from './pages/award-schemes/edit';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
+import { SourceDocumentList } from './pages/source-documents/list/list';
+import { SourceDocumentEdit } from './pages/source-documents/edit';
+import { SourceDocumentCreate } from './pages/source-documents/create';
+import SourceIcon from '@mui/icons-material/Source';
 
 const dataProvider: DataProvider = {
 	getList: async <RecordType extends RaRecord = RaRecord>(
@@ -180,6 +184,13 @@ const App = () => (
 			create={AwardSchemeCreate}
 			edit={AwardSchemeEdit}
 			icon={EmojiEventsIcon}
+		/>
+		<Resource
+			name="source-documents"
+			list={SourceDocumentList}
+			create={SourceDocumentCreate}
+			edit={SourceDocumentEdit}
+			icon={SourceIcon}
 		/>
 	</Admin>
 );
