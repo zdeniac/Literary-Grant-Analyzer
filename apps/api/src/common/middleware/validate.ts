@@ -6,7 +6,7 @@ export const validate = (schema: z.ZodType) =>
         const result = schema.safeParse(req.body);
 
         if (!result.success) {
-            return res.status(400).json({
+            return res.status(422).json({
                 error: 'VALIDATION_ERROR',
                 issues: z.treeifyError(result.error),
             });

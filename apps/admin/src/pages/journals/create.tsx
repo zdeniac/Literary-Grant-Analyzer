@@ -1,5 +1,5 @@
 import { Create } from "react-admin";
-import { JournalForm } from "./form/form";
+import { JournalForm } from "./form";
 
 export const JournalCreate = () => (
     <Create>

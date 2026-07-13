@@ -1,15 +1,20 @@
 import { ReferenceInput, required, SimpleForm, TextInput } from "react-admin";
 
+const validateName = [required()];
+
 export const DecisionBodyForm = () => {
     return (
         <>
             <SimpleForm>
                 <TextInput 
                     source="name"
-                    validate={[required()]}
+                    validate={validateName}
                 />
 
-                <ReferenceInput source="organizationId" reference="organizations"/>
+                <ReferenceInput 
+                    source="organizationId" 
+                    reference="organizations"
+                />
 
             </SimpleForm>
         </>

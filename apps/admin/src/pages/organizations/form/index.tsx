@@ -3,19 +3,23 @@ import { YearInput } from "../../../components/inputs/YearInput";
 import { legalForms, } from "../constants";
 import { url } from "../../../shared/validation/validators";
 
+const validateName = [required()];
+const validateWebsite = [url()];
+const validateLegalForm = [required()];
+
 export const OrganizationForm = () => {
     return (
         <SimpleForm>
 
-            <TextInput source="name" validate={[required()]} />
+            <TextInput source="name" validate={validateName} />
             <TextInput source="address" />
 
-            <TextInput source="website" validate={[url()]} />
+            <TextInput source="website" validate={validateWebsite} />
 
             <SelectInput 
                 source="legalForm"
                 choices={legalForms}
-                validate={[required()]}
+                validate={validateLegalForm}
             />
 
             <YearInput source="foundingYear" />

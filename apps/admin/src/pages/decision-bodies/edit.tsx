@@ -1,8 +1,8 @@
-import { Edit } from "react-admin";
-import { DecisionBodyForm } from "./form/form";
+import { CustomEdit } from "../../components/form/CustomEdit";
+import { DecisionBodyForm } from "./form";
 
 export const DecisionBodyEdit = () => (
-    <Edit>
+    <CustomEdit>
         <DecisionBodyForm />
-    </Edit>
+    </CustomEdit>
 );

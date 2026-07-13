@@ -1,18 +1,22 @@
 import { DateTimeInput, required, SimpleForm, TextInput } from "react-admin";
 import { url } from "../../../shared/validation/validators";
 
+const validateTitle = [required()];
+const validateUrl = [url(), required()];
+const validateRetrievedAt = [required()];
+
 export const SourceDocumentForm = () => {
     return (
         <>
             <SimpleForm>
                 <TextInput 
                     source="title"
-                    validate={[required()]}
+                    validate={validateTitle}
                 />
 
-                <TextInput source="url" validate={[url(), required()]}/>
+                <TextInput source="url" validate={validateUrl}/>
 
-                <DateTimeInput source="retrievedAt" validate={[required()]} />
+                <DateTimeInput source="retrievedAt" validate={validateRetrievedAt} />
             
             </SimpleForm>
         </>

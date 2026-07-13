@@ -1,8 +1,8 @@
-import { Edit } from "react-admin";
-import { JournalForm } from "./form/form";
+import { CustomEdit } from "../../components/form/CustomEdit";
+import { JournalForm } from "./form";
 
 export const JournalEdit = () => (
-    <Edit>
+    <CustomEdit>
         <JournalForm />
-    </Edit>
+    </CustomEdit>
 );

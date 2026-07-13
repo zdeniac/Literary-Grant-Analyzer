@@ -1,8 +1,8 @@
-import { Edit } from "react-admin";
-import { SourceDocumentForm } from "./form/form";
+import { CustomEdit } from "../../components/form/CustomEdit";
+import { SourceDocumentForm } from "./form";
 
 export const SourceDocumentEdit = () => (
-    <Edit>
+    <CustomEdit>
         <SourceDocumentForm />
-    </Edit>
+    </CustomEdit>
 );

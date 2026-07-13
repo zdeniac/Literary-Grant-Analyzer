@@ -1,8 +1,8 @@
-import { Edit } from "react-admin";
-import { OrganizationForm } from "./form/form";
+import { OrganizationForm } from "./form";
+import { CustomEdit } from "../../components/form/CustomEdit";
 
 export const OrganizationEdit = () => (
-    <Edit>
+    <CustomEdit>
         <OrganizationForm />
-    </Edit>
+    </CustomEdit>
 );

@@ -2,20 +2,23 @@ import { ReferenceInput, required, SelectInput, SimpleForm, TextInput } from "re
 import { YearInput } from "../../../components/inputs/YearInput";
 import { journalStatuses } from "../constants";
 
+const validateName = [required()];
+const validateStatus = [required()];
+
 export const JournalForm = () => {
     return (
         <>
             <SimpleForm>
                 <TextInput 
                     source="name"
-                    validate={[required()]}
+                    validate={validateName}
                 />
     
                 <TextInput source="issn" />
     
                 <SelectInput
                     source="status"
-                    validate={[required()]}
+                    validate={validateStatus}
                     choices={journalStatuses}
                 />
     

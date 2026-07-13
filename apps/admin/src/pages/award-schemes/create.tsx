@@ -1,5 +1,5 @@
 import { Create } from "react-admin";
-import { AwardSchemeForm } from "./form/form";
+import { AwardSchemeForm } from "./form";
 
 export const AwardSchemeCreate = () => (
     <Create>

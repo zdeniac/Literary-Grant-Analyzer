@@ -1,8 +1,8 @@
-import { Edit } from "react-admin";
-import { AwardSchemeForm } from "./form/form";
+import { CustomEdit } from "../../components/form/CustomEdit";
+import { AwardSchemeForm } from "./form";
 
 export const AwardSchemeEdit = () => (
-    <Edit>
+    <CustomEdit>
         <AwardSchemeForm />
-    </Edit>
+    </CustomEdit>
 );
