@@ -1,5 +1,5 @@
 import { Journal } from "@prisma/client";
-import { CrudController } from "../../common/contollers/crud.controller";
+import { CrudController } from "../../common/controllers/crud.controller";
 import { JournalService } from "./journal.service";
 import { JournalDto } from "./dto/journal.dto";
 import { DtoMapper } from "../../common/types/types";

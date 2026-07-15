@@ -1,5 +1,5 @@
 import { DecisionBody } from "@prisma/client";
-import { CrudController } from "../../common/contollers/crud.controller";
+import { CrudController } from "../../common/controllers/crud.controller";
 import { DecisionBodyDto } from "./dto/decision-body.dto";
 import { DtoMapper } from "../../common/types/types";
 import { DecisionBodyService } from "./decision-body.service";

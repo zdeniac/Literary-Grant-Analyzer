@@ -7,17 +7,18 @@ import { ImportSchemaService } from "./service/import-schema.service";
 import { RelationResolver } from "./resolver/relation-resolver";
 import { journalBlueprint } from "./blueprint/journal.blueprint";
 import { organizationBlueprint } from "./blueprint/organization.blueprint";
-import { OrganizationImportWriter } from "../organization/import/handler";
+import { OrganizationImportWriter } from "../organization/import/writer";
 import { ActorRepository } from "../actor/actor.repository";
 import { OrganizationRepository } from "../organization/organization.repository";
 import { DataImportWriter } from "./handler/writer";
 import { DataImportLookup } from "./handler/lookup";
+import { Journal, Organization } from "@prisma/client";
 
 export const createImportModule = () => {
     const registry = new ImportBlueprintRegistry(journalBlueprint, organizationBlueprint);
 
     const repositories = {
-        journal: new PrismaImportTargetRepository(prisma.journal),
+        journal: new PrismaImportTargetRepository<Journal>(prisma.journal),
         organization: new OrganizationRepository(prisma),
     };
 
@@ -31,7 +32,7 @@ export const createImportModule = () => {
 
     const lookups = {
         journal: new DataImportLookup(repositories.journal),
-        organization: new DataImportLookup(
+        organization: new DataImportLookup<Organization>(
             new PrismaImportTargetRepository(prisma.organization)
         ),
     }
@@ -43,5 +44,6 @@ export const createImportModule = () => {
 
     return {
         controller,
+        service: importService,
     }
 };

@@ -5,7 +5,7 @@ import { JournalService } from "./journal.service";
 import { toJournalDto } from "./mapper/journal.mapper";
 
 export const createJournalModule = () => {
-    const service = new JournalService(new JournalRepository(prisma.journal));
+    const service = new JournalService(new JournalRepository(prisma));
     const controller = new JournalController(service, toJournalDto);
 
     return {

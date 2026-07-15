@@ -1,10 +1,11 @@
 import { describe, it, expect, afterAll, beforeEach } from "vitest";
 import request from "supertest";
 import app from "../../../src/app";
-import { LegalForm } from "@prisma/client";
+import { ActorType, LegalForm } from "@prisma/client";
 import { wipeDatabase } from "../helpers/db.helper";
 import { Id } from "../../../src/common/types/types";
 import { OrganizationDto } from "../../../src/modules/organization/dto/organization.dto";
+import { prisma } from "../../../src/db/prisma";
 
 describe('Decision body routes test', () => {
 
@@ -62,12 +63,28 @@ describe('Decision body routes test', () => {
         expect(res.body.data.name).toBe(decisionBodyName);
     });
 
+    it('POST / creates actor', async () => {
+        const res = await createDecisionBody();
+
+        const decisionBody = await prisma.decisionBody.findUniqueOrThrow({
+            where: { id: res.body.data.id },
+        });
+
+        const actor = await prisma.actor.findUnique({
+            where: { id: decisionBody.actorId },
+        });
+
+        expect(actor).not.toBeNull();
+        expect(actor?.type).toBe(ActorType.DECISION_BODY)
+    });
+
+
     it('POST / rejects invalid payload', async () => {
         const res = await createDecisionBody({
             name: '',
         });
 
-        expect(res.status).toBe(400);
+        expect(res.status).toBe(422);
         expect(res.body.error).toBe('VALIDATION_ERROR');
     });
 
@@ -108,7 +125,7 @@ describe('Decision body routes test', () => {
             }
         );
 
-        expect(res.status).toBe(400);
+        expect(res.status).toBe(422);
         expect(res.body.error).toBe('VALIDATION_ERROR');
     });
 
@@ -123,4 +140,22 @@ describe('Decision body routes test', () => {
 
         expect(deleted.status).toBe(404);
     });
+
+    it('DELETE /:id deletes actor', async () => {
+        const created = await createDecisionBody();
+        const id = created.body.data.id;
+
+        const decisionBody = await prisma.decisionBody.findUniqueOrThrow({
+            where: { id },
+        });
+
+        const res = await deleteDecisionBody(id);
+
+        const actor = await prisma.actor.findUnique({
+            where: { id: decisionBody.actorId },
+        });
+
+        expect(actor).toBeNull();
+    });
+
 });

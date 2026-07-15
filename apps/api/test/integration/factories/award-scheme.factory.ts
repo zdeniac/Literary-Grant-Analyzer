@@ -5,7 +5,7 @@ import { AwardSchemeRepository as AwardSchemeRepository } from "../../../src/mod
 import { AwardSchemeService } from "../../../src/modules/award-scheme/award-scheme.service";
 import { UpdateAwardSchemeDto  } from "../../../src/modules/award-scheme/dto/award-scheme.dto";
 
-const awardSchemeService = new AwardSchemeService(new AwardSchemeRepository(prisma.awardScheme));
+const awardSchemeService = new AwardSchemeService(new AwardSchemeRepository(prisma));
 
 export const createAwardScheme = async (overrides: {
     name: string,
@@ -25,7 +25,7 @@ export const findAwardSchemeById = async (id: Id): Promise<AwardScheme | undefin
 export const findEveryAwardScheme = async (): Promise<AwardScheme[]> => 
     await awardSchemeService.findAll();
 
-export const deleteAwardScheme = async (id: Id): Promise<void> => 
+export const deleteAwardScheme = async (id: Id): Promise<AwardScheme> => 
     await awardSchemeService.delete(id);
 
 export const updateAwardScheme = async (id: Id, data: UpdateAwardSchemeDto): Promise<AwardScheme> => 

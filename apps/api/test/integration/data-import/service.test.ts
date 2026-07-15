@@ -3,30 +3,12 @@ import { ImportFile } from "../../../src/modules/data-import/types/import.types"
 import { JournalStatus, LegalForm } from "@prisma/client";
 import { ImportValidationError } from "../../../src/modules/data-import/error/import.errors";
 import { prisma } from "../../../src/db/prisma";
-import { PrismaImportTargetRepository, } from "../../../src/db/prisma-import-target.repository";
-import { ImportService } from "../../../src/modules/data-import/service/import.service";
-import { RelationResolver } from "../../../src/modules/data-import/resolver/relation-resolver";
-import { ImportBlueprintRegistry } from "../../../src/modules/data-import/registry/import-blueprint.registry";
-import { journalBlueprint } from "../../../src/modules/data-import/blueprint/journal.blueprint";
-import { organizationBlueprint } from "../../../src/modules/data-import/blueprint/organization.blueprint";
 import { wipeDatabase } from "../helpers/db.helper";
 import { createOrganization } from "../factories/organization.factory";
+import { createImportModule } from "../../../src/modules/data-import/import.factory";
 
 describe('dataImport', () => {
-    const orgRepo = new PrismaImportTargetRepository(prisma.organization);
-    const journalRepo = new PrismaImportTargetRepository(prisma.journal);
-
-    const blueprintRegistry = new ImportBlueprintRegistry(journalBlueprint, organizationBlueprint);
-    const repositories = {
-            organization: orgRepo,
-            journal: journalRepo,
-        };
-    
-    const importer = new ImportService(
-        blueprintRegistry,
-        repositories,
-        new RelationResolver(repositories)
-    );
+    const importer = createImportModule().service;
 
     const org1 = {
         name: 'Jelenkor Alapítvány',
@@ -49,6 +31,7 @@ describe('dataImport', () => {
             'name',
             'legalForm',
             'address',
+            'website',
             'foundingYear',
         ],
         rows: [

@@ -1,10 +1,10 @@
 import { DecisionBody } from "@prisma/client";
 import { PrismaCrudRepository } from "../../db/prisma-crud-repository";
-import { CreateDecisionBodyData, CreateDecisionBodyDto, UpdateDecisionBodyDto } from "./dto/decision-body.dto";
+import { CreateDecisionBodyData, UpdateDecisionBodyDto } from "./dto/decision-body.dto";
 import { PrismaModel } from "../../db/types";
 
 export class DecisionBodyRepository 
-    extends PrismaCrudRepository<DecisionBody, CreateDecisionBodyDto, UpdateDecisionBodyDto> 
+    extends PrismaCrudRepository<DecisionBody, CreateDecisionBodyData, UpdateDecisionBodyDto> 
 {
     protected get model(): PrismaModel<DecisionBody>
     {

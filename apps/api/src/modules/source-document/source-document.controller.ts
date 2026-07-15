@@ -1,5 +1,5 @@
 import { SourceDocument } from "@prisma/client";
-import { CrudController } from "../../common/contollers/crud.controller";
+import { CrudController } from "../../common/controllers/crud.controller";
 import { SourceDocumentDto } from "./dto/source-document.dto";
 import { SourceDocumentService } from "./source-document.service";
 import { DtoMapper } from "../../common/types/types";

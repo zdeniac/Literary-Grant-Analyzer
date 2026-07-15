@@ -4,9 +4,11 @@ import { OrganizationRepository } from "../../../src/modules/organization/organi
 import { OrganizationService } from "../../../src/modules/organization/organization.service";
 import { UpdateOrganizationDto } from "../../../src/modules/organization/dto/organization.dto";
 import { Id } from "../../../src/common/types/types";
+import { ActorRepository } from "../../../src/modules/actor/actor.repository";
 
 const organizationService = new OrganizationService(
-    new OrganizationRepository(prisma.organization)
+    new OrganizationRepository(prisma),
+    new ActorRepository(prisma),
 );
 
 export const createOrganization = async (overrides: { 
@@ -29,7 +31,7 @@ export const findOrganizationById = async (id: Id): Promise<Organization | undef
 export const findEveryOrganization = async (): Promise<Organization[]> => 
     await organizationService.findAll();
 
-export const deleteOrganization = async (id: Id): Promise<void> => 
+export const deleteOrganization = async (id: Id): Promise<Organization> => 
     await organizationService.delete(id);
 
 export const updateOrganization = async (id: Id, data: UpdateOrganizationDto): Promise<Organization> => 

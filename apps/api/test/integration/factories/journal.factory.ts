@@ -6,7 +6,7 @@ import { Id } from "../../../src/common/types/types";
 import { prisma } from "../../../src/db/prisma";
 import { UpdateJournalDto } from "../../../src/modules/journal/dto/journal.dto";
 
-const journalService = new JournalService(new JournalRepository(prisma.journal));
+const journalService = new JournalService(new JournalRepository(prisma));
 
 export const createJournal = async (overrides: {
     organizationId: Id, 
@@ -30,7 +30,7 @@ export const findJournalById = async (id: Id): Promise<Journal | undefined> =>
 export const findEveryJournal = async (): Promise<Journal[]> => 
     await journalService.findAll();
 
-export const deleteJournal = async (id: Id): Promise<void> => 
+export const deleteJournal = async (id: Id): Promise<Journal> => 
     await journalService.delete(id);
 
 export const updateJournal = async (id: Id, data: UpdateJournalDto): Promise<Journal> => 

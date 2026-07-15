@@ -6,7 +6,8 @@ import { ActorRepository } from "../actor/actor.repository";
 import { transaction } from "../../db/transaction";
 import { Id } from "../../common/types/types";
 
-export class DecisionBodyService extends CrudService<DecisionBody, CreateDecisionBodyData, UpdateDecisionBodyDto> {
+export class DecisionBodyService extends CrudService<DecisionBody, CreateDecisionBodyData, UpdateDecisionBodyDto>
+{
     constructor(
         repository: DecisionBodyRepository,
         private readonly actorRepository: ActorRepository,
@@ -17,7 +18,7 @@ export class DecisionBodyService extends CrudService<DecisionBody, CreateDecisio
     async create(dto: CreateDecisionBodyDto): Promise<DecisionBody>
     {
         const actor = await this.actorRepository.create(
-            ActorType.ORGANIZATION
+            ActorType.DECISION_BODY
         );
 
         return this.repository.create({

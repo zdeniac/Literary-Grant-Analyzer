@@ -1,8 +1,9 @@
 import { describe, it, expect, afterAll, beforeEach } from "vitest";
 import request from "supertest";
 import app from "../../../src/app";
-import { LegalForm } from "@prisma/client";
+import { Actor, ActorType, LegalForm } from "@prisma/client";
 import { wipeDatabase } from "../helpers/db.helper";
+import { prisma } from "../../../src/db/prisma";
 
 describe('Organization routes test', () => {
 
@@ -25,8 +26,24 @@ describe('Organization routes test', () => {
 
     it('POST /organization creates organization', async () => {
         const res = await createOrganization();
+
         expect(res.status).toBe(200);
         expect(res.body.data.name).toBe(orgName);
+    });
+
+    it('POST /organization creates actor', async () => {
+        const res = await createOrganization();
+
+        const organization = await prisma.organization.findUniqueOrThrow({
+            where: { id: res.body.data.id },
+        });
+
+        const actor = await prisma.actor.findUnique({
+            where: { id: organization.actorId },
+        });
+
+        expect(actor).not.toBeNull();
+        expect(actor?.type).toBe(ActorType.ORGANIZATION)
     });
 
     it('POST /organization rejects invalid payload', async () => {
@@ -35,7 +52,7 @@ describe('Organization routes test', () => {
             legalForm: 'LegalForm.FOUNDATION',
         });
 
-        expect(res.status).toBe(400);
+        expect(res.status).toBe(422);
         expect(res.body.error).toBe('VALIDATION_ERROR');
     });
 
@@ -73,7 +90,7 @@ describe('Organization routes test', () => {
                 legalForm: 'LegalForm.OTHER'
             });
 
-        expect(res.status).toBe(400);
+        expect(res.status).toBe(422);
         expect(res.body.error).toBe('VALIDATION_ERROR');
     });
 
@@ -91,4 +108,23 @@ describe('Organization routes test', () => {
         
         expect(deleted.status).toBe(404);
     });
+
+    it('DELETE /organization deletes actor', async () => {
+        const created = await createOrganization();
+        const id = created.body.data.id;
+
+        const organization = await prisma.organization.findUniqueOrThrow({
+            where: { id },
+        });
+
+        const res = await request(app)
+            .delete(`${route}/${id}`);
+
+        const actor = await prisma.actor.findUnique({
+            where: { id: organization.actorId },
+        });
+
+        expect(actor).toBeNull();
+    });
+
 });

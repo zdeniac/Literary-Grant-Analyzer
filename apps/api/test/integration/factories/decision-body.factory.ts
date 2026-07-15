@@ -4,8 +4,12 @@ import { prisma } from "../../../src/db/prisma";
 import { DecisionBodyRepository } from "../../../src/modules/decision-body/decision-body.repository";
 import { DecisionBodyService } from "../../../src/modules/decision-body/decision-body.service";
 import { UpdateDecisionBodyDto } from "../../../src/modules/decision-body/dto/decision-body.dto";
+import { ActorRepository } from "../../../src/modules/actor/actor.repository";
 
-const decisionBodyService = new DecisionBodyService(new DecisionBodyRepository(prisma.decisionBody));
+const decisionBodyService = new DecisionBodyService(
+    new DecisionBodyRepository(prisma),
+    new ActorRepository(prisma)
+);
 
 export const createDecisionBody = async (overrides: {
     name?: string,
@@ -23,7 +27,7 @@ export const findDecisionBodyById = async (id: Id): Promise<DecisionBody | undef
 export const findEveryDecisionBody = async (): Promise<DecisionBody[]> => 
     await decisionBodyService.findAll();
 
-export const deleteDecisionBody = async (id: Id): Promise<void> => 
+export const deleteDecisionBody = async (id: Id): Promise<DecisionBody> => 
     await decisionBodyService.delete(id);
 
 export const updateDecisionBody = async (id: Id, data: UpdateDecisionBodyDto): Promise<DecisionBody> => 

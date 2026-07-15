@@ -3,6 +3,7 @@ import { JournalStatus } from "@prisma/client";
 import { wipeDatabase } from "../helpers/db.helper";
 import { createJournal, deleteJournal, findEveryJournal, findJournalById, updateJournal } from "../factories/journal.factory";
 import { createOrganization } from "../factories/organization.factory";
+import { NotFoundError } from "../../../src/common/errors/http.error";
 
 describe('JournalServiceTest', () => {
     const journalInput = {
@@ -123,16 +124,15 @@ describe('JournalServiceTest', () => {
         const org = await createOrganization({ name: 'Teszt 7' });
 
         const created = await createJournal({ organizationId: org.id });
-        const deleted = await deleteJournal(created.id);
-        
-        // Returns the deleted org
-        expect(deleted).toBeNullable();
+        await deleteJournal(created.id);
+
+        await expect(findJournalById(created.id))
+            .rejects
+            .toThrow(NotFoundError);
     });
 
     it('throws exception on querying for non-existent journal', async () => {
-        await expect(
-            findJournalById(999)
-        )
+        await expect(findJournalById(999))
             .rejects
             .toThrow();
     });

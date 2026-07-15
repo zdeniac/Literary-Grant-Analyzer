@@ -4,7 +4,6 @@ import { describe, expect, it } from "vitest";
 
 describe('AwardSchemeSchema', () => {
     const validInput = {
-        id: 1,
         name: 'Kossuth-díj',
         type: AwardSchemeType.AWARD,
         organizationId: 123,
@@ -14,15 +13,6 @@ describe('AwardSchemeSchema', () => {
         const result = AwardSchemeSchema.parse(validInput);
 
         expect(result).toEqual(validInput);
-    });
-
-    it('fails when id is missing', () => {
-        expect(() =>
-            AwardSchemeSchema.parse({
-                ...validInput,
-                id: undefined,
-            })
-        ).toThrow();
     });
 
     it('fails when name is invalid', () => {

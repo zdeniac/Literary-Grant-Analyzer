@@ -9,6 +9,7 @@ export const toOrganizationDto: DtoMapper<Organization, OrganizationDto> = (
     
     name: org.name,
     legalForm: org.legalForm,
+    website: org.website,
     address: org.address,
     foundingYear: org.foundingYear,
 

@@ -6,11 +6,11 @@ import { DecisionBodyService } from "./decision-body.service";
 import { toDecisionBodyDto } from "./mapper/decision-body.mapper";
 
 export const createDecisionBodyModule = () => {
-    const repository = new DecisionBodyRepository(prisma.decisionBody);
+    const repository = new DecisionBodyRepository(prisma);
     
     const service = new DecisionBodyService(
         repository,
-        new ActorRepository(),
+        new ActorRepository(prisma),
     );
 
     return {

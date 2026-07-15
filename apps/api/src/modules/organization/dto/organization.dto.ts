@@ -11,7 +11,7 @@ export type OrganizationDto = {
     legalForm: LegalForm;
     address: string | null;
     foundingYear: Year | null;
-
+    
     createdAt: Date;
     updatedAt: Date | null;
 };

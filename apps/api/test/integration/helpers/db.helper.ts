@@ -6,5 +6,7 @@ export async function wipeDatabase() {
         prisma.decisionBody.deleteMany(),
         prisma.journal.deleteMany(),
         prisma.organization.deleteMany(),
+        prisma.actor.deleteMany(),
+        prisma.sourceDocument.deleteMany(),
     ]);
 }

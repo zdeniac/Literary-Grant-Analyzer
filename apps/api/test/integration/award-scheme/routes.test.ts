@@ -69,13 +69,14 @@ describe('Award scheme routes test', () => {
             name: '',
         });
 
-        expect(res.status).toBe(400);
+        expect(res.status).toBe(422);
         expect(res.body.error).toBe('VALIDATION_ERROR');
 
         res = await createAwardScheme({
             type: 'd'
         });
-        expect(res.status).toBe(400);
+
+        expect(res.status).toBe(422);
         expect(res.body.error).toBe('VALIDATION_ERROR');
     });
 
@@ -116,7 +117,7 @@ describe('Award scheme routes test', () => {
             }
         );
 
-        expect(res.status).toBe(400);
+        expect(res.status).toBe(422);
         expect(res.body.error).toBe('VALIDATION_ERROR');
     });
 

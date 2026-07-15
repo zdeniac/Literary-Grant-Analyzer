@@ -7,8 +7,8 @@ import { ActorRepository } from "../actor/actor.repository";
 
 export const createOrganizationModule = () => {
     const service = new OrganizationService(
-        new OrganizationRepository(prisma.organization),
-        new ActorRepository(),
+        new OrganizationRepository(prisma),
+        new ActorRepository(prisma),
     );
 
     const controller = new OrganizationController(service, toOrganizationDto);

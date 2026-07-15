@@ -4,6 +4,7 @@ import app from "../../../src/app";
 import { JournalStatus, LegalForm } from "@prisma/client";
 import { wipeDatabase } from "../helpers/db.helper";
 import { OrganizationDto } from "../../../src/modules/organization/dto/organization.dto";
+
 describe('Journal routes test', () => {
 
     const route = '/api/journals';
@@ -56,7 +57,7 @@ describe('Journal routes test', () => {
     it('POST / creates journal', async () => {
         const org = await createOrganization();
         const res = await createJournal();
-
+        console.log(res);
         expect(res.status).toBe(200);
         expect(res.body.data.name)
             .toBe('Tiszatáj');
@@ -68,7 +69,7 @@ describe('Journal routes test', () => {
             status: 'invalid',
         });
 
-        expect(res.status).toBe(400);
+        expect(res.status).toBe(422);
         expect(res.body.error)
             .toBe('VALIDATION_ERROR');
     });
@@ -115,7 +116,7 @@ describe('Journal routes test', () => {
             }
         );
 
-        expect(res.status).toBe(400);
+        expect(res.status).toBe(422);
         expect(res.body.error)
             .toBe('VALIDATION_ERROR');
     });

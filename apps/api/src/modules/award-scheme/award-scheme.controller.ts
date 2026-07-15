@@ -1,5 +1,5 @@
 import { AwardScheme } from "@prisma/client";
-import { CrudController } from "../../common/contollers/crud.controller";
+import { CrudController } from "../../common/controllers/crud.controller";
 import { AwardSchemeDto } from "./dto/award-scheme.dto";
 import { AwardSchemeService } from "./award-scheme.service";
 import { DtoMapper } from "../../common/types/types";
