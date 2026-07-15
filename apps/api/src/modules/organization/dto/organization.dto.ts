@@ -16,7 +16,11 @@ export type OrganizationDto = {
     updatedAt: Date | null;
 };
 
-export type CreateOrganizationDto = z.infer<typeof OrganizationSchema>
+export type CreateOrganizationDto = z.infer<typeof OrganizationSchema>;
+
+export type CreateOrganizationData = CreateOrganizationDto & {
+    actorId: Id;
+};
 
 export type UpdateOrganizationDto = {
     name?: string;

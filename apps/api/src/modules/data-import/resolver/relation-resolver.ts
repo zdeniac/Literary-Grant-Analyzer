@@ -1,10 +1,10 @@
-import { ImportTargetRepository } from "../../../db/types";
 import { ImportError } from "../error/import.errors";
-import { ImportRow, ModelName, RelationBlueprint } from "../types/import.types";
+import { ImportLookup, ImportRow, ModelName, RelationBlueprint } from "../types/import.types";
 
-export class RelationResolver {
+export class RelationResolver
+{
     constructor(
-        private readonly repositories: Record<ModelName, ImportTargetRepository>,
+        private readonly lookups: Record<ModelName, ImportLookup<any>>,
     ) {}
 
     public async resolve(validated: ImportRow[], blueprint: RelationBlueprint): Promise<ImportRow[]> 
@@ -22,7 +22,7 @@ export class RelationResolver {
 
         // Check if they are in the db
         const foreignData: Record<string, unknown>[] = 
-            await this.repositories[model].findManyBy(
+            await this.lookups[model].findManyBy(
                 lookupField,
                 foreignTableValues
             );
@@ -34,7 +34,7 @@ export class RelationResolver {
         }
 
         const missing = foreignTableValues.filter(
-            value => !found.has(value)
+            (value) => !found.has(value)
         );
 
         if (missing.length) throw new ImportError(`Missing foreign record with data: ${missing.join(', ')}`);

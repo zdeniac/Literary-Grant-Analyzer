@@ -1,7 +1,8 @@
 import { CrudRepository } from "../../db/types";
 import { Id } from "../types/types";
 
-export abstract class CrudService<TModel, TCreateDto, TUpdateDto> {
+export abstract class CrudService<TModel, TCreateDto, TUpdateDto>
+{
     constructor(
         protected readonly repository: CrudRepository<TModel, TCreateDto, TUpdateDto>
     ) {}
@@ -26,7 +27,7 @@ export abstract class CrudService<TModel, TCreateDto, TUpdateDto> {
         return this.repository.update(id, dto);
     }
 
-    public async delete(id: Id): Promise<void>
+    public async delete(id: Id): Promise<TModel>
     {
         return this.repository.delete(id);
     }

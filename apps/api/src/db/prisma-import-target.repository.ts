@@ -1,11 +1,13 @@
-import { ModelDelegate, ImportTargetRepository } from "./types";
+import { ImportLookup, ImportRow, ImportWriter } from "../modules/data-import/types/import.types";
+import { ModelDelegate } from "./types";
 
-export class PrismaImportTargetRepository implements ImportTargetRepository {
+export class PrismaImportTargetRepository<TModel> implements ImportLookup<TModel>, ImportWriter
+{
     constructor(
         private readonly delegate: ModelDelegate
     ) {}
 
-    public async createMany(data: Record<string, unknown>[]): Promise<number>
+    async createMany(data: ImportRow[]): Promise<number>
     {
         const result = await this.delegate.createMany({
             data
@@ -14,7 +16,7 @@ export class PrismaImportTargetRepository implements ImportTargetRepository {
         return result.count;
     }
 
-    public async findManyBy(field: string, values: unknown[]): Promise<Record<string, unknown>[]>
+    async findManyBy(field: string, values: unknown[]): Promise<TModel[]>
     {
         return this.delegate.findMany({
             where: {

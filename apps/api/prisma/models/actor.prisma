@@ -1,0 +1,13 @@
+model Actor {
+    id				Int			@id @default(autoincrement()) 
+    
+    type            ActorType
+
+    organization Organization?
+    decisionBody DecisionBody?
+}
+
+enum ActorType {
+    ORGANIZATION
+    DECISION_BODY
+}

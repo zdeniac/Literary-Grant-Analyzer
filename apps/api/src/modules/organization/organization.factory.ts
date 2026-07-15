@@ -3,10 +3,12 @@ import { OrganizationService } from "./organization.service";
 import { prisma } from "../../db/prisma";
 import { OrganizationController } from "./organization.controller";
 import { toOrganizationDto } from "./mapper/organization.mapper";
+import { ActorRepository } from "../actor/actor.repository";
 
 export const createOrganizationModule = () => {
     const service = new OrganizationService(
-        new OrganizationRepository(prisma.organization)
+        new OrganizationRepository(prisma.organization),
+        new ActorRepository(),
     );
 
     const controller = new OrganizationController(service, toOrganizationDto);

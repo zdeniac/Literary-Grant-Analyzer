@@ -13,6 +13,10 @@ export type DecisionBodyDto = {
 
 export type CreateDecisionBodyDto = z.infer<typeof DecisionBodySchema>;
 
+export type CreateDecisionBodyData = CreateDecisionBodyDto & {
+    actorId: Id;
+};
+
 export type UpdateDecisionBodyDto = {
     name?: Name;
     organizationId?: Id;

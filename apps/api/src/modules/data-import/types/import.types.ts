@@ -51,6 +51,16 @@ export type RelationalModelBlueprint = ModelBlueprint & {
 
 export type Blueprint = ModelBlueprint | RelationalModelBlueprint;
 
+export interface ImportLookup<TModel>
+{
+    findManyBy(field: string, values: unknown[]): Promise<TModel[]>;
+}
+
+export interface ImportWriter
+{
+    createMany(data: ImportRow[]): Promise<number>;
+}
+
 // Type guard
 export function isRelationalModelBlueprint(blueprint: Blueprint): blueprint is RelationalModelBlueprint 
 {

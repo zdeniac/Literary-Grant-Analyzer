@@ -5,6 +5,9 @@ model Organization {
 	website			String?
 	legalForm 		LegalForm
 	foundingYear 	Int?
+
+	actorId			Int 		@unique
+	actor			Actor @relation(fields: [actorId], references: [id], onDelete: Restrict)
 	
 	journals		Journal[]
 	decisionBodies	DecisionBody[]

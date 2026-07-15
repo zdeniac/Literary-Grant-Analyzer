@@ -1,12 +1,14 @@
 import { NotFoundError } from "../common/errors/http.error";
-import { PrismaModel, CrudRepository } from "./types";
+import { PrismaRepository } from "./prisma-repository";
+import { CrudRepository, PrismaDatabase } from "./types";
 
-export abstract class PrismaCrudRepository<TModel, TCreate, TUpdate> 
-    implements CrudRepository<TModel, TCreate, TUpdate> 
+export abstract class PrismaCrudRepository<TModel, TCreate, TUpdate> extends PrismaRepository<TModel>
+    implements CrudRepository<TModel, TCreate, TUpdate>
 {
-    constructor(
-        protected readonly model: PrismaModel<TModel>
-    ) {}
+    constructor(db: PrismaDatabase)
+    {
+        super(db);
+    }
 
     async create(data: TCreate): Promise<TModel>
     {
@@ -43,9 +45,18 @@ export abstract class PrismaCrudRepository<TModel, TCreate, TUpdate>
         return entity;
     }
 
-    async delete(id: number): Promise<void> {
-        await this.model.delete({
+    async delete(id: number): Promise<TModel> {
+        return this.model.delete({
             where: { id }
         });
+    }
+
+    async createMany(data: TCreate[]): Promise<number>
+    {
+        const result = await this.model.createMany({
+            data
+        });
+
+        return result.count;
     }
 }
