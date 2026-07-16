@@ -12,17 +12,31 @@ describe('AwardDecision routes test', () => {
     beforeEach(wipeDatabase);
     afterAll(wipeDatabase);
 
-    const createActor = async (): Promise<number> => {
-        const actor = await prisma.actor.create({
+    const createOrganizationActor = async (
+        name: string
+    ): Promise<number> => {
+
+        const organization = await prisma.organization.create({
             data: {
-                type: ActorType.ORGANIZATION,
+                name,
+                legalForm: LegalForm.OTHER,
+                actor: {
+                    create: {
+                        type: ActorType.ORGANIZATION,
+                    }
+                }
+            },
+            include: {
+                actor: true,
             }
         });
 
-        return actor.id;
+        return organization.actorId;
     };
 
+
     const createAwardScheme = async (): Promise<number> => {
+
         const organization = await prisma.organization.create({
             data: {
                 name: `NKA_${Date.now()}`,
@@ -46,7 +60,9 @@ describe('AwardDecision routes test', () => {
         return scheme.id;
     };
 
+
     const createSourceDocument = async (): Promise<number> => {
+
         const document = await prisma.sourceDocument.create({
             data: {
                 title: 'NKA döntés 2024',
@@ -58,26 +74,43 @@ describe('AwardDecision routes test', () => {
         return document.id;
     };
 
+
     const createAwardDecision = async (
         data: Partial<{
             amount: number;
             purpose: string;
-            decisionDate?: string | Date;
+            sourceIdentifier: string;
+            decisionDate: string | Date;
         }> = {}
     ): Promise<request.Response> => {
 
-        const awardSchemeId = await createAwardScheme();
-        const decisionMakerId = await createActor();
-        const recipientId = await createActor();
-        const sourceDocumentId = await createSourceDocument();
+        const awardSchemeId =
+            await createAwardScheme();
+
+        const decisionMakerId =
+            await createOrganizationActor(
+                'Nemzeti Kulturális Alap'
+            );
+
+        const recipientId =
+            await createOrganizationActor(
+                'Jelenkor Alapítvány'
+            );
+
+        const sourceDocumentId =
+            await createSourceDocument();
+
 
         return request(app)
             .post(route)
             .send({
                 amount: data.amount ?? 1000000,
                 purpose: data.purpose ?? 'Laptámogatás',
-                sourceIdentifier: 'NKA-2024-001',
-                decisionDate: data?.decisionDate ?? '2024-01-01',
+                sourceIdentifier:
+                    data.sourceIdentifier ?? 'NKA-2024-001',
+
+                decisionDate:
+                    data.decisionDate ?? '2024-01-01',
 
                 awardSchemeId,
                 decisionMakerId,
@@ -86,9 +119,11 @@ describe('AwardDecision routes test', () => {
             });
     };
 
+
     const getAwardDecision = (id: number) =>
         request(app)
             .get(`${route}/${id}`);
+
 
     const updateAwardDecision = (
         id: number,
@@ -104,38 +139,52 @@ describe('AwardDecision routes test', () => {
             .delete(`${route}/${id}`);
 
     it('POST / creates award decision', async () => {
+
         const res = await createAwardDecision();
 
-        expect(res.status).toBe(200);
+        expect(res.status)
+            .toBe(200);
+
         expect(res.body.data.purpose)
             .toBe('Laptámogatás');
     });
 
     it('POST / rejects invalid payload', async () => {
+
         const res = await createAwardDecision({
             decisionDate: '',
         });
 
-        expect(res.status).toBe(422);
+        expect(res.status)
+            .toBe(422);
+
         expect(res.body.error)
             .toBe('VALIDATION_ERROR');
     });
 
-    it('GET /:id returns award decision', async () => {
+    it('GET /:id returns award decision with actors', async () => {
         const created = await createAwardDecision();
 
-        const id = created.body.data.id;
+        expect(created.status)
+            .toBe(200);
 
+        const id = created.body.data.id;
         const res = await getAwardDecision(id);
 
         expect(res.status).toBe(200);
-        expect(res.body.data.id)
-            .toBe(id);
+
+        expect(res.body.data.id).toBe(id);
+
+        expect(res.body.data.decisionMakerName)
+            .toBe('Nemzeti Kulturális Alap');
+
+        expect(res.body.data.recipientName)
+            .toBe('Jelenkor Alapítvány');
     });
 
     it('PATCH /:id updates award decision', async () => {
-        const created = await createAwardDecision();
 
+        const created = await createAwardDecision();
         const id = created.body.data.id;
 
         const res = await updateAwardDecision(id, {
@@ -143,13 +192,14 @@ describe('AwardDecision routes test', () => {
         });
 
         expect(res.status).toBe(200);
+
         expect(res.body.data.purpose)
             .toBe('Módosított cél');
     });
 
     it('PATCH /:id rejects invalid payload', async () => {
-        const created = await createAwardDecision();
 
+        const created = await createAwardDecision();
         const res = await updateAwardDecision(
             created.body.data.id,
             {
@@ -157,19 +207,20 @@ describe('AwardDecision routes test', () => {
             }
         );
 
-        expect(res.status).toBe(422);
+        expect(res.status)
+            .toBe(422);
+
         expect(res.body.error)
             .toBe('VALIDATION_ERROR');
     });
 
     it('DELETE /:id deletes award decision', async () => {
         const created = await createAwardDecision();
-
         const id = created.body.data.id;
-
         const res = await deleteAwardDecision(id);
 
-        expect(res.status).toBe(204);
+        expect(res.status)
+            .toBe(204);
 
         const deleted = await getAwardDecision(id);
 

@@ -4,17 +4,17 @@ import { validate } from "../../common/middleware/validate";
 import { OrganizationSchema, UpdateOrganizationSchema } from "./validation/organization.schema";
 
 const router = Router();
-const { controller } = createOrganizationModule();
+const { controller, crudController } = createOrganizationModule();
 
 router.get(
     '/:id',
-    controller.findById,
+    crudController.findById,
 );
 
 router.patch(
     '/:id',
     validate(UpdateOrganizationSchema),
-    controller.update,
+    crudController.update,
 );
 
 router.delete(
@@ -30,7 +30,7 @@ router.post(
 
 router.get(
     '/',
-    controller.findAll,
+    crudController.findAll,
 );
 
 export default router;

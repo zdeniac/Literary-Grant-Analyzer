@@ -5,21 +5,19 @@ const validateName = [required()];
 const validateType = [required()];
 
 export const AwardSchemeForm = () => (
-    <>
-        <SimpleForm>
-            <TextInput 
-                source="name"
-                validate={validateName} 
-            />
+    <SimpleForm>
+        <TextInput 
+            source="name"
+            validate={validateName} 
+        />
 
-            <SelectInput
-                source="type"
-                choices={awardSchemeTypes}
-                validate={validateType}
-            />
+        <SelectInput
+            source="type"
+            choices={awardSchemeTypes}
+            validate={validateType}
+        />
 
-            <ReferenceInput source="organizationId" reference="organizations"/>
+        <ReferenceInput source="organizationId" reference="organizations"/>
 
-        </SimpleForm>
-    </>
+    </SimpleForm>
 );

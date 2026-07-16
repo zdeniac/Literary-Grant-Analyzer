@@ -2,9 +2,9 @@ import { Request, Response } from "express";
 import { sendData } from "../http/response";
 import { idSchema } from "../validation/schema";
 import { DtoMapper } from "../types/types";
-import { CrudService } from "../services/crud.service";
+import { CrudService } from "../services/crud.service2";
 
-export abstract class CrudController<TModel, TDto>
+export class CrudController<TModel, TDto>
 {
     constructor(
         protected readonly service: CrudService<TModel, any, any>,

@@ -4,17 +4,17 @@ import { DecisionBodySchema, UpdateDecisionBodySchema } from "./validation/decis
 import { validate } from "../../common/middleware/validate";
 
 const router = Router();
-const { controller } = createDecisionBodyModule();
+const { controller, crudController } = createDecisionBodyModule();
 
 router.get(
     '/:id',
-    controller.findById,
+    crudController.findById,
 );
 
 router.patch(
     '/:id',
     validate(UpdateDecisionBodySchema),
-    controller.update,
+    crudController.update,
 );
 
 router.delete(
@@ -30,7 +30,7 @@ router.post(
 
 router.get(
     '/',
-    controller.findAll,
+    crudController.findAll,
 );
 
 export default router;

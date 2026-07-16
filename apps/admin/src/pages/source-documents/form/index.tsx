@@ -5,20 +5,16 @@ const validateTitle = [required()];
 const validateUrl = [url(), required()];
 const validateRetrievedAt = [required()];
 
-export const SourceDocumentForm = () => {
-    return (
-        <>
-            <SimpleForm>
-                <TextInput 
-                    source="title"
-                    validate={validateTitle}
-                />
+export const SourceDocumentForm = () => (
+    <SimpleForm>
+        <TextInput 
+            source="title"
+            validate={validateTitle}
+        />
 
-                <TextInput source="url" validate={validateUrl}/>
+        <TextInput source="url" validate={validateUrl}/>
 
-                <DateTimeInput source="retrievedAt" validate={validateRetrievedAt} />
-            
-            </SimpleForm>
-        </>
-    );
-}
+        <DateTimeInput source="retrievedAt" validate={validateRetrievedAt} />
+    
+    </SimpleForm>
+);

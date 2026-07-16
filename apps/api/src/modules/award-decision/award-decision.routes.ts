@@ -4,7 +4,7 @@ import { validate } from "../../common/middleware/validate";
 import { CreateAwardDecisionSchema, UpdateAwardDecisionSchema } from "./validation/award-decision.schema";
 
 const router = Router();
-const { controller } = createAwardDecisionModule();
+const { controller, crudController } = createAwardDecisionModule();
 
 router.get(
     '/:id',
@@ -14,18 +14,18 @@ router.get(
 router.patch(
     '/:id',
     validate(UpdateAwardDecisionSchema),
-    controller.update,
+    crudController.update,
 );
 
 router.delete(
     '/:id',
-    controller.delete,
+    crudController.delete,
 );
 
 router.post(
     '/',
     validate(CreateAwardDecisionSchema),
-    controller.create,
+    crudController.create,
 );
 
 router.get(

@@ -1,12 +1,14 @@
+import { CrudController } from "../../common/controllers/crud.controller2";
+import { CrudService } from "../../common/services/crud.service2";
 import { prisma } from "../../db/prisma";
-import { AwardSchemeController } from "./award-scheme.controller";
-import { AwardSchemeRepository } from "./award-scheme.repository";
-import { AwardSchemeService } from "./award-scheme.service";
+import { PrismaCrudRepository } from "../../db/prisma-crud-repository2";
 import { toAwardSchemeDto } from "./mapper/award-scheme.mapper";
 
 export const createAwardSchemeModule = () => {
-    const service = new AwardSchemeService(new AwardSchemeRepository(prisma));
-    const controller = new AwardSchemeController(service, toAwardSchemeDto);
+    const controller = new CrudController(
+        new CrudService(new PrismaCrudRepository(prisma.awardScheme)),
+        toAwardSchemeDto,
+    );
 
     return {
         controller,

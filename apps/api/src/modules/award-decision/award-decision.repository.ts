@@ -1,13 +1,46 @@
-import { AwardDecision } from "@prisma/client";
-import { PrismaCrudRepository } from "../../db/prisma-crud-repository";
-import { PrismaModel } from "../../db/types";
-import { CreateAwardDecisionDto, UpdateAwardDecisionDto } from "./dto/award-decision.dto";
+import { AwardDecisionWithRelations } from "./types/award-decision.types";
+import { prisma } from "../../db/prisma";
 
 export class AwardDecisionRepository
-    extends PrismaCrudRepository<AwardDecision, CreateAwardDecisionDto, UpdateAwardDecisionDto> 
 {
-    protected get model(): PrismaModel<AwardDecision>
+    async findAllWithActors(): Promise<AwardDecisionWithRelations[]>
     {
-        return this.db.awardDecision
+        return prisma.awardDecision.findMany({
+            include: {
+                decisionMaker: {
+                    include: {
+                        organization: true,
+                        decisionBody: true,
+                    },
+                },
+                recipient: {
+                    include: {
+                        organization: true,
+                        decisionBody: true,
+                    },
+                },
+            },
+        });
+    }
+
+    async findByIdWithActors(id: number): Promise<AwardDecisionWithRelations | null>
+    {
+        return prisma.awardDecision.findUnique({
+            where: { id },
+            include: {
+                decisionMaker: {
+                    include: {
+                        organization: true,
+                        decisionBody: true,
+                    },
+                },
+                recipient: {
+                    include: {
+                        organization: true,
+                        decisionBody: true,
+                    },
+                },
+            },
+        });
     }
 }

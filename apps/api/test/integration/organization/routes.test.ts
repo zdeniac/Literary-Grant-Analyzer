@@ -1,7 +1,7 @@
 import { describe, it, expect, afterAll, beforeEach } from "vitest";
 import request from "supertest";
 import app from "../../../src/app";
-import { Actor, ActorType, LegalForm } from "@prisma/client";
+import { ActorType, LegalForm } from "@prisma/client";
 import { wipeDatabase } from "../helpers/db.helper";
 import { prisma } from "../../../src/db/prisma";
 

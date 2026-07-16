@@ -1,22 +1,17 @@
 import { AwardDecision } from "@prisma/client";
 import { AwardDecisionDto } from "../dto/award-decision.dto";
-import { DtoMapper } from "../../../common/types/types";
 
-export const toAwardDecisionDto: DtoMapper<AwardDecision, AwardDecisionDto> = (
-    awardDecision
-) => ({
+export const toAwardDecisionDto = (awardDecision: AwardDecision): AwardDecisionDto => ({
     id: awardDecision.id,
 
-    amount: Number(awardDecision.amount) ?? null,
+    amount: Number(awardDecision.amount),
     purpose: awardDecision.purpose,
     sourceIdentifier: awardDecision.sourceIdentifier,
     decisionDate: awardDecision.decisionDate,
 
     awardSchemeId: awardDecision.awardSchemeId,
-
     decisionMakerId: awardDecision.decisionMakerId,
     recipientId: awardDecision.recipientId,
-
     sourceDocumentId: awardDecision.sourceDocumentId,
 
     createdAt: awardDecision.createdAt,

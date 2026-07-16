@@ -1,14 +1,16 @@
 import { NotFoundError } from "../common/errors/http.error";
-import { PrismaRepository } from "./prisma-repository";
-import { CrudRepository, PrismaDatabase } from "./types";
+import { CrudRepository, PrismaDatabase, PrismaModel } from "./types";
 
-export abstract class PrismaCrudRepository<TModel, TCreate, TUpdate>
-    extends PrismaRepository<TModel>
+export class PrismaCrudRepository<TModel, TCreate, TUpdate>
     implements CrudRepository<TModel, TCreate, TUpdate>
 {
-    constructor(db: PrismaDatabase)
+    constructor(
+        private readonly model: PrismaModel<TModel>,
+    ) {}
+    
+    withClient(client: PrismaDatabase): this 
     {
-        super(db);
+        return new (this.constructor as any)(client);
     }
 
     async create(data: TCreate): Promise<TModel>

@@ -1,18 +1,16 @@
 import { ActorType, DecisionBody } from "@prisma/client";
 import { DecisionBodyRepository } from "./decision-body.repository";
-import { CreateDecisionBodyData, CreateDecisionBodyDto, UpdateDecisionBodyDto } from "./dto/decision-body.dto";
-import { CrudService } from "../../common/services/crud.service";
+import { CreateDecisionBodyDto, UpdateDecisionBodyDto } from "./dto/decision-body.dto";
 import { ActorRepository } from "../actor/actor.repository";
 import { transaction } from "../../db/transaction";
 import { Id } from "../../common/types/types";
 
-export class DecisionBodyService extends CrudService<DecisionBody, CreateDecisionBodyData, UpdateDecisionBodyDto>
+export class DecisionBodyService
 {
     constructor(
-        repository: DecisionBodyRepository,
+        private readonly repository: DecisionBodyRepository,
         private readonly actorRepository: ActorRepository,
     ) {
-        super(repository);
     }
 
     async create(dto: CreateDecisionBodyDto): Promise<DecisionBody>

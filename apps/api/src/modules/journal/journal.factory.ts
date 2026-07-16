@@ -1,13 +1,15 @@
+import { CrudController } from "../../common/controllers/crud.controller2";
+import { CrudService } from "../../common/services/crud.service2";
 import { prisma } from "../../db/prisma";
-import { JournalController } from "./journal.controller";
-import { JournalRepository } from "./journal.repository";
-import { JournalService } from "./journal.service";
+import { PrismaCrudRepository } from "../../db/prisma-crud-repository2";
 import { toJournalDto } from "./mapper/journal.mapper";
 
 export const createJournalModule = () => {
-    const service = new JournalService(new JournalRepository(prisma));
-    const controller = new JournalController(service, toJournalDto);
-
+    const controller = new CrudController(
+        new CrudService(new PrismaCrudRepository(prisma.journal)),
+        toJournalDto,
+    );
+    
     return {
         controller,
     }

@@ -5,10 +5,16 @@ import { OrganizationService } from "../../../src/modules/organization/organizat
 import { UpdateOrganizationDto } from "../../../src/modules/organization/dto/organization.dto";
 import { Id } from "../../../src/common/types/types";
 import { ActorRepository } from "../../../src/modules/actor/actor.repository";
+import { CrudService } from "../../../src/common/services/crud.service2";
+import { PrismaCrudRepository } from "../../../src/db/prisma-crud-repository2";
 
 const organizationService = new OrganizationService(
     new OrganizationRepository(prisma),
     new ActorRepository(prisma),
+);
+
+const crudService = new CrudService(
+    new PrismaCrudRepository(prisma.organization),
 );
 
 export const createOrganization = async (overrides: { 
@@ -26,13 +32,13 @@ export const createOrganization = async (overrides: {
 };
 
 export const findOrganizationById = async (id: Id): Promise<Organization | undefined> => 
-    await organizationService.findById(id);
+    await crudService.findById(id);
 
 export const findEveryOrganization = async (): Promise<Organization[]> => 
-    await organizationService.findAll();
+    await crudService.findAll();
 
 export const deleteOrganization = async (id: Id): Promise<Organization> => 
     await organizationService.delete(id);
 
 export const updateOrganization = async (id: Id, data: UpdateOrganizationDto): Promise<Organization> => 
-    await organizationService.update(id, data);
+    await crudService.update(id, data);

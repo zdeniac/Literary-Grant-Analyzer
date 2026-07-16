@@ -1,18 +1,16 @@
 import { ActorType, Organization } from "@prisma/client";
-import { CreateOrganizationData, CreateOrganizationDto, UpdateOrganizationDto } from "./dto/organization.dto";
+import { CreateOrganizationDto } from "./dto/organization.dto";
 import { OrganizationRepository } from "./organization.repository";
-import { CrudService } from "../../common/services/crud.service";
 import { ActorRepository } from "../actor/actor.repository";
 import { Id } from "../../common/types/types";
 import { transaction } from "../../db/transaction";
 
-export class OrganizationService extends CrudService<Organization, CreateOrganizationData, UpdateOrganizationDto>
+export class OrganizationService
 {
     constructor(
-        repository: OrganizationRepository,
+        private readonly repository: OrganizationRepository,
         private readonly actorRepository: ActorRepository,
     ) {
-        super(repository);
     }
 
     async create(dto: CreateOrganizationDto): Promise<Organization>

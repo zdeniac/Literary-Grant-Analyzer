@@ -1,13 +1,26 @@
-import { AwardDecision } from "@prisma/client";
-import { CreateAwardDecisionDto, UpdateAwardDecisionDto } from "./dto/award-decision.dto";
+import { NotFoundError } from "../../common/errors/http.error";
 import { AwardDecisionRepository } from "./award-decision.repository";
-import { CrudService } from "../../common/services/crud.service";
+import { AwardDecisionWithRelations } from "./types/award-decision.types";
 
-export class AwardDecisionService extends CrudService<AwardDecision, CreateAwardDecisionDto, UpdateAwardDecisionDto>
+export class AwardDecisionService
 {
     constructor(
-        repository: AwardDecisionRepository
-    ) {
-        super(repository);
+        private readonly repository: AwardDecisionRepository
+    ) {}
+
+    async findAllWithActors(): Promise<AwardDecisionWithRelations[]>
+    {
+        return this.repository.findAllWithActors();
+    }
+
+    async findByIdWithActors(id: number): Promise<AwardDecisionWithRelations>
+    {
+        const model = await this.repository.findByIdWithActors(id);
+
+        if (!model) {
+            throw new NotFoundError();
+        }
+        
+        return model;
     }
 }

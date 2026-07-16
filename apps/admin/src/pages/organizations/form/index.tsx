@@ -7,23 +7,21 @@ const validateName = [required()];
 const validateWebsite = [url()];
 const validateLegalForm = [required()];
 
-export const OrganizationForm = () => {
-    return (
-        <SimpleForm>
+export const OrganizationForm = () => (
+    <SimpleForm>
 
-            <TextInput source="name" validate={validateName} />
-            <TextInput source="address" />
+        <TextInput source="name" validate={validateName} />
+        <TextInput source="address" />
 
-            <TextInput source="website" validate={validateWebsite} />
+        <TextInput source="website" validate={validateWebsite} />
 
-            <SelectInput 
-                source="legalForm"
-                choices={legalForms}
-                validate={validateLegalForm}
-            />
+        <SelectInput 
+            source="legalForm"
+            choices={legalForms}
+            validate={validateLegalForm}
+        />
 
-            <YearInput source="foundingYear" />
-            
-        </SimpleForm>
-    );
-}
+        <YearInput source="foundingYear" />
+        
+    </SimpleForm>
+);
