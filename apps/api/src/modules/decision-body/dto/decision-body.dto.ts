@@ -17,7 +17,4 @@ export type CreateDecisionBodyData = CreateDecisionBodyDto & {
     actorId: Id;
 };
 
-export type UpdateDecisionBodyDto = {
-    name?: Name;
-    organizationId?: Id;
-};
+export type UpdateDecisionBodyDto = Partial<CreateDecisionBodyDto>;

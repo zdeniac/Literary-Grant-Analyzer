@@ -67,7 +67,7 @@ describe('Organization routes test', () => {
         expect(res.body.data.id).toBe(id);
     });
 
-    it('PUT /organization/:id updates organization', async () => {
+    it('PATCH /organization/:id updates organization', async () => {
         const created = await createOrganization();
         const res = await request(app)
             .put(`${route}/${created.body.data.id}`)
@@ -81,7 +81,7 @@ describe('Organization routes test', () => {
         expect(res.body.data.legalForm).toBe('OTHER');
     });
 
-    it('PUT /organization/:id rejects invalid payload', async () => {
+    it('PATCH /organization/:id rejects invalid payload', async () => {
         const created = await createOrganization();
         const res = await request(app)
             .put(`${route}/${created.body.data.id}`)

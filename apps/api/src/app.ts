@@ -5,6 +5,7 @@ import dataImportRouter from "./modules/data-import/import.routes";
 import decisionBodyRouter from "./modules/decision-body/decision-body.routes";
 import awardSchemeRouter from "./modules/award-scheme/award-scheme.routes";
 import sourceDocumentRouter from "./modules/source-document/source-document.routes";
+import awardDecisionRouter from "./modules/award-decision/award-decision.routes";
 
 const app = express();
 
@@ -23,5 +24,6 @@ app.use('/api/import', dataImportRouter);
 app.use('/api/decision-bodies', decisionBodyRouter);
 app.use('/api/award-schemes', awardSchemeRouter);
 app.use('/api/source-documents', sourceDocumentRouter);
+app use('/api/award-decisions', awardDecisionRouter);
 
 export default app;

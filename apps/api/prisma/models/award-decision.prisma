@@ -1,0 +1,21 @@
+model AwardDecision {
+  id  Int  @id  @default(autoincrement())
+	
+  amount            Decimal?
+  purpose           String?
+  sourceIdentifier  String?         
+  decisionDate      DateTime
+
+  awardSchemeId     Int             
+  decisionMakerId   Int   
+  recipientId       Int
+  sourceDocumentId  Int
+
+  awardScheme       AwardScheme     @relation(fields: [awardSchemeId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  decisionMaker     Actor           @relation("DecisionMaker", fields: [decisionMakerId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  recipient         Actor           @relation("Recipient", fields: [recipientId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  sourceDocument    SourceDocument  @relation(fields: [sourceDocumentId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+}

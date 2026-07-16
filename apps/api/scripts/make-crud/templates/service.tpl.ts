@@ -3,7 +3,8 @@ import { Create{{ pascalCase }}Dto, Update{{ pascalCase }}Dto } from "./dto/{{ k
 import { {{ pascalCase }}Repository } from "./{{ kebabCase }}.repository";
 import { CrudService } from "../../common/services/crud.service";
 
-export class {{ pascalCase }}Service extends CrudService<{{ pascalCase }}, Create{{ pascalCase }}Dto, Update{{ pascalCase }}Dto> {
+export class {{ pascalCase }}Service extends CrudService<{{ pascalCase }}, Create{{ pascalCase }}Dto, Update{{ pascalCase }}Dto>
+{
     constructor(
         repository: {{ pascalCase }}Repository
     ) {

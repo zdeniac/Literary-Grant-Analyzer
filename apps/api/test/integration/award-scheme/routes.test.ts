@@ -91,7 +91,7 @@ describe('Award scheme routes test', () => {
         expect(res.body.data.id).toBe(id);
     });
 
-    it('PUT /:id updates awardScheme', async () => {
+    it('PATCH /:id updates awardScheme', async () => {
         const created = await createAwardScheme();
 
         const id = created.body.data.id;
@@ -107,7 +107,7 @@ describe('Award scheme routes test', () => {
         expect(res.body.data.type).toBe('SCHOLARSHIP');
     });
 
-    it('PUT /:id rejects invalid payload', async () => {
+    it('PATCH /:id rejects invalid payload', async () => {
         const created = await createAwardScheme();
 
         const res = await updateAwardScheme(

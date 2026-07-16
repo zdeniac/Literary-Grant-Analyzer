@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { createJournalModule } from "./journal.factory";
 import { validate } from "../../common/middleware/validate";
-import { JournalSchema } from "./validate/journal.schema";
+import { JournalSchema, UpdateJournalSchema } from "./validate/journal.schema";
 
 const router = Router();
 const { controller } = createJournalModule();
@@ -11,9 +11,9 @@ router.get(
     controller.findById,
 );
 
-router.put(
+router.patch(
     '/:id',
-    validate(JournalSchema),
+    validate(UpdateJournalSchema),
     controller.update,
 );
 

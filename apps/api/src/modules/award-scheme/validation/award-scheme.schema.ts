@@ -7,3 +7,5 @@ export const AwardSchemeSchema = z.object({
     type: z.enum(AwardSchemeType),
     organizationId: idSchema,
 });
+
+export const UpdateAwardSchemeSchema = AwardSchemeSchema.partial();

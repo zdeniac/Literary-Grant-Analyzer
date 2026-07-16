@@ -18,7 +18,6 @@ import { Wizard } from "./Wizard";
 
 const config = new PrismaConfig(prismaConfig);
 const schema = new PrismaSchema(config);
-
 const modelGenerator = new ModelGenerator(new FieldGenerator(), config.getModelsPath());
 
 const relationBuilder = new RelationBuilder(schema);

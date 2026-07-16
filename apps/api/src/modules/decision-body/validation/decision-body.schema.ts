@@ -10,6 +10,8 @@ export const DecisionBodySchema = DecisionBodyBaseSchema.extend({
     organizationId: idSchema,
 });
 
+export const UpdateDecisionBodySchema = DecisionBodySchema.partial();
+
 export const ImportDecisionBodySchema = DecisionBodyBaseSchema.extend({
     organizationName: OrganizationSchema.shape.name,
 });

@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { createSourceDocumentModule } from "./source-document.factory";
 import { validate } from "../../common/middleware/validate";
-import { SourceDocumentSchema } from "./validation/source-document.schema";
+import { SourceDocumentSchema, UpdateSourceDocumentSchema } from "./validation/source-document.schema";
 
 const router = Router();
 const { controller } = createSourceDocumentModule();
@@ -11,9 +11,9 @@ router.get(
     controller.findById,
 );
 
-router.put(
+router.patch(
     '/:id',
-    validate(SourceDocumentSchema),
+    validate(UpdateSourceDocumentSchema),
     controller.update,
 );
 

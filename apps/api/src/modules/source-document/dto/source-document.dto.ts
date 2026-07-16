@@ -15,8 +15,4 @@ export type SourceDocumentDto = {
 
 export type CreateSourceDocumentDto = z.infer<typeof SourceDocumentSchema>;
 
-export type UpdateSourceDocumentDto = {
-    title?: string;
-    url?: string;
-    retrievedAt?: Date;
-};
+export type UpdateSourceDocumentDto = Partial<CreateSourceDocumentDto>;

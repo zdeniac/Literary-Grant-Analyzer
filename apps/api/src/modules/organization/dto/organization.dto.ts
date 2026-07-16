@@ -22,10 +22,4 @@ export type CreateOrganizationData = CreateOrganizationDto & {
     actorId: Id;
 };
 
-export type UpdateOrganizationDto = {
-    name?: string;
-    website?: string | null;
-    legalForm?: LegalForm;
-    address?: string | null;
-    foundingYear?: Year;
-};
+export type UpdateOrganizationDto = Partial<CreateOrganizationDto>;

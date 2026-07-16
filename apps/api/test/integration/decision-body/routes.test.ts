@@ -99,7 +99,7 @@ describe('Decision body routes test', () => {
         expect(res.body.data.id).toBe(id);
     });
 
-    it('PUT /:id updates decisionBody', async () => {
+    it('PATCH /:id updates decisionBody', async () => {
         const created = await createDecisionBody();
         const org = await createOrganization({ name: 'NKA' });
 
@@ -115,7 +115,7 @@ describe('Decision body routes test', () => {
         expect(res.body.data.organizationId).toBe(org.id);
     });
 
-    it('PUT /:id rejects invalid payload', async () => {
+    it('PATCH /:id rejects invalid payload', async () => {
         const created = await createDecisionBody();
 
         const res = await updateDecisionBody(

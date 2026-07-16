@@ -4,9 +4,10 @@ import { parsePrismaFiles } from "./parser/prisma-parser";
 
 export class PrismaSchema
 {
-    private parsed: ParsedSchema;
+    public parsed: ParsedSchema;
 
-    constructor(prismaConfig: PrismaConfig) {
+    constructor(prismaConfig: PrismaConfig)
+    {
         this.parsed = parsePrismaFiles(prismaConfig.getModelsPath());
     }
 

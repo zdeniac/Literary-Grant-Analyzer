@@ -19,6 +19,8 @@ export const JournalSchema = JournalBaseSchema.extend({
     organizationId: idSchema,
 });
 
+export const UpdateJournalSchema = JournalSchema.partial();
+
 export const ImportJournalSchema = JournalBaseSchema.extend({
     foundingYear: yearSchema.nullable().optional(),
     organizationName: OrganizationSchema.shape.name,

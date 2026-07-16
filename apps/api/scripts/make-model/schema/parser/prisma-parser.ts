@@ -60,6 +60,6 @@ export function parsePrismaFiles(filesPath: string): ParsedSchema
             });
         }
     }
-
+    
     return parsedResources;
 }

@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { createOrganizationModule } from "./organization.factory";
 import { validate } from "../../common/middleware/validate";
-import { OrganizationSchema } from "./validation/organization.schema";
+import { OrganizationSchema, UpdateOrganizationSchema } from "./validation/organization.schema";
 
 const router = Router();
 const { controller } = createOrganizationModule();
@@ -11,9 +11,9 @@ router.get(
     controller.findById,
 );
 
-router.put(
+router.patch(
     '/:id',
-    validate(OrganizationSchema),
+    validate(UpdateOrganizationSchema),
     controller.update,
 );
 

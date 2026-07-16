@@ -17,8 +17,4 @@ export type CreateAwardSchemeDto = {
     organizationId: Id;
 };
 
-export type UpdateAwardSchemeDto = {
-    name?: Name;
-    type?: AwardSchemeType;
-    organizationId?: Id;
-};
+export type UpdateAwardSchemeDto = Partial<CreateAwardSchemeDto>;

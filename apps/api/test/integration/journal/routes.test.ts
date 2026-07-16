@@ -86,7 +86,7 @@ describe('Journal routes test', () => {
             .toBe(id);
     });
 
-    it('PUT /:id updates journal', async () => {
+    it('PATCH /:id updates journal', async () => {
         const created = await createJournal();
 
         const id = created.body.data.id;
@@ -105,7 +105,7 @@ describe('Journal routes test', () => {
             .toBe('CLOSED');
     });
 
-    it('PUT /:id rejects invalid payload', async () => {
+    it('PATCH /:id rejects invalid payload', async () => {
         const created = await createJournal();
 
         const res = await updateJournal(

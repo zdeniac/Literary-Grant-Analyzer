@@ -5,6 +5,9 @@ model Actor {
 
     organization Organization?
     decisionBody DecisionBody?
+
+    decisionsAsDecisionMaker AwardDecision[] @relation("DecisionMaker")
+    decisionsAsRecipient     AwardDecision[] @relation("Recipient")
 }
 
 enum ActorType {
