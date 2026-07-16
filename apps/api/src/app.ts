@@ -24,6 +24,6 @@ app.use('/api/import', dataImportRouter);
 app.use('/api/decision-bodies', decisionBodyRouter);
 app.use('/api/award-schemes', awardSchemeRouter);
 app.use('/api/source-documents', sourceDocumentRouter);
-app use('/api/award-decisions', awardDecisionRouter);
+app.use('/api/award-decisions', awardDecisionRouter);
 
 export default app;

@@ -50,7 +50,7 @@ describe('Award scheme routes test', () => {
 
     const updateAwardScheme = (id: Id, data: object) =>
         request(app)
-            .put(`${route}/${id}`)
+            .patch(`${route}/${id}`)
             .send(data);
 
     const deleteAwardScheme = (id: Id) =>

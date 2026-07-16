@@ -70,7 +70,7 @@ describe('Organization routes test', () => {
     it('PATCH /organization/:id updates organization', async () => {
         const created = await createOrganization();
         const res = await request(app)
-            .put(`${route}/${created.body.data.id}`)
+            .patch(`${route}/${created.body.data.id}`)
             .send({
                 name: 'Tiszatáj Alapítvány upd',
                 legalForm: LegalForm.OTHER
@@ -84,7 +84,7 @@ describe('Organization routes test', () => {
     it('PATCH /organization/:id rejects invalid payload', async () => {
         const created = await createOrganization();
         const res = await request(app)
-            .put(`${route}/${created.body.data.id}`)
+            .patch(`${route}/${created.body.data.id}`)
             .send({
                 name: '',
                 legalForm: 'LegalForm.OTHER'

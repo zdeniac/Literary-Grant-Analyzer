@@ -47,7 +47,7 @@ describe('Journal routes test', () => {
         data: object
     ) =>
         request(app)
-            .put(`${route}/${id}`)
+            .patch(`${route}/${id}`)
             .send(data);
 
     const deleteJournal = (id: number) =>
