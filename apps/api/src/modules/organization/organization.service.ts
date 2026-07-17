@@ -1,14 +1,15 @@
 import { ActorType, Organization } from "@prisma/client";
-import { CreateOrganizationDto } from "./dto/organization.dto";
-import { OrganizationRepository } from "./organization.repository";
+import { CreateOrganizationData, CreateOrganizationDto, UpdateOrganizationDto } from "./dto/organization.dto";
 import { ActorRepository } from "../actor/actor.repository";
 import { Id } from "../../common/types/types";
 import { transaction } from "../../db/transaction";
+import { CrudRepository, PrismaDatabase } from "../../db/types";
+import { createRepositories } from "../../db/repositories/factory";
 
 export class OrganizationService
 {
     constructor(
-        private readonly repository: OrganizationRepository,
+        private readonly repository: CrudRepository<Organization, CreateOrganizationData, UpdateOrganizationDto>,
         private readonly actorRepository: ActorRepository,
     ) {
     }
@@ -28,14 +29,9 @@ export class OrganizationService
     async delete(id: Id): Promise<Organization>
     {
         return transaction(async tx => {
-            const organizationRepository = this.repository as OrganizationRepository;
-            const actorRepository = this.actorRepository.withClient(tx);
-
-            const organization = await organizationRepository
-                .withClient(tx)
-                .delete(id);
-
-            await actorRepository.delete(organization.actorId);
+            const organization = await createRepositories(tx).organization.delete(id);
+            
+            await createRepositories(tx).actor.delete(organization.actorId);
 
             return organization;
         });

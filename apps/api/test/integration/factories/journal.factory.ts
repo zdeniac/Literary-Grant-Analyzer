@@ -1,12 +1,16 @@
 import { Journal, JournalStatus } from "@prisma/client";
-import { JournalRepository } from "../../../src/modules/journal/journal.repository";
-import { JournalService } from "../../../src/modules/journal/journal.service";
 import { Issn } from "../../../src/modules/journal/types/journal.types";
 import { Id } from "../../../src/common/types/types";
+import { CreateJournalDto, UpdateJournalDto } from "../../../src/modules/journal/dto/journal.dto";
+import { CrudService } from "../../../src/common/services/crud.service";
+import { PrismaCrudRepository } from "../../../src/db/repositories/prisma-crud-repository";
 import { prisma } from "../../../src/db/prisma";
-import { UpdateJournalDto } from "../../../src/modules/journal/dto/journal.dto";
 
-const journalService = new JournalService(new JournalRepository(prisma));
+const journalService = new CrudService<
+    Journal, 
+    CreateJournalDto, 
+    UpdateJournalDto
+>(new PrismaCrudRepository(prisma.journal));
 
 export const createJournal = async (overrides: {
     organizationId: Id, 

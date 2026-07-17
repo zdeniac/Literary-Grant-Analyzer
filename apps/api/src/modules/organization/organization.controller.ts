@@ -18,10 +18,10 @@ export class OrganizationController
 
     async create(req: Request, res: Response): Promise<void> 
     {
-        const entity = await this.service.create(
+        const organization = await this.service.create(
             req.body
         );
-        sendData(res, this.mapper(entity));
+        sendData(res, this.mapper(organization));
     }
 
     async delete(req: Request, res: Response): Promise<void> 
@@ -29,7 +29,6 @@ export class OrganizationController
         await this.service.delete(
             idSchema.parse(req.params.id)
         );
-
         res.sendStatus(204);
     }
 }

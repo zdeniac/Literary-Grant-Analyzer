@@ -1,14 +1,15 @@
 import { ActorType, DecisionBody } from "@prisma/client";
-import { DecisionBodyRepository } from "./decision-body.repository";
-import { CreateDecisionBodyDto, UpdateDecisionBodyDto } from "./dto/decision-body.dto";
+import { CreateDecisionBodyData, CreateDecisionBodyDto, UpdateDecisionBodyDto } from "./dto/decision-body.dto";
 import { ActorRepository } from "../actor/actor.repository";
 import { transaction } from "../../db/transaction";
 import { Id } from "../../common/types/types";
+import { PrismaCrudRepository } from "../../db/repositories/prisma-crud-repository";
+import { createRepositories } from "../../db/repositories/factory";
 
 export class DecisionBodyService
 {
     constructor(
-        private readonly repository: DecisionBodyRepository,
+        private readonly repository: PrismaCrudRepository<DecisionBody, CreateDecisionBodyData, UpdateDecisionBodyDto>,
         private readonly actorRepository: ActorRepository,
     ) {
     }
@@ -25,16 +26,14 @@ export class DecisionBodyService
         });
     }
 
-    async delete(id: Id): Promise<DecisionBody> {
+    async delete(id: Id): Promise<DecisionBody>
+    {
         return transaction(async tx => {
-            const decisionBodyRepository = this.repository as DecisionBodyRepository;
-            const actorRepository = this.actorRepository.withClient(tx);
+            const repositories = createRepositories(tx);
 
-            const decisionBody = await decisionBodyRepository
-                .withClient(tx)
-                .delete(id);
+            const decisionBody = await repositories.decisionBody.delete(id);
 
-            await actorRepository.delete(decisionBody.actorId);
+            await repositories.actor.delete(decisionBody.actorId);
 
             return decisionBody;
         });

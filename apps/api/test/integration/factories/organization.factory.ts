@@ -1,16 +1,17 @@
-import { Journal, LegalForm, Organization } from "@prisma/client";
+import { LegalForm, Organization } from "@prisma/client";
 import { prisma } from "../../../src/db/prisma";
-import { OrganizationRepository } from "../../../src/modules/organization/organization.repository";
 import { OrganizationService } from "../../../src/modules/organization/organization.service";
 import { UpdateOrganizationDto } from "../../../src/modules/organization/dto/organization.dto";
 import { Id } from "../../../src/common/types/types";
-import { ActorRepository } from "../../../src/modules/actor/actor.repository";
-import { CrudService } from "../../../src/common/services/crud.service2";
-import { PrismaCrudRepository } from "../../../src/db/prisma-crud-repository2";
+import { CrudService } from "../../../src/common/services/crud.service";
+import { PrismaCrudRepository } from "../../../src/db/repositories/prisma-crud-repository";
+import { createRepositories } from "../../../src/db/repositories/factory";
+
+const repositories = createRepositories(prisma);
 
 const organizationService = new OrganizationService(
-    new OrganizationRepository(prisma),
-    new ActorRepository(prisma),
+    repositories.organization,
+    repositories.actor,
 );
 
 const crudService = new CrudService(

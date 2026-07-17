@@ -1,11 +1,15 @@
-import { AwardDecisionWithRelations } from "./types/award-decision.types";
-import { prisma } from "../../db/prisma";
+import { PrismaDatabase } from "../../db/types";
+import { AwardDecisionWithActors } from "./types/award-decision.types";
 
 export class AwardDecisionRepository
 {
-    async findAllWithActors(): Promise<AwardDecisionWithRelations[]>
+    constructor(
+        private readonly model: PrismaDatabase['awardDecision']
+    ) {}
+
+    async findAllWithActors(): Promise<AwardDecisionWithActors[]>
     {
-        return prisma.awardDecision.findMany({
+        return this.model.findMany({
             include: {
                 decisionMaker: {
                     include: {
@@ -23,9 +27,9 @@ export class AwardDecisionRepository
         });
     }
 
-    async findByIdWithActors(id: number): Promise<AwardDecisionWithRelations | null>
+    async findByIdWithActors(id: number): Promise<AwardDecisionWithActors | null>
     {
-        return prisma.awardDecision.findUnique({
+        return this.model.findUnique({
             where: { id },
             include: {
                 decisionMaker: {

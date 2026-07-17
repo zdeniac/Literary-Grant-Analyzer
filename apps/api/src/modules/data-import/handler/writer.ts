@@ -1,12 +1,12 @@
 import { ImportRow, ImportWriter } from "../types/import.types";
 
-export class DataImportWriter implements ImportWriter
+export class DataImportWriter<TCreate> implements ImportWriter<TCreate>
 {
     constructor(
-        private readonly repository: ImportWriter
+        private readonly repository: ImportWriter<TCreate>
     ) {}
 
-    createMany(data: ImportRow[]): Promise<number> 
+    createMany(data: TCreate[]): Promise<number> 
     {
         return this.repository.createMany(data);
     }

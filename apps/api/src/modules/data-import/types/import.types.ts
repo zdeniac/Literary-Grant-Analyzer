@@ -56,9 +56,9 @@ export interface ImportLookup<TModel>
     findManyBy(field: string, values: unknown[]): Promise<TModel[]>;
 }
 
-export interface ImportWriter
+export interface ImportWriter<TCreate>
 {
-    createMany(data: ImportRow[]): Promise<number>;
+    createMany(data: TCreate[]): Promise<number>;
 }
 
 // Type guard

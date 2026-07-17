@@ -1,6 +1,6 @@
 import { prisma } from "../../db/prisma";
 import { DataImportController as ImportController } from "./controller/import.controller";
-import { PrismaImportTargetRepository, } from "../../db/prisma-import-target.repository";
+import { PrismaImportTargetRepository, } from "../../db/repositories/prisma-import-target.repository";
 import { ImportBlueprintRegistry } from "./registry/import-blueprint.registry";
 import { ImportService as ImportService } from "./service/import.service";
 import { ImportSchemaService } from "./service/import-schema.service";
@@ -8,26 +8,22 @@ import { RelationResolver } from "./resolver/relation-resolver";
 import { journalBlueprint } from "./blueprint/journal.blueprint";
 import { organizationBlueprint } from "./blueprint/organization.blueprint";
 import { OrganizationImportWriter } from "../organization/import/writer";
-import { ActorRepository } from "../actor/actor.repository";
-import { OrganizationRepository } from "../organization/organization.repository";
 import { DataImportWriter } from "./handler/writer";
 import { DataImportLookup } from "./handler/lookup";
 import { Journal, Organization } from "@prisma/client";
+import { ImportRow } from "./types/import.types";
 
 export const createImportModule = () => {
     const registry = new ImportBlueprintRegistry(journalBlueprint, organizationBlueprint);
 
     const repositories = {
-        journal: new PrismaImportTargetRepository<Journal>(prisma.journal),
-        organization: new OrganizationRepository(prisma),
+        journal: new PrismaImportTargetRepository<Journal, ImportRow>(prisma.journal),
+        organization: new PrismaImportTargetRepository<Organization, ImportRow>(prisma.organization),
     };
 
     const writers = {
         journal: new DataImportWriter(repositories.journal),
-        organization: new OrganizationImportWriter(
-            new OrganizationRepository(prisma), 
-            new ActorRepository(prisma)
-        )
+        organization: new OrganizationImportWriter(),
     };
 
     const lookups = {

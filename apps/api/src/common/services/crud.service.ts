@@ -1,10 +1,10 @@
 import { CrudRepository } from "../../db/types";
-import { Id } from "../types/types";
+import { CrudServiceInterface, Id } from "../types/types";
 
-export abstract class CrudService<TModel, TCreateDto, TUpdateDto>
+export class CrudService<TModel, TCreateDto, TUpdateDto> implements CrudServiceInterface<TModel, TCreateDto, TUpdateDto>
 {
     constructor(
-        protected readonly repository: CrudRepository<TModel, TCreateDto, TUpdateDto>
+        private readonly repository: CrudRepository<TModel, TCreateDto, TUpdateDto>
     ) {}
 
     public async create(dto: TCreateDto): Promise<TModel>

@@ -1,19 +1,12 @@
 import { Actor, ActorType } from "@prisma/client";
-import { PrismaDatabase, PrismaModel } from "../../db/types";
-import { PrismaRepository } from "../../db/prisma-repository";
+import { PrismaModel } from "../../db/types";
 
-export class ActorRepository extends PrismaRepository<Actor>
+export class ActorRepository
 {
-    constructor(db: PrismaDatabase)
-    {
-        super(db);
-    }
+    constructor(
+        private readonly model: PrismaModel<Actor>
+    ) {}
 
-    protected get model(): PrismaModel<Actor>
-    {
-        return this.db.actor;
-    }
-    
     async create(type: ActorType): Promise<Actor>
     {
         return this.model.create({ data: { type } });

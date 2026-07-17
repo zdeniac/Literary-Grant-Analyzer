@@ -1,13 +1,12 @@
 import { Request, Response } from "express";
 import { sendData } from "../http/response";
 import { idSchema } from "../validation/schema";
-import { DtoMapper } from "../types/types";
-import { CrudService } from "../services/crud.service";
+import { CrudServiceInterface, DtoMapper } from "../types/types";
 
-export abstract class CrudController<TModel, TDto>
+export class CrudController<TModel, TDto>
 {
     constructor(
-        protected readonly service: CrudService<TModel, any, any>,
+        protected readonly service: CrudServiceInterface<TModel, any, any>,
         protected readonly toDto: DtoMapper<TModel, TDto>,
     ) {
         this.findById = this.findById.bind(this);
