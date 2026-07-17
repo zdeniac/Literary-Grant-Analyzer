@@ -1,9 +1,10 @@
 import { DataTable, List, ReferenceField } from "react-admin";
 import { JournalListActions } from "./actions";
 import { AuditColumns } from "../../../components/table/AuditColumns";
+import { CustomEmpty } from "../../../components/table/CustomEmpty";
 
 export const JournalList = () => (
-    <List actions={<JournalListActions />}>
+    <List actions={<JournalListActions />} empty={<CustomEmpty hasImport model="journal" />}>
         <DataTable>
             <DataTable.Col source="id" />
             <DataTable.Col source="name" />

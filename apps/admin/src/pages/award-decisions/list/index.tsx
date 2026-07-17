@@ -6,19 +6,12 @@ export const AwardDecisionList = () => (
         <DataTable>
 
             <DataTable.Col source="id" />
-
             <DataTable.Col source="awardSchemeName" />
-
             <DataTable.Col source="decisionMakerName" />
-
             <DataTable.Col source="recipientName" />
-
             <DataTable.Col source="sourceDocumentTitle" />
-
             <DataTable.Col source="amount" />
-
             <DataTable.Col source="purpose" />
-            
             <DataTable.Col source="decisionDate" />
 
             <AuditColumns />

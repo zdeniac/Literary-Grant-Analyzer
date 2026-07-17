@@ -11,9 +11,9 @@ export const ImportButton = ({
     const [open, setOpen] = useState(false);
 
     return (
-        <>
+        <span>
             <Button
-                variant="text"
+                variant={props?.variant ?? 'text'}
                 onClick={() => setOpen(true)}
                 {...props}
             >
@@ -21,6 +21,6 @@ export const ImportButton = ({
                 Import
             </Button>
             <ImportModal model={model} open={open} onClose={() => setOpen(false)} />
-        </>
+        </span>
     );
 };

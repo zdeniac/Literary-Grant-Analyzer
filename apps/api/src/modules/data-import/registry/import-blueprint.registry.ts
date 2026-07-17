@@ -1,8 +1,8 @@
 import { ImportError } from "../error/import.errors";
-import { Blueprint } from "../types/import.types";
+import { Blueprint, ModelName } from "../types/import.types";
 
 export class ImportBlueprintRegistry {
-    private readonly blueprints = new Map<string, Blueprint>();
+    private readonly blueprints = new Map<ModelName, Blueprint>();
 
     constructor(...blueprints: Blueprint[])
     {
@@ -13,17 +13,17 @@ export class ImportBlueprintRegistry {
         );
     }
 
-    get(model: string): Blueprint | undefined
+    get(model: ModelName): Blueprint | undefined
     {
         return this.blueprints.get(model);
     }
 
-    has(model: string): boolean
+    has(model: ModelName): boolean
     {
         return model in this.blueprints;
     }
 
-    getOrThrow(model: string): Blueprint
+    getOrThrow(model: ModelName): Blueprint
     {
         const blueprint = this.get(model);
 
@@ -36,7 +36,7 @@ export class ImportBlueprintRegistry {
         return blueprint;
     }
 
-    getAll(): [string, Blueprint][]
+    getAll(): [ModelName, Blueprint][]
     {
         return Object.entries(this.blueprints);
     }

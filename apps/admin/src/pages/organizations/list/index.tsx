@@ -1,10 +1,11 @@
 import { DataTable, List } from "react-admin";
 import { OrganizationListActions } from "./actions";
 import { AuditColumns } from "../../../components/table/AuditColumns";
+import { CustomEmpty } from "../../../components/table/CustomEmpty";
 
 export const OrganizationList = () => {
     return (
-        <List actions={<OrganizationListActions />}>
+        <List actions={<OrganizationListActions />} empty={<CustomEmpty hasImport model="organization" />}>
             <DataTable>
                 <DataTable.Col source="id" />
                 <DataTable.Col source="name" />

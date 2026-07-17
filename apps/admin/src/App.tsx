@@ -21,6 +21,10 @@ import { SourceDocumentEdit } from './pages/source-documents/edit';
 import { SourceDocumentCreate } from './pages/source-documents/create';
 import SourceIcon from '@mui/icons-material/Source';
 import dataProvider from './data-provider';
+import { AwardDecisionList } from './pages/award-decisions/list';
+import { AwardDecisionCreate } from './pages/award-decisions/create';
+import { AwardDecisionEdit } from './pages/award-decisions/edit';
+import MilitaryTechIcon from '@mui/icons-material/MilitaryTech';
 
 const App = () => (
 	<Admin layout={CustomLayout} dataProvider={dataProvider} >
@@ -58,6 +62,13 @@ const App = () => (
 			create={SourceDocumentCreate}
 			edit={SourceDocumentEdit}
 			icon={SourceIcon}
+		/>
+		<Resource
+			name="award-decisions"
+			list={AwardDecisionList}
+			create={AwardDecisionCreate}
+			edit={AwardDecisionEdit}
+			icon={MilitaryTechIcon}
 		/>
 	</Admin>
 );

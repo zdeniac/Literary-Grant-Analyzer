@@ -1,6 +1,6 @@
 import z, { ZodType } from "zod";
 import { ImportRowError, ImportValidationError } from "../error/import.errors";
-import { ImportField, ImportHeader, ImportRow } from "../types/import.types";
+import { ImportField, ImportHeader, ImportOptions, ImportRow } from "../types/import.types";
 
 export const modelNameSchema = z
     .string()
@@ -36,21 +36,21 @@ export function validateRows<T extends ImportRow>(
     return validated;
 }
 
-export function validateHeaders(headers: ImportHeader, fields: ImportField[]): void
-{
+export function validateHeaders(
+    headers: ImportHeader, 
+    fields: ImportField[],
+    allowUnknownFields: boolean,
+): void {
+    const errors: ImportRowError[] = [];
+
     const fieldNames = fields.map(
         field => field.name
     );
+
     // Find the missing header fields compared to the fields
     const missing = fieldNames.filter(
         field => !headers.includes(field)
     );
-    // Find the missing fields compared to the header
-    const unexpectedFields = headers.filter(
-        header => !fieldNames.includes(header)
-    );
-
-    const errors: ImportRowError[] = [];
 
     if (missing.length) {
         errors.push({
@@ -61,15 +61,22 @@ export function validateHeaders(headers: ImportHeader, fields: ImportField[]): v
         });
     }
 
-    if (unexpectedFields.length) {
+    // Find the missing fields compared to the header
+    let unexpectedFields: ImportHeader = [];
+    if (!allowUnknownFields) {
+        unexpectedFields = headers.filter(
+            header => !fieldNames.includes(header)
+        );
+
         errors.push({
             row: 1,
             issues: unexpectedFields.map(field => ({
                 message: `Unknown field: ${field}`
             }))
         });
-    }
 
+    }
+    
     if (errors.length) throw new ImportValidationError(errors);
 }
 

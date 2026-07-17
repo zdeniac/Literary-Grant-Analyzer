@@ -51,6 +51,12 @@ export type RelationalModelBlueprint = ModelBlueprint & {
 
 export type Blueprint = ModelBlueprint | RelationalModelBlueprint;
 
+export type ImportOptions = {
+    validation?: {
+        allowUnknownFields: boolean;
+    };
+}
+
 export interface ImportLookup<TModel>
 {
     findManyBy(field: string, values: unknown[]): Promise<TModel[]>;

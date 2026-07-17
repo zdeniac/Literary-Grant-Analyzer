@@ -1,10 +1,10 @@
-import { JournalStatus } from "@prisma/client";
-import { ImportJournalSchema } from "../../journal/validate/journal.schema";
+import { AwardSchemeType } from "@prisma/client";
 import { RelationalModelBlueprint } from "../types/import.types";
+import { ImportAwardSchemeSchema } from "../../award-scheme/validation/award-scheme.schema";
 
-export const journalBlueprint: RelationalModelBlueprint = 
+export const awardSchemeBlueprint: RelationalModelBlueprint = 
     {
-        model: 'journal',
+        model: 'awardScheme',
         fields: [
             {
                 name: 'name',
@@ -12,20 +12,10 @@ export const journalBlueprint: RelationalModelBlueprint =
                 required: true,
             },
             {
-                name: 'issn',
-                type: 'string',
-                required: false,
-            },
-            {
-                name: 'foundingYear',
-                type: 'number',
+                name: 'type',
+                type: 'enum',
                 required: true,
-            },
-            {
-                name: 'status',
-                type: 'string',
-                required: false,
-                options: Object.keys(JournalStatus)
+                options: Object.keys(AwardSchemeType)
             },
             {
                 name: 'organizationName',
@@ -33,7 +23,7 @@ export const journalBlueprint: RelationalModelBlueprint =
                 required: true
             },
         ],
-        schema: ImportJournalSchema,
+        schema: ImportAwardSchemeSchema,
         relations: [
             {
                 model: 'organization',
