@@ -1,7 +1,12 @@
 export enum JournalStatus {
     ACTIVE = 'ACTIVE',
     PAUSE = 'PAUSE',
-    CLOSED = 'CLOSED',
+    DECEASED = 'DECEASED',
+}
+
+export enum JournalFormat {
+    ONLINE = 'ONLINE',
+    PRINT = 'PRINT',
 }
 
 export enum LegalForm {
@@ -14,6 +19,13 @@ export enum LegalForm {
     // Egyesület
     ASSOCIATION = 'ASSOCIATION',
     // Egyéb
+    OTHER = 'OTHER',
+}
+
+export enum Sector {
+    PUBLIC = 'PUBLIC',
+    CIVIL = 'CIVIL',
+    MARKET = 'MARKET',
     OTHER = 'OTHER',
 }
 

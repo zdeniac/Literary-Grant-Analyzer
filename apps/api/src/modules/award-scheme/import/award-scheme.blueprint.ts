@@ -1,5 +1,5 @@
 import { AwardSchemeType } from "@prisma/client";
-import { RelationalModelBlueprint } from "../types/import.types";
+import { RelationalModelBlueprint } from "../../data-import/types/import.types";
 import { ImportAwardSchemeSchema } from "../../award-scheme/validation/award-scheme.schema";
 
 export const awardSchemeBlueprint: RelationalModelBlueprint = 

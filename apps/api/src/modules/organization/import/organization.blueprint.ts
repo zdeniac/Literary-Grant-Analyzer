@@ -1,6 +1,6 @@
-import { LegalForm } from "@prisma/client";
+import { LegalForm, Sector } from "@prisma/client";
 import { ImportOrganizationSchema } from "../../organization/validation/organization.schema";
-import { ModelBlueprint } from "../types/import.types";
+import { ModelBlueprint } from "../../data-import/types/import.types";
 
 export const organizationBlueprint: ModelBlueprint = 
     {
@@ -21,6 +21,12 @@ export const organizationBlueprint: ModelBlueprint =
                 type: 'enum',
                 required: true,
                 options: Object.values(LegalForm),
+            },
+            {
+                name: 'sector',
+                type: 'enum',
+                required: true,
+                options: Object.values(Sector),
             },
             {
                 name: 'address',

@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterAll } from "vitest";
 import { prisma } from "../../../src/db/prisma";
-import { LegalForm } from "@prisma/client";
+import { LegalForm, Sector } from "@prisma/client";
 import { wipeDatabase } from "../helpers/db.helper";
 import { createOrganization, deleteOrganization, findEveryOrganization, findOrganizationById, updateOrganization } from "../factories/organization.factory";
 import { createJournal } from "../factories/journal.factory";
@@ -9,6 +9,7 @@ describe('OrganizationServiceTest', () => {
     const input = {
         name: 'Jelenkor Alapítvány',
         legalForm: LegalForm.LTD,
+        sector: Sector.CIVIL,
         address: '7621 Pécs, Széchenyi tér 7-8',
         foundingYear: 1990,
     };
@@ -22,6 +23,7 @@ describe('OrganizationServiceTest', () => {
         expect(organization).toMatchObject({
             name: input.name,
             legalForm: input.legalForm,
+            sector: input.sector,
             address: input.address,
         });
     });
@@ -38,16 +40,19 @@ describe('OrganizationServiceTest', () => {
         const org1 = await createOrganization({
             name: 'Alapítvány',
             legalForm: LegalForm.FOUNDATION,
+            sector: Sector.CIVIL,
         });
 
         const org2 = await createOrganization({
             name: 'Kft',
             legalForm: LegalForm.LTD,
+            sector: Sector.MARKET,
         });
 
         const org3 = await createOrganization({
             name: 'Nyrt',
             legalForm: LegalForm.PLC,
+            sector: Sector.MARKET,
         });
 
         const found = await findEveryOrganization();

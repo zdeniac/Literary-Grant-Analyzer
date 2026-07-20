@@ -1,11 +1,12 @@
 import { required, SelectInput, SimpleForm, TextInput } from "react-admin";
 import { YearInput } from "../../../components/inputs/YearInput";
-import { legalForms, } from "../constants";
+import { legalForms, sectors, } from "../constants";
 import { url } from "../../../shared/validation/validators";
 
 const validateName = [required()];
 const validateWebsite = [url()];
 const validateLegalForm = [required()];
+const validateSector = [required()];
 
 export const OrganizationForm = () => (
     <SimpleForm>
@@ -19,6 +20,12 @@ export const OrganizationForm = () => (
             source="legalForm"
             choices={legalForms}
             validate={validateLegalForm}
+        />
+
+        <SelectInput 
+            source="sector"
+            choices={sectors}
+            validate={validateSector}
         />
 
         <YearInput source="foundingYear" />

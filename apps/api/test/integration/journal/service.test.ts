@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterAll } from "vitest";
-import { JournalStatus } from "@prisma/client";
+import { JournalFormat, JournalStatus } from "@prisma/client";
 import { wipeDatabase } from "../helpers/db.helper";
 import { createJournal, deleteJournal, findEveryJournal, findJournalById, updateJournal } from "../factories/journal.factory";
 import { createOrganization } from "../factories/organization.factory";
@@ -10,6 +10,7 @@ describe('JournalServiceTest', () => {
         name: 'Jelenkor',
         issn: '1234-567',
         status: JournalStatus.ACTIVE,
+        format: [JournalFormat.PRINT],
         foundingYear: 1990,
     };
 
@@ -20,7 +21,8 @@ describe('JournalServiceTest', () => {
         const org = await createOrganization({ name: 'Teszt' });
         const journal = await createJournal({ 
             ...journalInput,
-            organizationId: org.id 
+            organizationId: org.id,
+            format: [JournalFormat.PRINT]
         });
 
         expect(journal).toMatchObject({
@@ -63,6 +65,7 @@ describe('JournalServiceTest', () => {
         const j1 = await createJournal({
             name: 'Alföld',
             status: JournalStatus.ACTIVE,
+            format: [JournalFormat.ONLINE],
             organizationId: org.id,
             issn: '1234-568',
         });
@@ -70,13 +73,15 @@ describe('JournalServiceTest', () => {
         const j2 = await createJournal({
             name: 'Tiszatáj',
             status: JournalStatus.PAUSE,
+            format: [JournalFormat.ONLINE, JournalFormat.PRINT],
             organizationId: org.id,
             issn: '1234-569',
         });
 
         const j3 = await createJournal({
             name: 'Jelenkor',
-            status: JournalStatus.CLOSED,
+            status: JournalStatus.CEASED,
+            format: [JournalFormat.PRINT],
             organizationId: org.id,
             issn: '1234-510',
         });

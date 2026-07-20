@@ -3,10 +3,11 @@ model Journal {
 	name			String
 	issn			String?		@unique
 	status			JournalStatus
+	format			JournalFormat[]
 	foundingYear	Int?
 	
 	organizationId	Int
-	organization	Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+	organizations	Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
 
 	createdAt 		DateTime 	@default(now())
 	updatedAt 		DateTime 	@updatedAt
@@ -15,5 +16,10 @@ model Journal {
 enum JournalStatus {
 	ACTIVE
 	PAUSE
-	CLOSED
+	CEASED
+}
+
+enum JournalFormat {
+	ONLINE
+	PRINT
 }

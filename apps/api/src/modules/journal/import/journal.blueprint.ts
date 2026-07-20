@@ -1,6 +1,6 @@
-import { JournalStatus } from "@prisma/client";
+import { JournalFormat, JournalStatus } from "@prisma/client";
 import { ImportJournalSchema } from "../../journal/validate/journal.schema";
-import { RelationalModelBlueprint } from "../types/import.types";
+import { RelationalModelBlueprint } from "../../data-import/types/import.types";
 
 export const journalBlueprint: RelationalModelBlueprint = 
     {
@@ -19,13 +19,19 @@ export const journalBlueprint: RelationalModelBlueprint =
             {
                 name: 'foundingYear',
                 type: 'number',
-                required: true,
+                required: false,
             },
             {
                 name: 'status',
                 type: 'enum',
                 required: true,
                 options: Object.keys(JournalStatus)
+            },
+            {
+                name: 'format',
+                type: 'enum',
+                required: true,
+                options: Object.keys(JournalFormat)
             },
             {
                 name: 'organizationName',

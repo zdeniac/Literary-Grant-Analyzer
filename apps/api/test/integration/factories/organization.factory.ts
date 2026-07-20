@@ -1,4 +1,4 @@
-import { LegalForm, Organization } from "@prisma/client";
+import { LegalForm, Organization, Sector } from "@prisma/client";
 import { prisma } from "../../../src/db/prisma";
 import { OrganizationService } from "../../../src/modules/organization/organization.service";
 import { UpdateOrganizationDto } from "../../../src/modules/organization/dto/organization.dto";
@@ -20,13 +20,15 @@ const crudService = new CrudService(
 
 export const createOrganization = async (overrides: { 
     name: string, 
-    legalForm?: LegalForm, 
+    legalForm?: LegalForm,
+    sector?: Sector,
     address?: string, 
     foundingYear?: number
 }): Promise<Organization> => {
     return organizationService.create({
         name: overrides.name,
         legalForm: overrides.legalForm ?? LegalForm.LTD,
+        sector: overrides.sector ?? Sector.CIVIL,
         address: overrides.address ?? '1234',
         foundingYear: overrides.foundingYear ?? 1990,
     });

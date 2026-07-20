@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { OrganizationSchema } from "../../../src/modules/organization/validation/organization.schema";
-import { LegalForm } from "@prisma/client";
+import { LegalForm, Sector } from "@prisma/client";
 
 describe('Organization schema test', () => {
     
@@ -8,6 +8,7 @@ describe('Organization schema test', () => {
             const result = OrganizationSchema.safeParse({
                 name: 'Tiszatáj',
                 legalForm: LegalForm.FOUNDATION,
+                sector: Sector.CIVIL,
             });
 
             expect(result.success).toBe(true);
@@ -28,4 +29,12 @@ describe('Organization schema test', () => {
                 legalForm: 'INVALID'
             });
         });
+
+        it('rejects invalid sector', () => {
+            const result = OrganizationSchema.safeParse({
+                name: 'Tiszatáj',
+                sector: 'INVALID'
+            });
+        });
+
 });

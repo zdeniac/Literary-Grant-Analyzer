@@ -11,6 +11,7 @@ export const OrganizationList = () => {
                 <DataTable.Col source="name" />
                 <DataTable.Col source="address" />
                 <DataTable.Col source="legalForm" />
+                <DataTable.Col source="sector" />
                 <DataTable.Col source="foundingYear" />
 
                 <AuditColumns />

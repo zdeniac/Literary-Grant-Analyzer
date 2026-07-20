@@ -1,4 +1,4 @@
-import { Journal, JournalStatus } from "@prisma/client";
+import { Journal, JournalFormat, JournalStatus } from "@prisma/client";
 import { Issn } from "../../../src/modules/journal/types/journal.types";
 import { Id } from "../../../src/common/types/types";
 import { CreateJournalDto, UpdateJournalDto } from "../../../src/modules/journal/dto/journal.dto";
@@ -16,7 +16,8 @@ export const createJournal = async (overrides: {
     organizationId: Id, 
     name?: string,
     foundingYear?: number
-    status?: JournalStatus, 
+    status?: JournalStatus,
+    format?: JournalFormat[],
     issn?: Issn,
 }): Promise<Journal> => {
     return journalService.create({
@@ -24,6 +25,7 @@ export const createJournal = async (overrides: {
         name: overrides.name ?? 'Tiszatáj',
         foundingYear: overrides.foundingYear ?? 1980,
         status: overrides.status ?? JournalStatus.PAUSE,
+        format: overrides.format ?? [JournalFormat.PRINT, JournalFormat.ONLINE],
         issn: overrides.issn ?? '1234-567',
     });
 };

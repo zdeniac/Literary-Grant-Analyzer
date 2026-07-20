@@ -1,4 +1,4 @@
-import { JournalStatus } from "@prisma/client";
+import { JournalFormat, JournalStatus } from "@prisma/client";
 import z from "zod";
 import { OrganizationSchema } from "../../organization/validation/organization.schema";
 import { idSchema, nameSchema, yearSchema } from "../../../common/validation/schema";
@@ -13,6 +13,7 @@ const JournalBaseSchema = z.object({
     issn: issnSchema.nullable().optional(),
     foundingYear: yearSchema.nullable().optional(),
     status: z.enum(JournalStatus).optional(),
+    format: z.array(z.enum(JournalFormat)).min(1),
 });
 
 export const JournalSchema = JournalBaseSchema.extend({

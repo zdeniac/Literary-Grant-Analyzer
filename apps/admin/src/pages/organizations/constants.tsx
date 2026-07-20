@@ -1,6 +1,6 @@
-import { LegalForm } from "../../../../packages/shared/enums";
+import { LegalForm, Sector } from "../../../../packages/shared/enums";
 
-export const legalForms =[
+export const legalForms = [
     { 
         id: LegalForm.LTD, 
         name: 'Korlátolt felelősségű társaság (Kft.)' 
@@ -20,5 +20,25 @@ export const legalForms =[
     {
         id: LegalForm.OTHER, 
         name: 'Egyéb' 
+    },
+];
+
+
+export const sectors = [
+    {
+        id: Sector.CIVIL,
+        name: 'Civil'
+    },
+    {
+        id: Sector.MARKET,
+        name: 'Piaci'
+    },
+    {
+        id: Sector.PUBLIC,
+        name: 'Állami'
+    },
+    {
+        id: Sector.OTHER,
+        name: 'Egyéb'
     },
 ];
