@@ -1,3 +1,4 @@
+import { Id } from "../../common/types/types";
 import { PrismaDatabase } from "../../db/types";
 import { AwardDecisionWithActors } from "./types/award-decision.types";
 
@@ -27,7 +28,7 @@ export class AwardDecisionRepository
         });
     }
 
-    async findByIdWithActors(id: number): Promise<AwardDecisionWithActors | null>
+    async findByIdWithActors(id: Id): Promise<AwardDecisionWithActors | null>
     {
         return this.model.findUnique({
             where: { id },

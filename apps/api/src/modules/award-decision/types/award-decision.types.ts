@@ -1,15 +1,4 @@
-import { AwardDecision, Prisma } from "@prisma/client";
-
-// export type AwardDecisionWithActors = AwardDecision & {
-//     decisionMaker: {
-//         organization: { name: string } | null;
-//         decisionBody: { name: string } | null;
-//     };
-//     recipient: {
-//         organization: { name: string } | null;
-//         decisionBody: { name: string } | null;
-//     };
-// };
+import { Prisma } from "@prisma/client";
 
 export type AwardDecisionWithActors = Prisma.AwardDecisionGetPayload<{
     include: {

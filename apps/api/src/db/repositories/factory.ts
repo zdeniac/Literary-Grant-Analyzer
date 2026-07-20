@@ -2,7 +2,7 @@ import { AwardDecision, AwardScheme, DecisionBody, Journal, Organization, Source
 import { PrismaDatabase } from "../types";
 import { PrismaCrudRepository } from "./prisma-crud-repository";
 import { CreateOrganizationData, UpdateOrganizationDto } from "../../modules/organization/dto/organization.dto";
-import { CreateJournalDto, UpdateJournalDto } from "../../modules/journal/dto/journal.dto";
+import { CreateJournalWithOrganizationsInput, UpdateJournalWithOrganizationsInput } from "../../modules/journal/dto/journal.dto";
 import { CreateAwardSchemeDto } from "../../modules/award-scheme/dto/award-scheme.dto";
 import { UpdateAwardDecisionDto } from "../../modules/award-decision/dto/award-decision.dto";
 import { CreateDecisionBodyData, UpdateDecisionBodyDto } from "../../modules/decision-body/dto/decision-body.dto";
@@ -13,7 +13,7 @@ import { ActorRepository } from "../../modules/actor/actor.repository";
 export function createRepositories(db: PrismaDatabase)
 {
     let organization: PrismaCrudRepository<Organization, CreateOrganizationData, UpdateOrganizationDto> | undefined;
-    let journal: PrismaCrudRepository<Journal, CreateJournalDto, UpdateJournalDto> | undefined;
+    let journal: PrismaCrudRepository<Journal, CreateJournalWithOrganizationsInput, UpdateJournalWithOrganizationsInput> | undefined;
     let awardScheme: PrismaCrudRepository<AwardScheme, CreateAwardSchemeDto, UpdateAwardDecisionDto> | undefined;
     let decisionBody: PrismaCrudRepository<DecisionBody, CreateDecisionBodyData, UpdateDecisionBodyDto> | undefined;
     let sourceDocument: PrismaCrudRepository<SourceDocument, CreateSourceDocumentDto, UpdateSourceDocumentDto> | undefined;

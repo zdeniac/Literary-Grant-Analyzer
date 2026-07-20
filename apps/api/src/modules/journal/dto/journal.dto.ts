@@ -1,8 +1,24 @@
 import { JournalFormat, JournalStatus } from "@prisma/client"
 import z from "zod";
-import { JournalSchema } from "../validate/journal.schema";
+import { CreateJournalSchemaWithOrganizations, UpdateJournalSchemaWithOrganizations } from "../validate/journal.schema";
 import { Issn } from "../types/journal.types";
 import { Id, Name, Year } from "../../../common/types/types";
+import { JournalOrganizationDto } from "../../journal-organization/dto/journal-organization.dto";
+
+export type JournalWithOrganizationsDto = {
+    id: Id;
+    
+    name: Name;
+	issn: Issn | null;
+	status: JournalStatus;
+    format: JournalFormat[];
+    foundingYear: Year | null;
+
+    organizations: JournalOrganizationDto[];
+
+    createdAt: Date;
+    updatedAt: Date | null;
+}
 
 export type JournalDto = {
     id: Id;
@@ -13,12 +29,9 @@ export type JournalDto = {
     format: JournalFormat[];
     foundingYear: Year | null;
 
-    organizationId: Id;
-
     createdAt: Date;
     updatedAt: Date | null;
-}
+};
 
-export type CreateJournalDto = z.infer<typeof JournalSchema>;
-
-export type UpdateJournalDto = Partial<JournalDto>;
+export type CreateJournalWithOrganizationsInput = z.infer<typeof CreateJournalSchemaWithOrganizations>;
+export type UpdateJournalWithOrganizationsInput = z.infer<typeof UpdateJournalSchemaWithOrganizations>;

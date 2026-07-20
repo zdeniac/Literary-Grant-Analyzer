@@ -10,7 +10,7 @@ model Organization {
 	actorId			Int 		@unique
 	actor			Actor 		@relation(fields: [actorId], references: [id], onDelete: Restrict)
 	
-	journals		Journal[]
+	journals		JournalOrganization[]
 	decisionBodies	DecisionBody[]
 	awardSchemes	AwardScheme[]
 

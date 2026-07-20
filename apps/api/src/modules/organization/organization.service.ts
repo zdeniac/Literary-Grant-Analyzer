@@ -3,7 +3,7 @@ import { CreateOrganizationData, CreateOrganizationDto, UpdateOrganizationDto } 
 import { ActorRepository } from "../actor/actor.repository";
 import { Id } from "../../common/types/types";
 import { transaction } from "../../db/transaction";
-import { CrudRepository, PrismaDatabase } from "../../db/types";
+import { CrudRepository } from "../../db/types";
 import { createRepositories } from "../../db/repositories/factory";
 
 export class OrganizationService

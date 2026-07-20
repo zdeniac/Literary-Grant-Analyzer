@@ -1,0 +1,16 @@
+model JournalOrganization {
+    id                  Int             @id @default(autoincrement())
+
+    journalId           Int
+    organizationId      Int
+
+    journal             Journal         @relation(fields: [journalId], references: [id], onDelete: Restrict)
+    organization        Organization    @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+
+    fromYear            Int?
+    toYear              Int?
+    note                String?
+    sourceDocumentId    Int?
+    
+    createdAt           DateTime        @default(now())
+}

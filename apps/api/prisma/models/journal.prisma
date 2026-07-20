@@ -6,8 +6,7 @@ model Journal {
 	format			JournalFormat[]
 	foundingYear	Int?
 	
-	organizationId	Int
-	organizations	Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+	organizations	JournalOrganization[]
 
 	createdAt 		DateTime 	@default(now())
 	updatedAt 		DateTime 	@updatedAt

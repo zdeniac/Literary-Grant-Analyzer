@@ -1,11 +1,11 @@
 import { describe, it, expect } from "vitest";
 import { JournalStatus } from "@prisma/client";
-import { JournalSchema } from "../../../src/modules/journal/validate/journal.schema";
+import { JournalSchemaWithOrganizations } from "../../../src/modules/journal/validate/journal.schema";
 
 describe('Journal schema test', () => {
     
         it('accepts valid organization id', () => {
-            const result = JournalSchema.safeParse({
+            const result = JournalSchemaWithOrganizations.safeParse({
                 name: 'Alföld',
                 status: JournalStatus.ACTIVE,
                 organizationId: 1,
@@ -15,7 +15,7 @@ describe('Journal schema test', () => {
         });
 
         it('rejects empty name', () => {
-            const result = JournalSchema.safeParse({
+            const result = JournalSchemaWithOrganizations.safeParse({
                 name: '',
                 status: 'ACTIVE',
                 organizationId: 1,
@@ -25,7 +25,7 @@ describe('Journal schema test', () => {
         });
 
         it('rejects invalid status', () => {
-            const result = JournalSchema.safeParse({
+            const result = JournalSchemaWithOrganizations.safeParse({
                 name: 'Alföld',
                 status: 'BRR',
                 organizationId: 1,
@@ -35,7 +35,7 @@ describe('Journal schema test', () => {
         });
 
         it('rejects empty organization id', () => {
-            const result = JournalSchema.safeParse({
+            const result = JournalSchemaWithOrganizations.safeParse({
                 name: 'Alföld',
                 status: JournalStatus.ACTIVE,
                 organizationId: null,
