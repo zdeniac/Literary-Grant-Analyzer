@@ -6,7 +6,7 @@ export class DataImportLookup<TModel> implements ImportLookup<TModel>
         private readonly repository: ImportLookup<TModel>
     ) {}
     
-    findManyBy(field: string, values: unknown[]): Promise<TModel[]>
+    async findManyBy(field: string, values: unknown[]): Promise<TModel[]>
     {
         return this.repository.findManyBy(field, values);
     }

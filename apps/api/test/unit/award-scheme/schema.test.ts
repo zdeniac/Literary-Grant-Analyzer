@@ -1,4 +1,4 @@
-import { AwardSchemeSchema } from "../../../src/modules/award-scheme/validation/award-scheme.schema";
+import { awardSchemeSchema } from "../../../src/modules/award-scheme/validation/award-scheme.schema";
 import { AwardSchemeType } from "@prisma/client";
 import { describe, expect, it } from "vitest";
 
@@ -10,14 +10,14 @@ describe('AwardSchemeSchema', () => {
     };
 
     it('parses valid input', () => {
-        const result = AwardSchemeSchema.parse(validInput);
+        const result = awardSchemeSchema.parse(validInput);
 
         expect(result).toEqual(validInput);
     });
 
     it('fails when name is invalid', () => {
         expect(() =>
-            AwardSchemeSchema.parse({
+            awardSchemeSchema.parse({
                 ...validInput,
                 name: '',
             })
@@ -26,7 +26,7 @@ describe('AwardSchemeSchema', () => {
 
     it('fails when type is invalid enum value', () => {
         expect(() =>
-            AwardSchemeSchema.parse({
+            awardSchemeSchema.parse({
                 ...validInput,
                 type: 'INVALID',
             } as any)
@@ -35,7 +35,7 @@ describe('AwardSchemeSchema', () => {
 
     it('fails when organizationId is missing', () => {
         expect(() =>
-            AwardSchemeSchema.parse({
+            awardSchemeSchema.parse({
                 ...validInput,
                 organizationId: undefined,
             })

@@ -1,9 +1,9 @@
 import { NotFoundError } from "../../common/errors/http.error";
 import { Id } from "../../common/types/types";
-import { CreateJournalWithOrganizationsInput, UpdateJournalWithOrganizationsInput } from "./dto/journal.dto";
+import { CreateJournalWithAffiliationsInput, UpdateJournalWithAffiliationsInput } from "./dto/journal.dto";
 import { JournalRepository } from "./journal.repository";
-import { JournalWithOrganizations } from "./types/journal.types";
-import { JournalOrganizationRepository } from "../journal-organization/journal-organization.repository";
+import { JournalWithAffiliatedOrganizationsAndSourceDocument } from "./types/journal.types";
+import { JournalOrganizationRepository } from "../journal-affiliation/journal-affiliation.repository";
 
 export class JournalService
 {
@@ -13,54 +13,56 @@ export class JournalService
     ) {
     }
 
-    async create(dto: CreateJournalWithOrganizationsInput): Promise<JournalWithOrganizations>
+    async create(dto: CreateJournalWithAffiliationsInput): Promise<JournalWithAffiliatedOrganizationsAndSourceDocument>
     {
-        return this.repository.createWithOrganizations(dto);
+        return this.repository.createWithAffiliations(dto);
     }
 
-    async update(id: Id, dto: UpdateJournalWithOrganizationsInput): Promise<JournalWithOrganizations>
+    async update(id: Id, dto: UpdateJournalWithAffiliationsInput): Promise<JournalWithAffiliatedOrganizationsAndSourceDocument>
     {
         const existing = await this.pivotRepository.findManyByJournalId(id)
         const existingById = new Map(
             existing.map(item => [item.id, item])
         );
 
-        const pivotIds = new Set(
-            dto.pivot
-                .filter(pivot => pivot?.id !== undefined)
-                .map(pivot => pivot.id!)
+        const affiliationIds = new Set(
+            dto.affiliations!
+                .filter(affiliation => affiliation?.id !== undefined)
+                .map(affiliation => affiliation.id!)
         );
 
         // update + create
-        for (const pivot of dto.pivot) {
-            if (pivot.id) {
-                const current = existingById.get(pivot.id);
+        for (const affiliation of dto.affiliations!) {
+            if (affiliation.id) {
+                const current = existingById.get(affiliation.id);
 
                 if (!current) {
-                    throw new Error(`JournalOrganization ${pivot.id} not found.`);
+                    throw new Error(`JournalAffiliation ${affiliation.id} not found.`);
                 }
 
-                await this.pivotRepository.update(pivot.id, {
-                    fromYear: pivot.fromYear,
-                    toYear: pivot.toYear,
-                    note: pivot.note,
-                    sourceDocumentId: pivot.sourceDocumentId,
+                await this.pivotRepository.update(affiliation.id, {
+                    fromYear: affiliation.fromYear,
+                    toYear: affiliation.toYear,
+                    note: affiliation.note,
+                    sourceDocumentId: affiliation.sourceDocumentId,
+                    isCurrent: affiliation.isCurrent,
                 });
             } else {
                 await this.pivotRepository.create({
                     journalId: id,
-                    organizationId: pivot.organizationId,
-                    fromYear: pivot.fromYear,
-                    toYear: pivot.toYear,
-                    note: pivot.note,
-                    sourceDocumentId: pivot.sourceDocumentId,
+                    organizationId: affiliation.organizationId,
+                    fromYear: affiliation.fromYear,
+                    toYear: affiliation.toYear,
+                    note: affiliation.note,
+                    isCurrent: affiliation.isCurrent,
+                    sourceDocumentId: affiliation.sourceDocumentId,
                 });
             }
         }
 
         // delete
         for (const current of existing) {
-            if (!pivotIds.has(current.id)) {
+            if (!affiliationIds.has(current.id)) {
                 await this.pivotRepository.delete(current.id);
             }
         }
@@ -68,7 +70,7 @@ export class JournalService
         return this.repository.findById(id);
     }
 
-    async findByIdWithOrganizations(id: Id): Promise<JournalWithOrganizations | null>
+    async findByIdWithOrganizations(id: Id): Promise<JournalWithAffiliatedOrganizationsAndSourceDocument | null>
     {
         const journal = await this.repository.findById(id);
 

@@ -1,6 +1,6 @@
 import { PrismaDatabase } from "../../db/types";
-import { CreateJournalWithOrganizationsInput } from "./dto/journal.dto";
-import { JournalWithOrganizations } from "./types/journal.types";
+import { CreateJournalWithAffiliationsInput } from "./dto/journal.dto";
+import { JournalWithAffiliatedOrganizationsAndSourceDocument } from "./types/journal.types";
 import { Id } from "../../common/types/types";
 
 export class JournalRepository
@@ -9,7 +9,7 @@ export class JournalRepository
         private readonly model: PrismaDatabase['journal']
     ) {}
     
-    async createWithOrganizations(dto: CreateJournalWithOrganizationsInput): Promise<JournalWithOrganizations>
+    async createWithAffiliations(dto: CreateJournalWithAffiliationsInput): Promise<JournalWithAffiliatedOrganizationsAndSourceDocument>
     {
         return this.model.create({
             data: {
@@ -19,41 +19,44 @@ export class JournalRepository
                 format: dto.format,
                 foundingYear: dto.foundingYear,
 
-                organizations: {
-                    create: dto.organizations.map(org => ({
+                affiliations: {
+                    create: dto.affiliations.map(affiliation => ({
                         organization: {
                             connect: {
-                                id: org.organizationId
+                                id: affiliation.organizationId
                             }
                         },
 
-                        sourceDocumentId: org.sourceDocumentId,
-                        note: org.note,
-                        fromYear: org.fromYear,
-                        toYear: org.toYear
+                        sourceDocumentId: affiliation.sourceDocumentId,
+                        note: affiliation.note,
+                        isCurrent: affiliation.isCurrent,
+                        fromYear: affiliation.fromYear,
+                        toYear: affiliation.toYear
                     }))
                 },      
             },
             include: {
-                organizations: {
+                affiliations: {
                     include: {
-                        organization: true
+                        organization: true,
+                        sourceDocument: true,
                     }
                 }
             }
         });
     }
 
-    async findById(id: Id): Promise<JournalWithOrganizations>
+    async findById(id: Id): Promise<JournalWithAffiliatedOrganizationsAndSourceDocument>
     {
         return this.model.findUniqueOrThrow({
             where: {
                 id
             },
             include: {
-                organizations: {
+                affiliations: {
                     include: {
-                        organization: true
+                        organization: true,
+                        sourceDocument: true,
                     }
                 }
             }

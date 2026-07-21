@@ -1,16 +1,20 @@
-model JournalOrganization {
+model JournalAffiliation {
     id                  Int             @id @default(autoincrement())
 
     journalId           Int
     organizationId      Int
+    sourceDocumentId    Int?
+
+    isCurrent           Boolean         @default(true)
 
     journal             Journal         @relation(fields: [journalId], references: [id], onDelete: Restrict)
     organization        Organization    @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+    sourceDocument      SourceDocument?  @relation(fields: [sourceDocumentId], references: [id], onDelete: Restrict)
 
     fromYear            Int?
     toYear              Int?
     note                String?
-    sourceDocumentId    Int?
     
     createdAt           DateTime        @default(now())
+    updatedAt           DateTime        @updatedAt
 }

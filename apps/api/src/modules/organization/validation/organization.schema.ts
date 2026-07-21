@@ -1,28 +1,47 @@
 import { LegalForm, Sector } from "@prisma/client";
 import * as z from "zod";
-import { nameSchema, yearSchema } from "../../../common/validation/schema";
+import { idSchema, nameSchema, yearSchema } from "../../../common/validation/schema";
 
-export const OrganizationSchema = z.object({
+export const organizationSchema = z.object({
+    id: idSchema,
+
     name: nameSchema,
-
     legalForm: z.enum(LegalForm),
     sector: z.enum(Sector),
+    
+    address: z.string().min(4).max(256).nullable(),
+    website: z.httpUrl().nullable(),
+    foundingYear: yearSchema.nullable(),
 
-    address: z.preprocess(
-        value => value === '' || value === null ? undefined : value,
-        z.string().min(4).max(256).optional()
-    ),
+    actorId: idSchema.nullable(),
 
-    website: z.preprocess(
-        value => value === '' || value === null ? undefined : value,
-        z.httpUrl().optional()
-    ),
-
-    foundingYear: yearSchema.optional(),
+    createdAt: z.coerce.date(),
+    updatedAt: z.coerce.date().nullable(),
 });
 
-export const UpdateOrganizationSchema = OrganizationSchema.partial();
+export const createOrganizationSchema = organizationSchema
+    .omit({
+        id: true,
+        createdAt: true,
+        updatedAt: true,
+        actorId: true,
+    })
+    .extend({
+        address: z.preprocess(
+            value => value === '' || value === null ? undefined : value,
+            z.string().min(4).max(256).optional()
+        ),
+        website: z.preprocess(
+            value => value === '' || value === null ? undefined : value,
+            z.httpUrl().optional()
+        ),
+        foundingYear: yearSchema.optional(),
+    });
 
-export const ImportOrganizationSchema = OrganizationSchema.extend({
-    foundingYear: z.coerce.number().optional(),
+export const createOrganizationWithActorIdSchema = createOrganizationSchema.extend({
+    actorId: idSchema,
 });
+
+export const updateOrganizationSchema = createOrganizationSchema.partial();
+
+export const importOrganizationSchema = createOrganizationSchema;

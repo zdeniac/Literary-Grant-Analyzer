@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { createDecisionBodyModule } from "./decision-body.factory";
-import { DecisionBodySchema, UpdateDecisionBodySchema } from "./validation/decision-body.schema";
+import { decisionBodySchema, updateDecisionBodySchema } from "./validation/decision-body.schema";
 import { validate } from "../../common/middleware/validate";
 
 const router = Router();
@@ -13,7 +13,7 @@ router.get(
 
 router.patch(
     '/:id',
-    validate(UpdateDecisionBodySchema),
+    validate(updateDecisionBodySchema),
     crudController.update,
 );
 
@@ -24,7 +24,7 @@ router.delete(
 
 router.post(
     '/',
-    validate(DecisionBodySchema),
+    validate(decisionBodySchema),
     controller.create,
 );
 

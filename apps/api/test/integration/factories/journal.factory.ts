@@ -1,19 +1,19 @@
 import { Journal, JournalFormat, JournalStatus } from "@prisma/client";
 import { Issn } from "../../../src/modules/journal/types/journal.types";
 import { Id } from "../../../src/common/types/types";
-import { CreateJournalWithOrganizationsInput, UpdateJournalWithOrganizationsInput } from "../../../src/modules/journal/dto/journal.dto";
+import { CreateJournalWithAffiliationsInput, UpdateJournalWithAffiliationsInput } from "../../../src/modules/journal/dto/journal.dto";
 import { CrudService } from "../../../src/common/services/crud.service";
 import { PrismaCrudRepository } from "../../../src/db/repositories/prisma-crud-repository";
 import { prisma } from "../../../src/db/prisma";
 
 const journalService = new CrudService<
     Journal, 
-    CreateJournalWithOrganizationsInput, 
-    UpdateJournalWithOrganizationsInput
+    CreateJournalWithAffiliationsInput, 
+    UpdateJournalWithAffiliationsInput
 >(new PrismaCrudRepository(prisma.journal));
 
 export const createJournal = async (overrides: {
-    organizationId: Id, 
+    affiliationId: Id, 
     name?: string,
     foundingYear?: number
     status?: JournalStatus,
@@ -21,7 +21,7 @@ export const createJournal = async (overrides: {
     issn?: Issn,
 }): Promise<Journal> => {
     return journalService.create({
-        organizationId: overrides.organizationId, 
+        affiliationId: overrides.affiliationId, 
         name: overrides.name ?? 'Tiszatáj',
         foundingYear: overrides.foundingYear ?? 1980,
         status: overrides.status ?? JournalStatus.PAUSE,

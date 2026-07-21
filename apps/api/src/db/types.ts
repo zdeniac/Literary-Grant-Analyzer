@@ -1,7 +1,7 @@
 import { Prisma, PrismaClient } from "@prisma/client";
 import { GetBatchResult } from "@prisma/client/runtime/client";
 
-// This type is needed for using transactions for repositories
+// This type is needed for using transactions
 export type PrismaDatabase = PrismaClient | Prisma.TransactionClient;
 
 export type ModelDelegate<T> = {

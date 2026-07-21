@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { createAwardDecisionModule } from "./award-decision.factory";
 import { validate } from "../../common/middleware/validate";
-import { CreateAwardDecisionSchema, UpdateAwardDecisionSchema } from "./validation/award-decision.schema";
+import { createAwardDecisionSchema, updateAwardDecisionSchema } from "./validation/award-decision.schema";
 
 const router = Router();
 const { controller, crudController } = createAwardDecisionModule();
@@ -13,7 +13,7 @@ router.get(
 
 router.patch(
     '/:id',
-    validate(UpdateAwardDecisionSchema),
+    validate(updateAwardDecisionSchema),
     crudController.update,
 );
 
@@ -24,7 +24,7 @@ router.delete(
 
 router.post(
     '/',
-    validate(CreateAwardDecisionSchema),
+    validate(createAwardDecisionSchema),
     crudController.create,
 );
 

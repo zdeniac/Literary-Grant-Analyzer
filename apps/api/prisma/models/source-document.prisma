@@ -1,12 +1,13 @@
 model SourceDocument {
-  id            Int  @id  @default(autoincrement())
+  id                    Int               @id  @default(autoincrement())
 	
-  title         String    
-  url           String    @unique
-  retrievedAt   DateTime
+  title                 String    
+  url                   String            @unique
+  retrievedAt           DateTime
 
-  decisions     AwardDecision[]
+  decisions             AwardDecision[]
+  journalAffiliations   JournalAffiliation[]
 
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @updatedAt
 }

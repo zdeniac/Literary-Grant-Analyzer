@@ -1,6 +1,6 @@
 import { AwardSchemeType } from "@prisma/client";
 import { RelationalModelBlueprint } from "../../data-import/types/import.types";
-import { ImportAwardSchemeSchema } from "../../award-scheme/validation/award-scheme.schema";
+import { importAwardSchemeSchema } from "../../award-scheme/validation/award-scheme.schema";
 
 export const awardSchemeBlueprint: RelationalModelBlueprint = 
     {
@@ -23,7 +23,7 @@ export const awardSchemeBlueprint: RelationalModelBlueprint =
                 required: true
             },
         ],
-        schema: ImportAwardSchemeSchema,
+        schema: importAwardSchemeSchema,
         relations: [
             {
                 model: 'organization',

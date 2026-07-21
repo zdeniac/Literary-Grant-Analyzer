@@ -1,10 +1,10 @@
-import { AwardDecision } from "@prisma/client";
 import { AwardDecisionDto } from "../dto/award-decision.dto";
+import { AwardDecisionModel } from "../types/award-decision.types";
 
-export const toAwardDecisionDto = (awardDecision: AwardDecision): AwardDecisionDto => ({
+export const toAwardDecisionDto = (awardDecision: AwardDecisionModel): AwardDecisionDto => ({
     id: awardDecision.id,
 
-    amount: Number(awardDecision.amount),
+    amount: awardDecision.amount,
     purpose: awardDecision.purpose,
     sourceIdentifier: awardDecision.sourceIdentifier,
     decisionDate: awardDecision.decisionDate,

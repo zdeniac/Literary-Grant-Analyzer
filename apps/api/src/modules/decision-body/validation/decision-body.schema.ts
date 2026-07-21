@@ -1,17 +1,48 @@
 import z from "zod";
 import { idSchema, nameSchema } from "../../../common/validation/schema";
-import { OrganizationSchema } from "../../organization/validation/organization.schema";
+import { organizationSchema } from "../../organization/validation/organization.schema";
 
-const DecisionBodyBaseSchema = z.object({
+export const decisionBodySchema = z.object({
+    id: idSchema,
+
     name: nameSchema,
+    organizationId: idSchema.optional().nullable(),
+    actorId: idSchema,
+
+    createdAt: z.coerce.date(),
+    updatedAt: z.coerce.date(),
 });
 
-export const DecisionBodySchema = DecisionBodyBaseSchema.extend({
-    organizationId: idSchema,
-});
+const ommittedFields = {
+    id: true,
+    actorId: true,
+    createdAt: true,
+    updatedAt: true,
+} as const;
 
-export const UpdateDecisionBodySchema = DecisionBodySchema.partial();
+export const createDecisionBodyInputSchema = decisionBodySchema
+    .omit(ommittedFields)
+    .extend({
+        organizationId: idSchema,
+    });
 
-export const ImportDecisionBodySchema = DecisionBodyBaseSchema.extend({
-    organizationName: OrganizationSchema.shape.name,
-});
+export const createDecisionBodySchema = decisionBodySchema
+    .omit({
+        id: true,
+        createdAt: true,
+        updatedAt: true,
+    })
+    .extend({
+        organizationId: idSchema,
+    });
+
+export const updateDecisionBodySchema = decisionBodySchema
+    .omit(ommittedFields)
+    .partial()
+;
+
+export const importDecisionBodySchema = decisionBodySchema
+    .partial()
+    .extend({
+        organizationName: organizationSchema.shape.name,
+    });

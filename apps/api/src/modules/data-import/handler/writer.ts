@@ -1,4 +1,4 @@
-import { ImportRow, ImportWriter } from "../types/import.types";
+import { ImportWriter } from "../types/import.types";
 
 export class DataImportWriter<TCreate> implements ImportWriter<TCreate>
 {
@@ -6,7 +6,7 @@ export class DataImportWriter<TCreate> implements ImportWriter<TCreate>
         private readonly repository: ImportWriter<TCreate>
     ) {}
 
-    createMany(data: TCreate[]): Promise<number> 
+    async createMany(data: TCreate[]): Promise<number> 
     {
         return this.repository.createMany(data);
     }

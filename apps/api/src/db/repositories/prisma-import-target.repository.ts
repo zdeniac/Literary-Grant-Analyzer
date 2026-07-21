@@ -33,9 +33,4 @@ export class PrismaImportTargetRepository<TModel, TCreate> implements ImportLook
             }
         });
     }
-
-    withClient(client: PrismaDatabase): this 
-    {
-        return new (this.constructor as any)(client);
-    }
 }

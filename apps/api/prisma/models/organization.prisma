@@ -10,9 +10,9 @@ model Organization {
 	actorId			Int 		@unique
 	actor			Actor 		@relation(fields: [actorId], references: [id], onDelete: Restrict)
 	
-	journals		JournalOrganization[]
-	decisionBodies	DecisionBody[]
-	awardSchemes	AwardScheme[]
+	journalAffiliations		JournalAffiliation[]
+	decisionBodies			DecisionBody[]
+	awardSchemes			AwardScheme[]
 
 	createdAt 		DateTime 	@default(now())
 	updatedAt 		DateTime 	@updatedAt

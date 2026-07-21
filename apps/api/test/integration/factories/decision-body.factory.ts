@@ -3,7 +3,7 @@ import { Id } from "../../../src/common/types/types";
 import { prisma } from "../../../src/db/prisma";
 import { DecisionBodyRepository } from "../../../src/modules/decision-body/decision-body.repository";
 import { DecisionBodyService } from "../../../src/modules/decision-body/decision-body.service";
-import { UpdateDecisionBodyDto } from "../../../src/modules/decision-body/dto/decision-body.dto";
+import { UpdateDecisionBodyInput } from "../../../src/modules/decision-body/dto/decision-body.dto";
 import { ActorRepository } from "../../../src/modules/actor/actor.repository";
 
 const decisionBodyService = new DecisionBodyService(
@@ -30,5 +30,5 @@ export const findEveryDecisionBody = async (): Promise<DecisionBody[]> =>
 export const deleteDecisionBody = async (id: Id): Promise<DecisionBody> => 
     await decisionBodyService.delete(id);
 
-export const updateDecisionBody = async (id: Id, data: UpdateDecisionBodyDto): Promise<DecisionBody> => 
+export const updateDecisionBody = async (id: Id, data: UpdateDecisionBodyInput): Promise<DecisionBody> => 
     await decisionBodyService.update(id, data);

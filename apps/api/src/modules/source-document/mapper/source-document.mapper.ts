@@ -1,8 +1,8 @@
 import { SourceDocument } from "@prisma/client";
-import { SourceDocumentDto } from "../dto/source-document.dto";
+import { SourceDocumentDto, SourceDocumentModel } from "../dto/source-document.dto";
 import { DtoMapper } from "../../../common/types/types";
 
-export const toSourceDocumentDto: DtoMapper<SourceDocument, SourceDocumentDto> = (
+export const toSourceDocumentDto: DtoMapper<SourceDocumentModel, SourceDocumentDto> = (
     sourceDocument
 ) => ({
     id: sourceDocument.id,

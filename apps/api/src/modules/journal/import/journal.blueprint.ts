@@ -1,5 +1,5 @@
 import { JournalFormat, JournalStatus } from "@prisma/client";
-import { ImportJournalSchema } from "../../journal/validate/journal.schema";
+import { importJournalSchema } from "../../journal/validate/journal.schema";
 import { RelationalModelBlueprint } from "../../data-import/types/import.types";
 
 export const journalBlueprint: RelationalModelBlueprint = 
@@ -39,7 +39,7 @@ export const journalBlueprint: RelationalModelBlueprint =
                 required: true
             },
         ],
-        schema: ImportJournalSchema,
+        schema: importJournalSchema,
         relations: [
             {
                 model: 'organization',

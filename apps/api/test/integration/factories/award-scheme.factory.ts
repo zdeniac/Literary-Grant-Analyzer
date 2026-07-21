@@ -3,7 +3,7 @@ import { Id } from "../../../src/common/types/types";
 import { prisma } from "../../../src/db/prisma";
 import { AwardSchemeRepository as AwardSchemeRepository } from "../../../src/modules/award-scheme/award-scheme.repository";
 import { AwardSchemeService } from "../../../src/modules/award-scheme/award-scheme.service";
-import { UpdateAwardSchemeDto  } from "../../../src/modules/award-scheme/dto/award-scheme.dto";
+import { UpdateAwardSchemeInput  } from "../../../src/modules/award-scheme/dto/award-scheme.dto";
 
 const awardSchemeService = new AwardSchemeService(new AwardSchemeRepository(prisma));
 
@@ -28,5 +28,5 @@ export const findEveryAwardScheme = async (): Promise<AwardScheme[]> =>
 export const deleteAwardScheme = async (id: Id): Promise<AwardScheme> => 
     await awardSchemeService.delete(id);
 
-export const updateAwardScheme = async (id: Id, data: UpdateAwardSchemeDto): Promise<AwardScheme> => 
+export const updateAwardScheme = async (id: Id, data: UpdateAwardSchemeInput): Promise<AwardScheme> => 
     await awardSchemeService.update(id, data);

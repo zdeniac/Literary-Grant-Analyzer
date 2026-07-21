@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { createAwardSchemeModule } from "./award-scheme.factory";
 import { validate } from "../../common/middleware/validate";
-import { AwardSchemeSchema, UpdateAwardSchemeSchema } from "./validation/award-scheme.schema";
+import { awardSchemeSchema, updateAwardSchemeSchema } from "./validation/award-scheme.schema";
 
 const router = Router();
 const { controller } = createAwardSchemeModule();
@@ -13,7 +13,7 @@ router.get(
 
 router.patch(
     '/:id',
-    validate(UpdateAwardSchemeSchema),
+    validate(updateAwardSchemeSchema),
     controller.update,
 );
 
@@ -24,7 +24,7 @@ router.delete(
 
 router.post(
     '/',
-    validate(AwardSchemeSchema),
+    validate(awardSchemeSchema),
     controller.create,
 );
 

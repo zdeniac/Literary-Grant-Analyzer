@@ -1,26 +1,5 @@
-import { LegalForm, Sector } from "@prisma/client";
 import z from "zod";
-import { OrganizationSchema } from "../validation/organization.schema";
-import { Id, Year } from "../../../common/types/types";
+import { organizationSchema } from "../validation/organization.schema";
 
-export type OrganizationDto = {
-    id: Id;
-    
-    name: string;
-    website: string | null;
-    legalForm: LegalForm;
-    sector: Sector;
-    address: string | null;
-    foundingYear: Year | null;
-    
-    createdAt: Date;
-    updatedAt: Date | null;
-};
-
-export type CreateOrganizationDto = z.infer<typeof OrganizationSchema>;
-
-export type CreateOrganizationData = CreateOrganizationDto & {
-    actorId: Id;
-};
-
-export type UpdateOrganizationDto = Partial<CreateOrganizationDto>;
+export type OrganizationModel = OrganizationDto;
+export type OrganizationDto = z.infer<typeof organizationSchema>;

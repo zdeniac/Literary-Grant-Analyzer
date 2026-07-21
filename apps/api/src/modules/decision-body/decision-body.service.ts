@@ -1,5 +1,5 @@
-import { ActorType, DecisionBody } from "@prisma/client";
-import { CreateDecisionBodyData, CreateDecisionBodyDto, UpdateDecisionBodyDto } from "./dto/decision-body.dto";
+import { ActorType } from "@prisma/client";
+import { CreateDecisionBodyData, CreateDecisionBodyInput, DecisionBodyDto, UpdateDecisionBodyInput } from "./dto/decision-body.dto";
 import { ActorRepository } from "../actor/actor.repository";
 import { transaction } from "../../db/transaction";
 import { Id } from "../../common/types/types";
@@ -9,12 +9,12 @@ import { createRepositories } from "../../db/repositories/factory";
 export class DecisionBodyService
 {
     constructor(
-        private readonly repository: PrismaCrudRepository<DecisionBody, CreateDecisionBodyData, UpdateDecisionBodyDto>,
+        private readonly repository: PrismaCrudRepository<DecisionBodyDto, CreateDecisionBodyData, UpdateDecisionBodyInput>,
         private readonly actorRepository: ActorRepository,
     ) {
     }
 
-    async create(dto: CreateDecisionBodyDto): Promise<DecisionBody>
+    async create(dto: CreateDecisionBodyData): Promise<DecisionBodyDto>
     {
         const actor = await this.actorRepository.create(
             ActorType.DECISION_BODY
@@ -26,7 +26,7 @@ export class DecisionBodyService
         });
     }
 
-    async delete(id: Id): Promise<DecisionBody>
+    async delete(id: Id): Promise<DecisionBodyDto>
     {
         return transaction(async tx => {
             const repositories = createRepositories(tx);

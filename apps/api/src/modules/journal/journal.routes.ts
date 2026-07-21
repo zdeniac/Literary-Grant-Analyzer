@@ -1,17 +1,16 @@
 import { Router } from "express";
 import { createJournalModule } from "./journal.factory";
 import { validate } from "../../common/middleware/validate";
-import { CreateJournalSchemaWithOrganizations, UpdateJournalSchemaWithOrganizations } from "./validate/journal.schema";
-import { createJournalOrganizationModule } from "../journal-organization/journal-organization.factory";
-import { CreateJournalOrganizationSchema } from "../journal-organization/validate/journal-organization.schema";
+import { createJournalWithAffiliationsSchema, updateJournalWithAffiliationsSchema } from "./validate/journal.schema";
+import { createJournalAffiliationModule } from "../journal-affiliation/journal-affiliation.factory";
 
 const router = Router();
 const { controller, crudController } = createJournalModule();
-const pivotController = createJournalOrganizationModule().controller;
+const pivotController = createJournalAffiliationModule().controller;
 
 router.post(
-    '/:id/organizations',
-    validate(CreateJournalOrganizationSchema),
+    '/:id/affiliations',
+    validate(createJournalWithAffiliationsSchema),
     pivotController.create,
 );
 
@@ -22,7 +21,7 @@ router.get(
 
 router.patch(
     '/:id',
-    validate(UpdateJournalSchemaWithOrganizations),
+    validate(updateJournalWithAffiliationsSchema),
     crudController.update,
 );
 
@@ -33,7 +32,7 @@ router.delete(
 
 router.post(
     '/',
-    validate(CreateJournalSchemaWithOrganizations),
+    validate(createJournalWithAffiliationsSchema),
     controller.create,
 );
 

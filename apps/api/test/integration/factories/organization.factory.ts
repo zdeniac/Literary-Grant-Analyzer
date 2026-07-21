@@ -1,7 +1,7 @@
 import { LegalForm, Organization, Sector } from "@prisma/client";
 import { prisma } from "../../../src/db/prisma";
 import { OrganizationService } from "../../../src/modules/organization/organization.service";
-import { UpdateOrganizationDto } from "../../../src/modules/organization/dto/organization.dto";
+import { UpdateOrganizationInput } from "../../../src/modules/organization/dto/organization.dto";
 import { Id } from "../../../src/common/types/types";
 import { CrudService } from "../../../src/common/services/crud.service";
 import { PrismaCrudRepository } from "../../../src/db/repositories/prisma-crud-repository";
@@ -43,5 +43,5 @@ export const findEveryOrganization = async (): Promise<Organization[]> =>
 export const deleteOrganization = async (id: Id): Promise<Organization> => 
     await organizationService.delete(id);
 
-export const updateOrganization = async (id: Id, data: UpdateOrganizationDto): Promise<Organization> => 
+export const updateOrganization = async (id: Id, data: UpdateOrganizationInput): Promise<Organization> => 
     await crudService.update(id, data);

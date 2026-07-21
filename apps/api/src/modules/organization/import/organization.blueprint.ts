@@ -1,5 +1,5 @@
 import { LegalForm, Sector } from "@prisma/client";
-import { ImportOrganizationSchema } from "../../organization/validation/organization.schema";
+import { importOrganizationSchema } from "../../organization/validation/organization.schema";
 import { ModelBlueprint } from "../../data-import/types/import.types";
 
 export const organizationBlueprint: ModelBlueprint = 
@@ -40,5 +40,5 @@ export const organizationBlueprint: ModelBlueprint =
             }
 
         ],
-        schema: ImportOrganizationSchema,
+        schema: importOrganizationSchema,
     };

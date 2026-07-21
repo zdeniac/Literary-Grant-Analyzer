@@ -1,19 +1,40 @@
 import * as z from "zod";
 import { idSchema, nameSchema } from "../../../common/validation/schema";
 import { AwardSchemeType } from "@prisma/client";
-import { OrganizationSchema } from "../../organization/validation/organization.schema";
+import { organizationSchema } from "../../organization/validation/organization.schema";
 
-const BaseAwardSchemeSchema = z.object({
+export const awardSchemeSchema = z.object({
+    id: idSchema,
+
     name: nameSchema,
     type: z.enum(AwardSchemeType),
-});
 
-export const AwardSchemeSchema = BaseAwardSchemeSchema.extend({
     organizationId: idSchema,
+
+    createdAt: z.coerce.date(),
+    updatedAt: z.coerce.date(),
 });
 
-export const UpdateAwardSchemeSchema = AwardSchemeSchema.partial();
+const ommittedFields = {
+    id: true,
+    createdAt: true,
+    updatedAt: true,
+} as const;
 
-export const ImportAwardSchemeSchema = BaseAwardSchemeSchema.extend({
-    organizationName: OrganizationSchema.shape.name,
-});
+export const createAwardSchemeSchema = awardSchemeSchema
+    .omit(ommittedFields);
+
+export const updateAwardSchemeSchema = awardSchemeSchema
+    .omit(ommittedFields)
+    .partial();
+
+export const importAwardSchemeSchema = awardSchemeSchema
+    .omit({
+        id: true,
+        organizationId: true,
+        createdAt: true,
+        updatedAt: true,
+    })
+    .extend({
+        organizationName: organizationSchema.shape.name,
+    });

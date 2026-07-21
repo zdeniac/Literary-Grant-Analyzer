@@ -1,8 +1,7 @@
-import { AwardScheme } from "@prisma/client";
-import { AwardSchemeDto } from "../dto/award-scheme.dto";
+import { AwardSchemeDto, AwardSchemeModel } from "../dto/award-scheme.dto";
 import { DtoMapper } from "../../../common/types/types";
 
-export const toAwardSchemeDto: DtoMapper<AwardScheme, AwardSchemeDto> = (
+export const toAwardSchemeDto: DtoMapper<AwardSchemeModel, AwardSchemeDto> = (
     awardScheme
 ) => ({
     id: awardScheme.id,

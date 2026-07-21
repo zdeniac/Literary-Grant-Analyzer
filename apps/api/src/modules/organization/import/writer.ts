@@ -1,12 +1,12 @@
 import { ActorType } from "@prisma/client";
 import { transaction } from "../../../db/transaction";
-import { CreateOrganizationData, CreateOrganizationDto } from "../dto/organization.dto";
+import { CreateOrganizationData, CreateOrganizationInput } from "../dto/organization.dto";
 import { ImportWriter } from "../../data-import/types/import.types";
 import { createRepositories } from "../../../db/repositories/factory";
 
 export class OrganizationImportWriter implements ImportWriter<CreateOrganizationData>
 {
-    async createMany(data: CreateOrganizationDto[]): Promise<number>
+    async createMany(data: CreateOrganizationInput[]): Promise<number>
     {
         return transaction(async (tx) => {
             const repositories = createRepositories(tx);

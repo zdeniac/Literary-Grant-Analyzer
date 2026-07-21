@@ -1,20 +1,5 @@
-import { AwardSchemeType } from "@prisma/client";
-import { Id, Name } from "../../../common/types/types";
+import { awardSchemeSchema } from "../validation/award-scheme.schema";
+import z from "zod";
 
-export type AwardSchemeDto = {
-    id: Id;
-    name: Name;
-    type: AwardSchemeType;
-    organizationId: Id;
-
-    createdAt: Date;
-    updatedAt: Date | null;
-};
-
-export type CreateAwardSchemeDto = {
-    name: Name;
-    type: AwardSchemeType;
-    organizationId: Id;
-};
-
-export type UpdateAwardSchemeDto = Partial<CreateAwardSchemeDto>;
+export type AwardSchemeModel = AwardSchemeDto;
+export type AwardSchemeDto = z.infer<typeof awardSchemeSchema>;

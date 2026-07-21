@@ -1,34 +1,55 @@
 import { JournalFormat, JournalStatus } from "@prisma/client";
 import z from "zod";
-import { OrganizationSchema } from "../../organization/validation/organization.schema";
+import { organizationSchema } from "../../organization/validation/organization.schema";
 import { idSchema, nameSchema, yearSchema } from "../../../common/validation/schema";
-import { CreateJournalOrganizationSchema, JournalOrganizationSchema } from "../../journal-organization/validate/journal-organization.schema";
+import { createJournalAffiliationSchema, journalAffiliationSchema, journalAffiliationWithOrganizationAndSourceDocumentSchema } from "../../journal-affiliation/validate/journal-affiliation.schema";
+
+const ommittedFields = {
+    id: true,
+    createdAt: true,
+    updatedAt: true,
+} as const;
 
 export const issnSchema = z
     .string()
     .transform(v => v.replace('-', ''))
     .refine(v => /^\d{8}$/.test(v) || /^\d{7}X$/.test(v));
 
-const JournalBaseSchema = z.object({
+export const journalSchema = z.object({
+    id: idSchema,
+
     name: nameSchema,
-    issn: issnSchema.nullable().optional(),
-    foundingYear: yearSchema.nullable().optional(),
+    issn: issnSchema.nullable(),
+    foundingYear: yearSchema.nullable(),
     status: z.enum(JournalStatus).default(JournalStatus.ACTIVE),
     format: z.array(z.enum(JournalFormat)).min(1),
+
+    createdAt: z.coerce.date(),
+    updatedAt: z.coerce.date(),
 });
 
-export const CreateJournalSchemaWithOrganizations = JournalBaseSchema.extend({
-    organizations: z.array(CreateJournalOrganizationSchema),
-});
-
-export const UpdateJournalSchemaWithOrganizations = JournalBaseSchema
-    .partial()
+export const journalWithAffiliationsSchema = journalSchema
     .extend({
-        id: idSchema,
-        pivot: z.array(JournalOrganizationSchema),
+        affiliations: z.array(journalAffiliationWithOrganizationAndSourceDocumentSchema),
     });
 
-export const ImportJournalSchema = JournalBaseSchema.extend({
-    foundingYear: yearSchema.nullable().optional(),
-    organizationName: OrganizationSchema.shape.name,
-});
+export const createJournalSchema = journalSchema
+    .omit(ommittedFields)
+    .extend({   
+        issn: issnSchema.nullable().optional(),
+        foundingYear: yearSchema.nullable().optional(),
+    });
+
+export const createJournalWithAffiliationsSchema = createJournalSchema
+    .extend({
+        affiliations: z.array(createJournalAffiliationSchema),
+    });
+
+export const updateJournalWithAffiliationsSchema = journalSchema
+    .omit(ommittedFields)
+    .partial();
+
+export const importJournalSchema = createJournalSchema
+    .extend({
+        organizationName: organizationSchema.shape.name,
+    });

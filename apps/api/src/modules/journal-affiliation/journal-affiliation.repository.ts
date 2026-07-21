@@ -1,7 +1,7 @@
 import { JournalOrganization } from "@prisma/client";
 import { Id } from "../../common/types/types";
 import { PrismaDatabase } from "../../db/types";
-import { CreateJournalOrganizationInput, UpdateJournalOrganizationInput } from "./dto/journal-organization.dto";
+import { CreateJournalAffiliationInput, UpdateJournalAffiliationInput } from "./dto/journal-affiliation.dto";
 
 export class JournalOrganizationRepository
 {
@@ -18,7 +18,7 @@ export class JournalOrganizationRepository
         });
     }
 
-    async update(id: Id, data: UpdateJournalOrganizationInput): Promise<JournalOrganization>
+    async update(id: Id, data: UpdateJournalAffiliationInput): Promise<JournalOrganization>
     {
         return this.model.update({
             where: {
@@ -28,7 +28,7 @@ export class JournalOrganizationRepository
         });
     }
 
-    async create(data: CreateJournalOrganizationInput): Promise<JournalOrganization>
+    async create(data: CreateJournalAffiliationInput): Promise<JournalOrganization>
     {
         return this.model.create({ data });
     }

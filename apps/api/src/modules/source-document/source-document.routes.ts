@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { createSourceDocumentModule } from "./source-document.factory";
 import { validate } from "../../common/middleware/validate";
-import { SourceDocumentSchema, UpdateSourceDocumentSchema } from "./validation/source-document.schema";
+import { sourceDocumentSchema, updateSourceDocumentSchema } from "./validation/source-document.schema";
 
 const router = Router();
 const { controller } = createSourceDocumentModule();
@@ -13,7 +13,7 @@ router.get(
 
 router.patch(
     '/:id',
-    validate(UpdateSourceDocumentSchema),
+    validate(updateSourceDocumentSchema),
     controller.update,
 );
 
@@ -24,7 +24,7 @@ router.delete(
 
 router.post(
     '/',
-    validate(SourceDocumentSchema),
+    validate(sourceDocumentSchema),
     controller.create,
 );
 
