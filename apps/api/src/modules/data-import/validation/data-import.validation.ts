@@ -39,7 +39,7 @@ export function validateRows<T extends ImportRow>(
 export function validateHeaders(
     headers: ImportHeader, 
     fields: ImportField[],
-    allowUnknownFields: boolean,
+    allowUnknownFields = false,
 ): void {
     const errors: ImportRowError[] = [];
 
@@ -77,6 +77,8 @@ export function validateHeaders(
 
     }
     
-    if (errors.length) throw new ImportValidationError(errors);
+    if (missing.length || unexpectedFields.length) {
+        throw new ImportValidationError(errors);
+    }
 }
 

@@ -1,40 +1,98 @@
-import { describe, it, expect } from "vitest";
-import { organizationSchema } from "../../../src/modules/organization/validation/organization.schema";
 import { LegalForm, Sector } from "@prisma/client";
+import { describe, expect, it } from "vitest";
+import {
+    createOrganizationSchema,
+    importOrganizationSchema,
+    organizationSchema,
+    updateOrganizationSchema,
+} from "../../../src/modules/organization/validation/organization.schema";
+
+const validOrganization = {
+    id: 1,
+    name: 'Tiszatáj',
+    legalForm: LegalForm.FOUNDATION,
+    sector: Sector.CIVIL,
+    address: '123 Main St',
+    website: 'https://example.org',
+    foundingYear: 2020,
+    actorId: 3,
+    createdAt: '2024-01-01T00:00:00.000Z',
+    updatedAt: '2024-01-02T00:00:00.000Z',
+};
 
 describe('Organization schema test', () => {
-    
-        it('accepts valid organization', () => {
-            const result = organizationSchema.safeParse({
-                name: 'Tiszatáj',
-                legalForm: LegalForm.FOUNDATION,
-                sector: Sector.CIVIL,
-            });
+    it('accepts a valid organization payload', () => {
+        const parsed = organizationSchema.parse(validOrganization);
 
-            expect(result.success).toBe(true);
+        expect(parsed).toEqual({
+            ...validOrganization,
+            createdAt: new Date(validOrganization.createdAt),
+            updatedAt: new Date(validOrganization.updatedAt),
         });
+    });
 
-        it('rejects empty name', () => {
-            const result = organizationSchema.safeParse({
+    it('rejects an empty name', () => {
+        expect(() =>
+            organizationSchema.parse({
+                ...validOrganization,
                 name: '',
-                legalForm: 'LTD',
-            });
+            })
+        ).toThrow();
+    });
 
-            expect(result.success).toBe(false);
+    it('rejects an invalid legal form', () => {
+        expect(() =>
+            organizationSchema.parse({
+                ...validOrganization,
+                legalForm: 'INVALID' as LegalForm,
+            })
+        ).toThrow();
+    });
+
+    it('accepts a create payload without id and timestamps', () => {
+        const parsed = createOrganizationSchema.parse({
+            name: 'Tiszatáj',
+            legalForm: LegalForm.FOUNDATION,
+            sector: Sector.CIVIL,
+            address: '',
+            website: '',
+            foundingYear: 2020,
         });
 
-        it('rejects invalid legal form', () => {
-            const result = organizationSchema.safeParse({
-                name: 'Tiszatáj',
-                legalForm: 'INVALID'
-            });
+        expect(parsed).toEqual({
+            name: 'Tiszatáj',
+            legalForm: LegalForm.FOUNDATION,
+            sector: Sector.CIVIL,
+            address: undefined,
+            website: undefined,
+            foundingYear: 2020,
+        });
+    });
+
+    it('allows partial updates', () => {
+        const parsed = updateOrganizationSchema.parse({
+            name: 'Updated organization',
         });
 
-        it('rejects invalid sector', () => {
-            const result = organizationSchema.safeParse({
-                name: 'Tiszatáj',
-                sector: 'INVALID'
-            });
+        expect(parsed).toEqual({
+            name: 'Updated organization',
+        });
+    });
+
+    it('accepts import payloads with the create schema shape', () => {
+        const parsed = importOrganizationSchema.parse({
+            name: 'Imported organization',
+            legalForm: LegalForm.FOUNDATION,
+            sector: Sector.CIVIL,
         });
 
+        expect(parsed).toEqual({
+            name: 'Imported organization',
+            legalForm: LegalForm.FOUNDATION,
+            sector: Sector.CIVIL,
+            address: undefined,
+            website: undefined,
+            foundingYear: undefined,
+        });
+    });
 });

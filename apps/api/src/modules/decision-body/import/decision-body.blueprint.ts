@@ -1,5 +1,5 @@
 import { RelationalModelBlueprint } from "../../data-import/types/import.types";
-import { ImportDecisionBodySchema } from "../validation/decision-body.schema";
+import {importDecisionBodySchema } from "../validation/decision-body.schema";
 
 export const decisionBodyBlueprint: RelationalModelBlueprint = 
     {
@@ -16,7 +16,7 @@ export const decisionBodyBlueprint: RelationalModelBlueprint =
                 required: false
             },
         ],
-        schema: ImportDecisionBodySchema,
+        schema: importDecisionBodySchema,
         relations: [
             {
                 model: 'organization',

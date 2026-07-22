@@ -1,24 +1,80 @@
 import { describe, expect, it } from "vitest";
-import { decisionBodySchema } from "../../../src/modules/decision-body/validation/decision-body.schema"; 
+import {
+    createDecisionBodyInputSchema,
+    createDecisionBodySchema,
+    decisionBodySchema,
+    importDecisionBodySchema,
+    updateDecisionBodySchema,
+} from "../../../src/modules/decision-body/validation/decision-body.schema";
 
-describe('Decision Body schema integration', () => {
-    it('accepts valid decision body', async () => {
-        const input = {
-            name: 'Valid decision',
-            organizationId: 12,
-        };
+const validDecisionBody = {
+    id: 1,
+    name: 'Valid decision',
+    organizationId: 12,
+    actorId: 3,
+    createdAt: '2024-01-01T00:00:00.000Z',
+    updatedAt: '2024-01-02T00:00:00.000Z',
+};
 
-        const parsed = decisionBodySchema.parse(input);
+describe('Decision Body schema test', () => {
+    it('accepts valid decision body', () => {
+        const parsed = decisionBodySchema.parse(validDecisionBody);
 
-        expect(parsed).toEqual(input);
+        expect(parsed).toEqual({
+            ...validDecisionBody,
+            createdAt: new Date(validDecisionBody.createdAt),
+            updatedAt: new Date(validDecisionBody.updatedAt),
+        });
     });
 
     it('rejects invalid name', () => {
         expect(() =>
             decisionBodySchema.parse({
+                ...validDecisionBody,
                 name: '',
-                organizationId: '123',
             })
         ).toThrow();
+    });
+
+    it('accepts a create payload without id and timestamps', () => {
+        const payload = {
+            name: 'New decision body',
+            organizationId: 12,
+            actorId: 3,
+        };
+
+        const parsed = createDecisionBodySchema.parse(payload);
+
+        expect(parsed).toEqual(payload);
+    });
+
+    it('requires organizationId for create input schema', () => {
+        expect(() =>
+            createDecisionBodyInputSchema.parse({
+                name: 'New decision body',
+            })
+        ).toThrow();
+    });
+
+    it('allows partial updates', () => {
+        const parsed = updateDecisionBodySchema.parse({
+            name: 'Updated decision body',
+        });
+
+        expect(parsed).toEqual({
+            name: 'Updated decision body',
+        });
+    });
+
+    it('accepts import payloads with organizationName', () => {
+        const parsed = importDecisionBodySchema.parse({
+            name: 'Imported decision body',
+            organizationName: 'Example Org',
+        });
+
+        expect(parsed).toEqual({
+            name: 'Imported decision body',
+            organizationName: 'Example Org',
+        });
     });
 });

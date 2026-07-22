@@ -18,13 +18,24 @@ describe('Data import validation', () => {
             ).toThrow(ImportValidationError);
         });
 
-        it('throws when header contains unknown fields', () => {
+        it('throws when header contains unknown fields and not allowed', () => {
             expect(() =>
                 validateHeaders(
                     ['name', 'foo'],
                     [{ name: 'asd', type: 'string', required: true }],
+                    false
                 )
             ).toThrow(ImportValidationError);
+        });
+
+        it('doesnt throw when header contains unknown fields and allowed', () => {
+            expect(() =>
+                validateHeaders(
+                    ['name'],
+                    [{ name: 'name', type: 'string', required: true }],
+                    true
+                )
+            ).not.toThrow();
         });
 
         it('passes valid headers', () => {
