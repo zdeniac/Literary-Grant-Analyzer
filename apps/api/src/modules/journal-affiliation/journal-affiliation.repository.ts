@@ -1,15 +1,18 @@
-import { JournalOrganization } from "@prisma/client";
+import { JournalAffiliation } from "@prisma/client";
 import { Id } from "../../common/types/types";
 import { PrismaDatabase } from "../../db/types";
-import { CreateJournalAffiliationInput, UpdateJournalAffiliationInput } from "./dto/journal-affiliation.dto";
+import { 
+    CreateJournalAffiliationInput, 
+    UpdateJournalAffiliationInput 
+} from "./dto/journal-affiliation.input.dto";
 
-export class JournalOrganizationRepository
+export class JournalAffiliationRepository
 {
     constructor(
-        private readonly model: PrismaDatabase['journalOrganization']
+        private readonly model: PrismaDatabase['journalAffiliation']
     ) {}
 
-    async findManyByJournalId(journalId: Id): Promise<JournalOrganization[]>
+    async findManyByJournalId(journalId: Id): Promise<JournalAffiliation[]>
     {
         return this.model.findMany({
             where: {
@@ -18,7 +21,7 @@ export class JournalOrganizationRepository
         });
     }
 
-    async update(id: Id, data: UpdateJournalAffiliationInput): Promise<JournalOrganization>
+    async update(id: Id, data: UpdateJournalAffiliationInput): Promise<JournalAffiliation>
     {
         return this.model.update({
             where: {
@@ -28,12 +31,12 @@ export class JournalOrganizationRepository
         });
     }
 
-    async create(data: CreateJournalAffiliationInput): Promise<JournalOrganization>
+    async create(data: CreateJournalAffiliationInput): Promise<JournalAffiliation>
     {
         return this.model.create({ data });
     }
 
-    async delete(id: Id): Promise<JournalOrganization>
+    async delete(id: Id): Promise<JournalAffiliation>
     {
         return this.model.delete({
             where: {

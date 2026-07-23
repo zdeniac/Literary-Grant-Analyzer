@@ -1,7 +1,9 @@
 import { PrismaDatabase } from "../../db/types";
-import { CreateJournalWithAffiliationsInput } from "./dto/journal.dto";
+import {  } from "./dto/journal.dto";
 import { JournalWithAffiliatedOrganizationsAndSourceDocument } from "./types/journal.types";
 import { Id } from "../../common/types/types";
+import { CreateJournalWithAffiliationsInput } from "./dto/journal.input.dto";
+import { NotFoundError } from "../../common/errors/http.error";
 
 export class JournalRepository
 {
@@ -25,13 +27,13 @@ export class JournalRepository
                             connect: {
                                 id: affiliation.organizationId
                             }
-                        },
-
+                        },            
+                        
                         sourceDocumentId: affiliation.sourceDocumentId,
                         note: affiliation.note,
                         isCurrent: affiliation.isCurrent,
                         fromYear: affiliation.fromYear,
-                        toYear: affiliation.toYear
+                        toYear: affiliation.toYear,
                     }))
                 },      
             },
@@ -46,9 +48,25 @@ export class JournalRepository
         });
     }
 
-    async findById(id: Id): Promise<JournalWithAffiliatedOrganizationsAndSourceDocument>
+    async update(id: Id, data: Partial<Pick<JournalWithAffiliatedOrganizationsAndSourceDocument, 'name' | 'status' | 'issn' | 'format' | 'foundingYear'>>): Promise<JournalWithAffiliatedOrganizationsAndSourceDocument>
     {
-        return this.model.findUniqueOrThrow({
+        return this.model.update({
+            where: { id },
+            data,
+            include: {
+                affiliations: {
+                    include: {
+                        organization: true,
+                        sourceDocument: true,
+                    }
+                }
+            }
+        });
+    }
+
+    async findByIdWithAffiliations(id: Id): Promise<JournalWithAffiliatedOrganizationsAndSourceDocument>
+    {
+        const journal = await this.model.findUnique({
             where: {
                 id
             },
@@ -61,5 +79,11 @@ export class JournalRepository
                 }
             }
         });
+
+        if (!journal) {
+            throw new NotFoundError();
+        }
+
+        return journal;
     }
 }

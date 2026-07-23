@@ -13,7 +13,7 @@ export const organizationSchema = z.object({
     website: z.httpUrl().nullable(),
     foundingYear: yearSchema.nullable(),
 
-    actorId: idSchema.nullable(),
+    actorId: idSchema,
 
     createdAt: z.coerce.date(),
     updatedAt: z.coerce.date().nullable(),

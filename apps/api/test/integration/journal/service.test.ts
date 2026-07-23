@@ -1,14 +1,18 @@
 import { describe, it, expect, beforeEach, afterAll } from "vitest";
 import { JournalFormat, JournalStatus } from "@prisma/client";
 import { wipeDatabase } from "../helpers/db.helper";
-import { createJournal, deleteJournal, findEveryJournal, findJournalById, updateJournal } from "../factories/journal.factory";
-import { createOrganization } from "../factories/organization.factory";
+import { createJournal, deleteJournal, findEveryJournal, findJournalById, updateJournal } from "../helpers/factories/journal.factory";
+import { createOrganization } from "../helpers/factories/organization.factory";
 import { NotFoundError } from "../../../src/common/errors/http.error";
+import { JournalService } from "../../../src/modules/journal/journal.service";
+import { JournalRepository } from "../../../src/modules/journal/journal.repository";
+import { JournalAffiliationRepository } from "../../../src/modules/journal-affiliation/journal-affiliation.repository";
+import { prisma } from "../../../src/db/prisma";
 
 describe('JournalServiceTest', () => {
     const journalInput = {
         name: 'Jelenkor',
-        issn: '1234-567',
+        issn: '12345678',
         status: JournalStatus.ACTIVE,
         format: [JournalFormat.PRINT],
         foundingYear: 1990,
@@ -17,7 +21,7 @@ describe('JournalServiceTest', () => {
     beforeEach(wipeDatabase);
     afterAll(wipeDatabase);
 
-    it('creates journal', async () => {
+    it('creates journal only when it has at least one affiliation', async () => {
         const org = await createOrganization({ name: 'Teszt' });
         const journal = await createJournal({ 
             ...journalInput,
@@ -30,8 +34,26 @@ describe('JournalServiceTest', () => {
             status: journalInput.status,
             issn: journalInput.issn,
             foundingYear: journalInput.foundingYear,
+        });
+        expect(journal.affiliations).toHaveLength(1);
+        expect(journal.affiliations[0]).toMatchObject({
             organizationId: org.id,
         });
+    });
+
+    it('rejects journal creation without affiliations', async () => {
+        const service = new JournalService(
+            new JournalRepository(prisma.journal),
+            new JournalAffiliationRepository(prisma.journalAffiliation)
+        );
+
+        await expect(service.create({
+            name: 'Standalone journal',
+            status: JournalStatus.ACTIVE,
+            format: [JournalFormat.PRINT],
+            issn: '12345679',
+            affiliations: [],
+        } as any)).rejects.toThrow();
     });
 
     it('finds journal by id', async () => {
@@ -47,7 +69,7 @@ describe('JournalServiceTest', () => {
         expect(found?.name).toBe(created.name);
     });
 
-    it('journal belongs to correct organization', async () => {
+    it('links the journal to the correct organization through an affiliation', async () => {
         const org = await createOrganization({ name: 'Teszt 3' });
         const created = await createJournal({ 
             ...journalInput,
@@ -57,7 +79,10 @@ describe('JournalServiceTest', () => {
         const found = await findJournalById(created.id);
 
         expect(found).not.toBeNull();
-        expect(found?.organizationId).toBe(org.id);
+        expect(found?.affiliations).toHaveLength(1);
+        expect(found?.affiliations[0]).toMatchObject({
+            organizationId: org.id,
+        });
     });
 
     it('finds all journals', async () => {
@@ -67,7 +92,7 @@ describe('JournalServiceTest', () => {
             status: JournalStatus.ACTIVE,
             format: [JournalFormat.ONLINE],
             organizationId: org.id,
-            issn: '1234-568',
+            issn: '12345680',
         });
 
         const j2 = await createJournal({
@@ -75,7 +100,7 @@ describe('JournalServiceTest', () => {
             status: JournalStatus.PAUSE,
             format: [JournalFormat.ONLINE, JournalFormat.PRINT],
             organizationId: org.id,
-            issn: '1234-569',
+            issn: '12345681',
         });
 
         const j3 = await createJournal({
@@ -83,17 +108,14 @@ describe('JournalServiceTest', () => {
             status: JournalStatus.CEASED,
             format: [JournalFormat.PRINT],
             organizationId: org.id,
-            issn: '1234-510',
+            issn: '12345682',
         });
 
         const found = await findEveryJournal();
 
         expect(found.length).toBe(3);
-        expect(found).toEqual(
-            expect.arrayContaining([j1, j2, j3])
-        );
-        // Order of elements is intact
-        expect(found.map(o => o.id)).toEqual([j1.id, j2.id, j3.id]);
+        expect(found.map(journal => journal.id)).toEqual([j1.id, j2.id, j3.id]);
+        expect(found.map(journal => journal.name)).toEqual(['Alföld', 'Tiszatáj', 'Jelenkor']);
     });
 
     it('updates journal', async () => {
@@ -110,8 +132,18 @@ describe('JournalServiceTest', () => {
             created.id, 
             { 
                 name: 'Teszt upd',
-                organizationId: org2.id
-            }
+                affiliations: [
+                    {
+                        id: created.affiliations[0].id,
+                        organizationId: org2.id,
+                        fromYear: 2000,
+                        toYear: 2020,
+                        note: 'Updated affiliation',
+                        isCurrent: true,
+                        sourceDocumentId: null,
+                    },
+                ],
+            } as any
         );
 
         expect(updated.updatedAt).toBeDefined();
@@ -121,6 +153,8 @@ describe('JournalServiceTest', () => {
             status: JournalStatus.ACTIVE,
             foundingYear: created.foundingYear,
             createdAt: created.createdAt,
+        });
+        expect(updated.affiliations[0]).toMatchObject({
             organizationId: org2.id,
         });
     });

@@ -1,29 +1,44 @@
 import { NotFoundError } from "../../common/errors/http.error";
 import { Id } from "../../common/types/types";
-import { CreateJournalWithAffiliationsInput, UpdateJournalWithAffiliationsInput } from "./dto/journal.dto";
 import { JournalRepository } from "./journal.repository";
 import { JournalWithAffiliatedOrganizationsAndSourceDocument } from "./types/journal.types";
-import { JournalOrganizationRepository } from "../journal-affiliation/journal-affiliation.repository";
+import { JournalAffiliationRepository } from "../journal-affiliation/journal-affiliation.repository";
+import { CreateJournalWithAffiliationsInput, UpdateJournalWithAffiliationsInput } from "./dto/journal.input.dto";
+import { createJournalWithAffiliationsSchema } from "./validate/journal.schema";
 
 export class JournalService
 {
     constructor(
         private readonly repository: JournalRepository,
-        private readonly pivotRepository: JournalOrganizationRepository
+        private readonly affiliationRepository: JournalAffiliationRepository
     ) {
     }
 
     async create(dto: CreateJournalWithAffiliationsInput): Promise<JournalWithAffiliatedOrganizationsAndSourceDocument>
     {
-        return this.repository.createWithAffiliations(dto);
+        const validatedDto = createJournalWithAffiliationsSchema.parse(dto);
+
+        return this.repository.createWithAffiliations(validatedDto);
     }
 
     async update(id: Id, dto: UpdateJournalWithAffiliationsInput): Promise<JournalWithAffiliatedOrganizationsAndSourceDocument>
     {
-        const existing = await this.pivotRepository.findManyByJournalId(id)
+        await this.repository.findByIdWithAffiliations(id);
+
+        const existing = await this.affiliationRepository.findManyByJournalId(id)
         const existingById = new Map(
             existing.map(item => [item.id, item])
         );
+
+        if (dto.name !== undefined || dto.status !== undefined || dto.issn !== undefined || dto.format !== undefined || dto.foundingYear !== undefined) {
+            await this.repository.update(id, {
+                name: dto.name,
+                status: dto.status,
+                issn: dto.issn,
+                format: dto.format,
+                foundingYear: dto.foundingYear,
+            });
+        }
 
         const affiliationIds = new Set(
             dto.affiliations!
@@ -40,7 +55,8 @@ export class JournalService
                     throw new Error(`JournalAffiliation ${affiliation.id} not found.`);
                 }
 
-                await this.pivotRepository.update(affiliation.id, {
+                await this.affiliationRepository.update(affiliation.id, {
+                    organizationId: affiliation.organizationId,
                     fromYear: affiliation.fromYear,
                     toYear: affiliation.toYear,
                     note: affiliation.note,
@@ -48,7 +64,7 @@ export class JournalService
                     isCurrent: affiliation.isCurrent,
                 });
             } else {
-                await this.pivotRepository.create({
+                await this.affiliationRepository.create({
                     journalId: id,
                     organizationId: affiliation.organizationId,
                     fromYear: affiliation.fromYear,
@@ -63,16 +79,16 @@ export class JournalService
         // delete
         for (const current of existing) {
             if (!affiliationIds.has(current.id)) {
-                await this.pivotRepository.delete(current.id);
+                await this.affiliationRepository.delete(current.id);
             }
         }
 
-        return this.repository.findById(id);
+        return this.repository.findByIdWithAffiliations(id);
     }
 
-    async findByIdWithOrganizations(id: Id): Promise<JournalWithAffiliatedOrganizationsAndSourceDocument | null>
+    async findByIdWithAffiliations(id: Id): Promise<JournalWithAffiliatedOrganizationsAndSourceDocument | null>
     {
-        const journal = await this.repository.findById(id);
+        const journal = await this.repository.findByIdWithAffiliations(id);
 
         if (!journal) {
             throw new NotFoundError();

@@ -19,7 +19,7 @@ export class JournalController
     async create(req: Request, res: Response): Promise<void>
     {
         const journal = await this.service.create(
-            this.mapper(req.body.data)
+            req.body
         );
 
         sendData(res, journal);
@@ -27,7 +27,7 @@ export class JournalController
 
     async findById(req: Request, res: Response): Promise<void>
     {
-        const journal = await this.service.findByIdWithOrganizations(
+        const journal = await this.service.findByIdWithAffiliations(
             idSchema.parse(req.params.id)
         );
 

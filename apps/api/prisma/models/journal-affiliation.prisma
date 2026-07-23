@@ -7,8 +7,8 @@ model JournalAffiliation {
 
     isCurrent           Boolean         @default(true)
 
-    journal             Journal         @relation(fields: [journalId], references: [id], onDelete: Restrict)
-    organization        Organization    @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+    journal             Journal         @relation(fields: [journalId], references: [id], onDelete: Cascade)
+    organization        Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
     sourceDocument      SourceDocument?  @relation(fields: [sourceDocumentId], references: [id], onDelete: Restrict)
 
     fromYear            Int?

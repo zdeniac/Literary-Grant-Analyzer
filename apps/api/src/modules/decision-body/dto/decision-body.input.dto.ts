@@ -7,4 +7,5 @@ import {
 
 export type CreateDecisionBodyInput = z.infer<typeof createDecisionBodyInputSchema>;
 export type CreateDecisionBodyData = z.infer<typeof createDecisionBodySchema>;
+
 export type UpdateDecisionBodyInput = z.infer<typeof updateDecisionBodySchema>;

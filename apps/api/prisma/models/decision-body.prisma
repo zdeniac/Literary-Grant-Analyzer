@@ -3,8 +3,8 @@ model DecisionBody {
 	id				Int				@id @default(autoincrement())
 	name			String
 
-	organizationId	Int?
-    organization    Organization? 	@relation(fields: [organizationId], references: [id], onDelete: Restrict)
+	organizationId	Int
+    organization    Organization	@relation(fields: [organizationId], references: [id], onDelete: Restrict)
 
 	actorId			Int				@unique
 	actor			Actor 			@relation(fields: [actorId], references: [id], onDelete: Restrict)

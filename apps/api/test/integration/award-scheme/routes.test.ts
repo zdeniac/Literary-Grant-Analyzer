@@ -1,10 +1,13 @@
 import { describe, it, expect, afterAll, beforeEach } from "vitest";
-import request from "supertest";
-import app from "../../../src/app";
-import { AwardSchemeType, LegalForm } from "@prisma/client";
+import { AwardSchemeType } from "@prisma/client";
 import { wipeDatabase } from "../helpers/db.helper";
-import { Id, Name } from "../../../src/common/types/types";
-import { OrganizationDto } from "../../../src/modules/organization/dto/organization.dto";
+import { Name } from "../../../src/common/types/types";
+import {
+    createAwardScheme,
+    deleteAwardScheme,
+    getAwardScheme,
+    updateAwardScheme,
+} from "../helpers/api/award-scheme.api";
 
 describe('Award scheme routes test', () => {
 
@@ -15,64 +18,36 @@ describe('Award scheme routes test', () => {
     beforeEach(wipeDatabase);
     afterAll(wipeDatabase);
 
-    const createOrganization = async (data: { name: Name }): Promise<OrganizationDto> => {
-        const res = await request(app)
-            .post('/api/organizations')
-            .send({
-                name: data.name,
-                legalForm: LegalForm.FOUNDATION
-            });
-
-        return res.body.data;
-    };
-
-    const createAwardScheme = async (
+    const createRouteAwardScheme = async (
         overrides: Partial<{
             name: string;
             type: AwardSchemeType | string;
-            organizationId: Id;
+            organizationId: number;
         }> = {}
     ) => {
-        const org = await createOrganization({ name: 'NKA' + Date.now().toString() });
-        return request(app)
-            .post(route)
-            .send({
-                name: awardSchemeName,
-                type: awardSchemeType,
-                organizationId: org.id,
-                ...overrides,
-            });
+        return createAwardScheme({
+            name: overrides.name ?? awardSchemeName,
+            type: overrides.type ?? awardSchemeType,
+            organizationId: overrides.organizationId,
+        });
     };
 
-    const getAwardScheme = (id: Id) =>
-        request(app)
-            .get(`${route}/${id}`);
-
-    const updateAwardScheme = (id: Id, data: object) =>
-        request(app)
-            .patch(`${route}/${id}`)
-            .send(data);
-
-    const deleteAwardScheme = (id: Id) =>
-        request(app)
-            .delete(`${route}/${id}`);
-
     it('POST / creates Award Scheme', async () => {
-        const res = await createAwardScheme();
+        const res = await createRouteAwardScheme();
 
         expect(res.status).toBe(200);
         expect(res.body.data.name).toBe(awardSchemeName);
     });
 
     it('POST / rejects invalid payload', async () => {
-        let res = await createAwardScheme({
+        let res = await createRouteAwardScheme({
             name: '',
         });
 
         expect(res.status).toBe(422);
         expect(res.body.error).toBe('VALIDATION_ERROR');
 
-        res = await createAwardScheme({
+        res = await createRouteAwardScheme({
             type: 'd'
         });
 
@@ -122,7 +97,7 @@ describe('Award scheme routes test', () => {
     });
 
     it('DELETE /:id deletes decisionBody', async () => {
-        const created = await createAwardScheme();
+        const created = await createRouteAwardScheme();
         const id = created.body.data.id;
         const res = await deleteAwardScheme(id);
 

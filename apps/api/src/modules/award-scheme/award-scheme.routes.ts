@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { createAwardSchemeModule } from "./award-scheme.factory";
 import { validate } from "../../common/middleware/validate";
-import { awardSchemeSchema, updateAwardSchemeSchema } from "./validation/award-scheme.schema";
+import { createAwardSchemeSchema, updateAwardSchemeSchema } from "./validation/award-scheme.schema";
 
 const router = Router();
 const { controller } = createAwardSchemeModule();
@@ -24,7 +24,7 @@ router.delete(
 
 router.post(
     '/',
-    validate(awardSchemeSchema),
+    validate(createAwardSchemeSchema),
     controller.create,
 );
 

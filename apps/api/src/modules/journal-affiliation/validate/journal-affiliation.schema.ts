@@ -23,6 +23,7 @@ export const journalAffiliationWithOrganizationAndSourceDocumentSchema = journal
         sourceDocumentTitle: z.string().nullable(),
     });
 
+// journalId is optional when creating a new affiliation, because it will be set by the JournalService
 export const createJournalAffiliationSchema = journalAffiliationSchema
     .omit({
         id: true,
@@ -35,14 +36,15 @@ export const createJournalAffiliationSchema = journalAffiliationSchema
         note: z.string().nullable().optional(),
         isCurrent: z.boolean().default(true).optional(),
 
+        journalId: idSchema.optional(),
+
         sourceDocumentId: idSchema.nullable().optional(),
     });
 
+// The affiliation cannot be attached to a different journal
 export const updateJournalAffiliationSchema = journalAffiliationSchema
     .omit({
         id: true,
-        createdAt: true,
-        updatedAt: true,
-        organizationId: true,
+        journalId: true,
     })
     .partial();

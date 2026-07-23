@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { createDecisionBodyModule } from "./decision-body.factory";
-import { decisionBodySchema, updateDecisionBodySchema } from "./validation/decision-body.schema";
+import { createDecisionBodyInputSchema, updateDecisionBodySchema } from "./validation/decision-body.schema";
 import { validate } from "../../common/middleware/validate";
 
 const router = Router();
@@ -24,7 +24,7 @@ router.delete(
 
 router.post(
     '/',
-    validate(decisionBodySchema),
+    validate(createDecisionBodyInputSchema),
     controller.create,
 );
 

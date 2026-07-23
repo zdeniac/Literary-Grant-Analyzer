@@ -4,7 +4,6 @@ import { organizationSchema } from "../../organization/validation/organization.s
 
 const ommittedFields = {
     id: true,
-    actorId: true,
     createdAt: true,
     updatedAt: true,
 } as const;
@@ -13,7 +12,7 @@ export const decisionBodySchema = z.object({
     id: idSchema,
 
     name: nameSchema,
-    organizationId: idSchema.optional().nullable(),
+    organizationId: idSchema,
     actorId: idSchema,
 
     createdAt: z.coerce.date(),
@@ -23,18 +22,11 @@ export const decisionBodySchema = z.object({
 export const createDecisionBodyInputSchema = decisionBodySchema
     .omit(ommittedFields)
     .extend({
-        organizationId: idSchema,
+        actorId: idSchema.nullable().optional(),
     });
 
 export const createDecisionBodySchema = decisionBodySchema
-    .omit({
-        id: true,
-        createdAt: true,
-        updatedAt: true,
-    })
-    .extend({
-        organizationId: idSchema,
-    });
+    .omit(ommittedFields);
 
 export const updateDecisionBodySchema = decisionBodySchema
     .omit(ommittedFields)

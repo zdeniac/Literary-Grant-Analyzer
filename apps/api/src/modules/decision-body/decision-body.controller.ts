@@ -17,10 +17,10 @@ export class DecisionBodyController
 
     async create(req: Request, res: Response): Promise<void> 
     {
-        const entity = await this.service.create(
+        const decisionBody = await this.service.create(
             req.body
         );
-        sendData(res, this.mapper(entity));
+        sendData(res, this.mapper(decisionBody));
     }
 
     async delete(req: Request, res: Response): Promise<void> 

@@ -2,8 +2,7 @@ import { describe, it, expect, beforeEach, afterAll } from "vitest";
 import { prisma } from "../../../src/db/prisma";
 import { LegalForm, Sector } from "@prisma/client";
 import { wipeDatabase } from "../helpers/db.helper";
-import { createOrganization, deleteOrganization, findEveryOrganization, findOrganizationById, updateOrganization } from "../factories/organization.factory";
-import { createJournal } from "../factories/journal.factory";
+import { createOrganization, deleteOrganization, findEveryOrganization, findOrganizationById, updateOrganization } from "../helpers/factories/organization.factory";
 
 describe('OrganizationServiceTest', () => {
     const input = {
@@ -91,26 +90,6 @@ describe('OrganizationServiceTest', () => {
         });
         
         expect(deleted).toBeNull();
-    });
-
-    it('cannot delete organization if it has journals', async () => {
-        const org = await createOrganization({ name: 'Teszt' });
-
-        await createJournal({
-            organizationId: org.id,
-        });
-
-        await expect(
-            deleteOrganization(org.id)
-        ).rejects.toThrow();
-
-        const exists = await prisma.organization.findUnique({
-            where: {
-                id: org.id,
-            },
-        });
-
-        expect(exists).not.toBeNull();
     });
 
     it('throws exception on querying for non-existent organization', async () => {

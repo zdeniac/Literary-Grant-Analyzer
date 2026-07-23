@@ -1,60 +1,33 @@
 import { describe, it, expect, afterAll, beforeEach } from "vitest";
-import request from "supertest";
-import app from "../../../src/app";
-import { ActorType, LegalForm } from "@prisma/client";
+import { ActorType } from "@prisma/client";
 import { wipeDatabase } from "../helpers/db.helper";
-import { Id } from "../../../src/common/types/types";
-import { OrganizationDto } from "../../../src/modules/organization/dto/organization.dto";
 import { prisma } from "../../../src/db/prisma";
+import {
+    createDecisionBody,
+    deleteDecisionBody,
+    getDecisionBody,
+    updateDecisionBody,
+} from "../helpers/api/decision-body.api";
+import { createOrganization } from "../helpers/api/organization.api";
 
 describe('Decision body routes test', () => {
 
-    const route = '/api/decision-bodies';
     const decisionBodyName = 'Szépirodalom Kollégium';
 
     beforeEach(wipeDatabase);
     afterAll(wipeDatabase);
 
-    const createOrganization = async (input: { name: string }): Promise<OrganizationDto> => {
-        const res = await request(app)
-            .post('/api/organizations')
-            .send({
-                name: input.name,
-                legalForm: LegalForm.FOUNDATION
-            });
-
-        return res.body.data;
-    };
-
-    const createDecisionBody = async (
+    const createRouteDecisionBody = async (
         overrides: Partial<{
-            organizationId: Id;
+            organizationId: number;
             name: string;
         }> = {}
     ) => {
-        const org = await createOrganization({ name: 'Nemzeti Kulturális Alap'});
-
-        return request(app)
-            .post(route)
-            .send({
-                name: decisionBodyName,
-                organizationId: org.id,
-                ...overrides,
-            });
+        return createDecisionBody({
+            name: overrides.name ?? decisionBodyName,
+            organizationId: overrides.organizationId,
+        });
     };
-
-    const getDecisionBody = (id: Id) =>
-        request(app)
-            .get(`${route}/${id}`);
-
-    const updateDecisionBody = (id: Id, data: object) =>
-        request(app)
-            .patch(`${route}/${id}`)
-            .send(data);
-
-    const deleteDecisionBody = (id: Id) =>
-        request(app)
-            .delete(`${route}/${id}`);
 
     it('POST / creates decisionBody', async () => {
         const res = await createDecisionBody();
@@ -80,7 +53,7 @@ describe('Decision body routes test', () => {
 
 
     it('POST / rejects invalid payload', async () => {
-        const res = await createDecisionBody({
+        const res = await createRouteDecisionBody({
             name: '',
         });
 
@@ -100,19 +73,20 @@ describe('Decision body routes test', () => {
     });
 
     it('PATCH /:id updates decisionBody', async () => {
-        const created = await createDecisionBody();
+        const created = await createRouteDecisionBody();
         const org = await createOrganization({ name: 'NKA' });
 
         const id = created.body.data.id;
+        const orgId = org.body.data.id;
 
         const res = await updateDecisionBody(id, {
             name: 'asd',
-            organizationId: org.id,
+            organizationId: orgId,
         });
 
         expect(res.status).toBe(200);
         expect(res.body.data.name).toBe('asd');
-        expect(res.body.data.organizationId).toBe(org.id);
+        expect(res.body.data.organizationId).toBe(orgId);
     });
 
     it('PATCH /:id rejects invalid payload', async () => {

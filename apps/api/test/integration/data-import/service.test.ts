@@ -1,10 +1,10 @@
 import { describe, expect, it, beforeEach, afterAll } from "vitest";
 import { ImportFile } from "../../../src/modules/data-import/types/import.types";
-import { JournalStatus, LegalForm } from "@prisma/client";
+import { JournalStatus, LegalForm, Sector } from "@prisma/client";
 import { ImportValidationError } from "../../../src/modules/data-import/error/import.errors";
 import { prisma } from "../../../src/db/prisma";
 import { wipeDatabase } from "../helpers/db.helper";
-import { createOrganization } from "../factories/organization.factory";
+import { createOrganization } from "../helpers/factories/organization.factory";
 import { createImportModule } from "../../../src/modules/data-import/import.factory";
 
 describe('dataImport', () => {
@@ -14,6 +14,7 @@ describe('dataImport', () => {
         name: 'Jelenkor Alapítvány',
         legalForm: LegalForm.FOUNDATION,
         address: 'Pécs',
+        sector: Sector.CIVIL,
         foundingYear: 1990,
     };
 
@@ -21,6 +22,7 @@ describe('dataImport', () => {
         name: 'Alföld Alapítvány',
         legalForm: LegalForm.FOUNDATION,
         address: 'Szeged',
+        sector: Sector.CIVIL,
         foundingYear: 1989,
     };
 
@@ -44,6 +46,7 @@ describe('dataImport', () => {
         name: 'Alföld',
         issn: '2049-3630',
         status: JournalStatus.ACTIVE,
+        sector: Sector.CIVIL,
         foundingYear: 1989,
         organizationName: 'Alföld Alapítvány',
     };

@@ -2,7 +2,11 @@ import { JournalFormat, JournalStatus } from "@prisma/client";
 import z from "zod";
 import { organizationSchema } from "../../organization/validation/organization.schema";
 import { idSchema, nameSchema, yearSchema } from "../../../common/validation/schema";
-import { createJournalAffiliationSchema, journalAffiliationSchema, journalAffiliationWithOrganizationAndSourceDocumentSchema } from "../../journal-affiliation/validate/journal-affiliation.schema";
+import { 
+    createJournalAffiliationSchema, 
+    journalAffiliationSchema, 
+    journalAffiliationWithOrganizationAndSourceDocumentSchema, 
+} from "../../journal-affiliation/validate/journal-affiliation.schema";
 
 const ommittedFields = {
     id: true,
@@ -42,11 +46,15 @@ export const createJournalSchema = journalSchema
 
 export const createJournalWithAffiliationsSchema = createJournalSchema
     .extend({
-        affiliations: z.array(createJournalAffiliationSchema),
+        affiliations: z.array(createJournalAffiliationSchema).min(1, "At least one affiliation is required"),
     });
 
-export const updateJournalWithAffiliationsSchema = journalSchema
-    .omit(ommittedFields)
+// When updating a journal, we expect that it already has at least one affiliation,
+// so we use the full journalAffiliationSchema
+export const updateJournalWithAffiliationsSchema = createJournalSchema
+    .extend({
+        affiliations: z.array(journalAffiliationSchema),
+    })
     .partial();
 
 export const importJournalSchema = createJournalSchema

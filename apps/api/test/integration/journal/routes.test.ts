@@ -1,70 +1,39 @@
 import { describe, it, expect, afterAll, beforeEach } from "vitest";
-import request from "supertest";
-import app from "../../../src/app";
-import { JournalStatus, LegalForm } from "@prisma/client";
+import { JournalStatus } from "@prisma/client";
 import { wipeDatabase } from "../helpers/db.helper";
-import { OrganizationDto } from "../../../src/modules/organization/dto/organization.dto";
+import {
+    createJournal,
+    deleteJournal,
+    getJournal,
+    updateJournal,
+} from "../helpers/api/journal.api";
 
 describe('Journal routes test', () => {
 
-    const route = '/api/journals';
     const journalName = 'Tiszatáj';
 
     beforeEach(wipeDatabase);
     afterAll(wipeDatabase);
 
-    const createOrganization = async (): Promise<OrganizationDto> => {
-        const res = await request(app)
-            .post('/api/organizations')
-            .send({
-                name: `Tiszatáj Alapítvány_${Date.now()}`,
-                legalForm: LegalForm.FOUNDATION
-            });
-        return res.body.data;
-    };
-
-    const createJournal = async (data: {
+    const createRouteJournal = async (data: {
         name?: string,
         status?: JournalStatus | string
-    } = {}): Promise<request.Response> => {
-        const org = await createOrganization();
-        const res = await request(app)
-            .post(route)
-            .send({
-                name: journalName ?? data.name,
-                status: data.status ?? JournalStatus.ACTIVE,
-                organizationId: org.id
-            });
-        return res;
+    } = {}) => {
+        return createJournal({
+            name: data.name ?? journalName,
+            status: data.status ?? JournalStatus.ACTIVE,
+        });
     };
 
-    const getJournal = (id: number) =>
-        request(app)
-            .get(`${route}/${id}`);
-
-    const updateJournal = (
-        id: number,
-        data: object
-    ) =>
-        request(app)
-            .patch(`${route}/${id}`)
-            .send(data);
-
-    const deleteJournal = (id: number) =>
-        request(app)
-            .delete(`${route}/${id}`);
-
     it('POST / creates journal', async () => {
-        const org = await createOrganization();
-        const res = await createJournal();
-        console.log(res);
+        const res = await createRouteJournal();
         expect(res.status).toBe(200);
         expect(res.body.data.name)
             .toBe('Tiszatáj');
     });
 
     it('POST / rejects invalid payload', async () => {
-        const res = await createJournal({
+        const res = await createRouteJournal({
             name: '',
             status: 'invalid',
         });
@@ -93,7 +62,7 @@ describe('Journal routes test', () => {
 
         const res = await updateJournal(id, {
             name: 'Tiszatáj upd',
-            status: JournalStatus.CLOSED,
+            status: JournalStatus.CEASED,
             organizationId: created.body.data.organizationId,
         });
 
@@ -102,7 +71,7 @@ describe('Journal routes test', () => {
             .toBe('Tiszatáj upd');
 
         expect(res.body.data.status)
-            .toBe('CLOSED');
+            .toBe('CEASED');
     });
 
     it('PATCH /:id rejects invalid payload', async () => {

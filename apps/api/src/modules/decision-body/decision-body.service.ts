@@ -1,10 +1,11 @@
 import { ActorType } from "@prisma/client";
-import { CreateDecisionBodyData, CreateDecisionBodyInput, DecisionBodyDto, UpdateDecisionBodyInput } from "./dto/decision-body.dto";
+import { DecisionBodyDto } from "./dto/decision-body.dto";
 import { ActorRepository } from "../actor/actor.repository";
 import { transaction } from "../../db/transaction";
 import { Id } from "../../common/types/types";
 import { PrismaCrudRepository } from "../../db/repositories/prisma-crud-repository";
 import { createRepositories } from "../../db/repositories/factory";
+import { CreateDecisionBodyData, CreateDecisionBodyInput, UpdateDecisionBodyInput } from "./dto/decision-body.input.dto";
 
 export class DecisionBodyService
 {
@@ -14,12 +15,11 @@ export class DecisionBodyService
     ) {
     }
 
-    async create(dto: CreateDecisionBodyData): Promise<DecisionBodyDto>
+    async create(dto: CreateDecisionBodyInput): Promise<DecisionBodyDto>
     {
         const actor = await this.actorRepository.create(
             ActorType.DECISION_BODY
         );
-
         return this.repository.create({
             ...dto,
             actorId: actor.id,
