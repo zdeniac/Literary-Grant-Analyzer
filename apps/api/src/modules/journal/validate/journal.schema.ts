@@ -14,6 +14,15 @@ const ommittedFields = {
     updatedAt: true,
 } as const;
 
+const importFormatSchema = z
+    .string()
+    .transform(value =>
+        value.split('|').map(v => v.trim()) as JournalFormat[]
+    )
+    .pipe(
+        z.array(z.enum(JournalFormat)).min(1)
+    );
+
 export const issnSchema = z
     .string()
     .transform(v => v.replace('-', ''))
@@ -44,9 +53,14 @@ export const createJournalSchema = journalSchema
         foundingYear: yearSchema.nullable().optional(),
     });
 
+export const createJournalWithOrganizationIdSchema = createJournalSchema
+    .extend({
+        organizationId: idSchema,
+    });
+
 export const createJournalWithAffiliationsSchema = createJournalSchema
     .extend({
-        affiliations: z.array(createJournalAffiliationSchema).min(1, "At least one affiliation is required"),
+        affiliations: z.array(createJournalAffiliationSchema).min(1, 'At least one affiliation is required'),
     });
 
 // When updating a journal, we expect that it already has at least one affiliation,
@@ -59,5 +73,6 @@ export const updateJournalWithAffiliationsSchema = createJournalSchema
 
 export const importJournalSchema = createJournalSchema
     .extend({
+        format: importFormatSchema,
         organizationName: organizationSchema.shape.name,
     });

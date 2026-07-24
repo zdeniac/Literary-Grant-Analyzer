@@ -1,9 +1,9 @@
-import { ImportWriter } from "../types/import.types";
+import { ImportWriterInterface } from "../types/import.types";
 
-export class DataImportWriter<TCreate> implements ImportWriter<TCreate>
+export class ImportWriter<TCreate> implements ImportWriterInterface<TCreate>
 {
     constructor(
-        private readonly repository: ImportWriter<TCreate>
+        private readonly repository: ImportWriterInterface<TCreate>
     ) {}
 
     async createMany(data: TCreate[]): Promise<number> 

@@ -1,25 +1,25 @@
 import { ActorType } from "@prisma/client";
 import { transaction } from "../../../db/transaction";
-import { CreateOrganizationData, CreateOrganizationInput } from "../dto/organization.dto";
-import { ImportWriter } from "../../data-import/types/import.types";
+import { ImportWriterInterface } from "../../data-import/types/import.types";
 import { createRepositories } from "../../../db/repositories/factory";
+import { CreateDecisionBodyInput } from "../dto/decision-body.input.dto";
 
-export class OrganizationImportWriter implements ImportWriter<CreateOrganizationData>
+export class DecisionBodyImportWriter implements ImportWriterInterface<CreateDecisionBodyInput>
 {
-    async createMany(data: CreateOrganizationInput[]): Promise<number>
+    async createMany(data: CreateDecisionBodyInput[]): Promise<number>
     {
         return transaction(async (tx) => {
             const repositories = createRepositories(tx);
 
-            const actorRepository = repositories.actor;
-            const orgRepository = repositories.organization;
+            const actorRepository = repositories.actor
+            const dBodyRepository = repositories.decisionBody;
 
             for (const row of data) {
                 const actor = await actorRepository.create(
-                    ActorType.ORGANIZATION
+                    ActorType.DECISION_BODY
                 );
 
-                await orgRepository.create({
+                await dBodyRepository.create({
                     ...row,
                     actorId: actor.id
                 });

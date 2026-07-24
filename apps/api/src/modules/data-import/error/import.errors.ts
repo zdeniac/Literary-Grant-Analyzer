@@ -21,3 +21,12 @@ export class ImportError extends AppError {
         this.name = 'ImportError';
     }
 }
+
+export class ImportRelationError extends ImportError {
+    constructor(public errors: ImportRowError[])
+    {
+        super('IMPORT_RELATION_ERROR');
+        this.name = 'ImportRelationError';
+    }
+}
+

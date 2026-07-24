@@ -1,28 +1,33 @@
 import { PrismaDatabase } from "../../db/types";
-import {  } from "./dto/journal.dto";
 import { JournalWithAffiliatedOrganizationsAndSourceDocument } from "./types/journal.types";
 import { Id } from "../../common/types/types";
-import { CreateJournalWithAffiliationsInput } from "./dto/journal.input.dto";
+import { CreateJournalInput, CreateJournalWithAffiliationsInput } from "./dto/journal.input.dto";
 import { NotFoundError } from "../../common/errors/http.error";
+import { Journal } from "@prisma/client";
 
 export class JournalRepository
 {
     constructor(
         private readonly model: PrismaDatabase['journal']
     ) {}
+
+    async create(data: CreateJournalInput): Promise<Journal>
+    {
+        return this.model.create({ data });
+    }
     
-    async createWithAffiliations(dto: CreateJournalWithAffiliationsInput): Promise<JournalWithAffiliatedOrganizationsAndSourceDocument>
+    async createWithAffiliations(input: CreateJournalWithAffiliationsInput): Promise<JournalWithAffiliatedOrganizationsAndSourceDocument>
     {
         return this.model.create({
             data: {
-                name: dto.name,
-                status: dto.status,
-                issn: dto.issn,
-                format: dto.format,
-                foundingYear: dto.foundingYear,
+                name: input.name,
+                status: input.status,
+                issn: input.issn,
+                format: input.format,
+                foundingYear: input.foundingYear,
 
                 affiliations: {
-                    create: dto.affiliations.map(affiliation => ({
+                    create: input.affiliations.map(affiliation => ({
                         organization: {
                             connect: {
                                 id: affiliation.organizationId

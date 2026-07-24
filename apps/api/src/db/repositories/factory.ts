@@ -11,11 +11,14 @@ import { AwardSchemeModel } from "../../modules/award-scheme/dto/award-scheme.dt
 import { DecisionBodyModel } from "../../modules/decision-body/dto/decision-body.dto";
 import { SourceDocumentModel } from "../../modules/source-document/dto/source-document.dto";
 import { CreateSourceDocumentInput, UpdateSourceDocumentInput } from "../../modules/source-document/dto/source-document.input.dto";
+import { JournalAffiliationRepository } from "../../modules/journal-affiliation/journal-affiliation.repository";
 
 export function createRepositories(db: PrismaDatabase)
 {
     let organization: PrismaCrudRepository<OrganizationModel, CreateOrganizationInputWithActorId, UpdateOrganizationInput> | undefined;
     let journal: JournalRepository | undefined;
+    let journalAffiliation: JournalAffiliationRepository | undefined;
+
     let awardScheme: PrismaCrudRepository<AwardSchemeModel, CreateAwardSchemeInput, UpdateAwardSchemeInput> | undefined;
     let decisionBody: PrismaCrudRepository<DecisionBodyModel, CreateDecisionBodyData, UpdateDecisionBodyInput> | undefined;
     let sourceDocument: PrismaCrudRepository<SourceDocumentModel, CreateSourceDocumentInput, UpdateSourceDocumentInput> | undefined;
@@ -29,6 +32,10 @@ export function createRepositories(db: PrismaDatabase)
 
         get journal() {
             return journal ??= new JournalRepository(db.journal);
+        },
+
+        get journalAffiliation() {
+            return journalAffiliation ??= new JournalAffiliationRepository(db.journalAffiliation);
         },
 
         get awardScheme() {

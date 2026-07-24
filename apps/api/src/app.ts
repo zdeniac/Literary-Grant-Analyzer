@@ -6,6 +6,7 @@ import decisionBodyRouter from "./modules/decision-body/decision-body.routes";
 import awardSchemeRouter from "./modules/award-scheme/award-scheme.routes";
 import sourceDocumentRouter from "./modules/source-document/source-document.routes";
 import awardDecisionRouter from "./modules/award-decision/award-decision.routes";
+import { errorHandler } from "./common/middleware/errorHandler";
 
 const app = express();
 
@@ -15,7 +16,8 @@ app.use((req, res, next) => {
 });
 
 app.use(
-    express.json(),
+  express.json(),
+  errorHandler
 );
 
 app.use('/api/organizations', organizationRouter);

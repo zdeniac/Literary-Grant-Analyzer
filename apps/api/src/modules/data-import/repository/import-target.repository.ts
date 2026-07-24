@@ -1,7 +1,7 @@
-import { ImportLookup, ImportWriter } from "../../modules/data-import/types/import.types";
-import { ModelDelegate, PrismaDatabase } from "../types";
+import { ImportLookupInterface, ImportWriterInterface } from "../types/import.types";
+import { ModelDelegate } from "../../../db/types";
 
-export class PrismaImportTargetRepository<TModel, TCreate> implements ImportLookup<TModel>, ImportWriter<TCreate>
+export class ImportTargetRepository<TModel, TCreate> implements ImportLookupInterface<TModel>, ImportWriterInterface<TCreate>
 {
     constructor(
         private readonly delegate: ModelDelegate<TModel>

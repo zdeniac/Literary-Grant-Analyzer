@@ -1,9 +1,9 @@
-import { ImportLookup } from "../types/import.types";
+import { ImportLookupInterface } from "../types/import.types";
 
-export class DataImportLookup<TModel> implements ImportLookup<TModel>
+export class ImportLookup<TModel> implements ImportLookupInterface<TModel>
 {
     constructor(
-        private readonly repository: ImportLookup<TModel>
+        private readonly repository: ImportLookupInterface<TModel>
     ) {}
     
     async findManyBy(field: string, values: unknown[]): Promise<TModel[]>

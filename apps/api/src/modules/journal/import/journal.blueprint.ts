@@ -29,7 +29,7 @@ export const journalBlueprint: RelationalModelBlueprint =
             },
             {
                 name: 'format',
-                type: 'enum',
+                type: 'array[enum]',
                 required: true,
                 options: Object.keys(JournalFormat)
             },

@@ -4,5 +4,7 @@ export class AppError extends Error {
         public statusCode: number = 500,
     ) {
         super(message);
+
+        Object.setPrototypeOf(this, new.target.prototype);
     }
 }

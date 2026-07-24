@@ -1,0 +1,29 @@
+model ImportJob {
+    id              Int             @id @default(autoincrement())
+
+    model           String
+    fileName        String?
+    mimeType        String?
+
+    status          ImportJobStatus
+
+    totalRows       Int             @default(0)
+    importedRows    Int             @default(0)
+    failedRows      Int             @default(0)
+
+    errorMessage    String?
+
+    startedAt       DateTime        @default(now())
+    finishedAt      DateTime?
+
+    createdAt       DateTime        @default(now())
+
+    sourceDocumentId Int?
+    sourceDocument SourceDocument? @relation(fields: [sourceDocumentId], references: [id], onDelete: Restrict)
+}
+
+enum ImportJobStatus {
+    RUNNING
+    COMPLETED
+    FAILED
+}

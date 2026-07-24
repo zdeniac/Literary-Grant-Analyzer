@@ -1,19 +1,19 @@
 import z, { ZodObject } from "zod";
-import { modelNameSchema } from "../validation/data-import.validation";
+import { modelNameSchema } from "../validation/data-import.validation.schema";
 
 export type ImportHeader = string[];
 export type ImportRow = Record<string, unknown>;
 export type ModelName = z.infer<typeof modelNameSchema>;
 
 export type ImportFile = {
-    name: string;
+    fileName: string;
     mimeType: string;
     // The header of the data table
     header: ImportHeader;
     rows: ImportRow[];
 };
 
-export type ImportFieldType = 'string' | 'number' | 'email' | 'enum' | 'boolean' | 'date';
+export type ImportFieldType = 'string' | 'number' | 'email' | 'enum' | 'boolean' | 'date' | 'array[enum]';
 export type ImportField = {
     name: string;
     type: ImportFieldType;
@@ -35,10 +35,17 @@ export type ModelBlueprint = {
     schema: ZodObject;
 };
 
+/**
+ * model: 'organization'
+ * sourceField: 'organizationName'
+ * lookupField: 'name'
+ */
 export type RelationBlueprint = {
     model: ModelName;
 
+    // the header field from the ImportFile
     sourceField: string;
+    // the foreign model's actual field from the db
     lookupField: string;
 
     foreignKey: string;
@@ -57,18 +64,12 @@ export type ImportOptions = {
     };
 }
 
-export interface ImportLookup<TModel>
+export interface ImportLookupInterface<TModel>
 {
     findManyBy(field: string, values: unknown[]): Promise<TModel[]>;
 }
 
-export interface ImportWriter<TCreate>
+export interface ImportWriterInterface<TCreate>
 {
     createMany(data: TCreate[]): Promise<number>;
-}
-
-// Type guard
-export function isRelationalModelBlueprint(blueprint: Blueprint): blueprint is RelationalModelBlueprint 
-{
-    return 'relations' in blueprint;
 }

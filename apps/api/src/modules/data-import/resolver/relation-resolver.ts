@@ -1,26 +1,23 @@
-import { ImportError } from "../error/import.errors";
-import { ImportLookup, ImportRow, ModelName, RelationBlueprint } from "../types/import.types";
+import { ImportError, ImportRelationError } from "../error/import.errors";
+import { ImportLookupInterface, ImportRow, ModelName, RelationBlueprint } from "../types/import.types";
 
 export class RelationResolver
 {
     constructor(
-        private readonly lookups: Record<ModelName, ImportLookup<any>>,
+        private readonly lookups: Record<ModelName, ImportLookupInterface<any>>,
     ) {}
 
-    public async resolve(validated: ImportRow[], blueprint: RelationBlueprint): Promise<ImportRow[]> 
+    public async resolve(validated: ImportRow[], relationBlueprint: RelationBlueprint): Promise<ImportRow[]> 
     {
-        const model = blueprint.model;
+        const model = relationBlueprint.model;
 
-        const sourceField = blueprint.sourceField;
-        const targetField = blueprint.targetField;
+        const sourceField = relationBlueprint.sourceField;
+        const lookupField = relationBlueprint.lookupField;
 
-        const foreignKey = blueprint.foreignKey;
-        const lookupField = blueprint.lookupField;
-
-        // Get the foreign data by the given field's values
+        // Get the foreign data by the given field's values, e.g. 'organizationName'
         const foreignTableValues = validated.map(row => row[sourceField]);
 
-        // Check if they are in the db
+        // Check if they are in the db by the lookup field, e.g. 'name' (in organizations)
         const foreignData: Record<string, unknown>[] = 
             await this.lookups[model].findManyBy(
                 lookupField,
@@ -37,17 +34,21 @@ export class RelationResolver
             (value) => !found.has(value)
         );
 
-        if (missing.length) throw new ImportError(`Missing foreign record with data: ${missing.join(', ')}`);
+        if (missing.length) {
+            throw new ImportRelationError(missing as string[]);
+        }
 
         // We rework the validated data structure by switching the source and its values
         // to the foreign data and its values
+        // e.g. the imported row's organizationName = 'something'
+        // will be changed to organizationId = number
         validated.forEach((row) => {
             const relation = found.get(row[sourceField])!;
 
             delete row[sourceField];
-            row[foreignKey] = relation[targetField];
+            row[relationBlueprint.foreignKey] = relation[relationBlueprint.targetField];
         });
-        
+    
         return validated;
     }
 }
