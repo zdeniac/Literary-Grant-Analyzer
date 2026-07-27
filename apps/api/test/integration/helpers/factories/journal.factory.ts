@@ -1,5 +1,5 @@
 import { JournalFormat, JournalStatus } from "@prisma/client";
-import { Issn, JournalWithAffiliatedOrganizationsAndSourceDocument } from "../../../../src/modules/journal/types/journal.types";
+import { Issn, JournalWithOrganizationsAndSourceDocument } from "../../../../src/modules/journal/types/journal.types";
 import { Id } from "../../../../src/common/types/types";
 import { prisma } from "../../../../src/db/prisma";
 import { JournalService } from "../../../../src/modules/journal/journal.service";
@@ -27,7 +27,7 @@ export const createJournal = async (overrides: {
     status?: JournalStatus,
     format?: JournalFormat[],
     issn?: Issn,
-}): Promise<JournalWithAffiliatedOrganizationsAndSourceDocument> => {
+}): Promise<JournalWithOrganizationsAndSourceDocument> => {
     const affiliations = [{
         fromYear: 2000,
         toYear: 2020,
@@ -46,10 +46,10 @@ export const createJournal = async (overrides: {
     });
 };
 
-export const updateJournal = async (id: Id, dto: UpdateJournalWithAffiliationsInput): Promise<JournalWithAffiliatedOrganizationsAndSourceDocument> => 
+export const updateJournal = async (id: Id, dto: UpdateJournalWithAffiliationsInput): Promise<JournalWithOrganizationsAndSourceDocument> => 
     await journalService.update(id, dto);
 
-export const findJournalById = async (id: Id): Promise<JournalWithAffiliatedOrganizationsAndSourceDocument | null> => 
+export const findJournalById = async (id: Id): Promise<JournalWithOrganizationsAndSourceDocument | null> => 
     await journalService.findByIdWithAffiliations(id);
 
 export const findEveryJournal = async (): Promise<JournalModel[]> => 

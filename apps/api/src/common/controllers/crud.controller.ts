@@ -6,7 +6,7 @@ import { CrudServiceInterface, DtoMapper } from "../types/types";
 export class CrudController<TModel, TDto>
 {
     constructor(
-        protected readonly service: CrudServiceInterface<TModel, any, any>,
+        protected readonly service: CrudServiceInterface<TModel, TDto>,
         protected readonly toDto: DtoMapper<TModel, TDto>,
     ) {
         this.findById = this.findById.bind(this);

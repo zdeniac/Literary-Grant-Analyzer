@@ -9,7 +9,7 @@ export type Name = z.infer<typeof nameSchema>;
 
 export type DtoMapper<TModel, TDto> = (model: TModel) => TDto;
 
-export interface CrudServiceInterface<TModel, TCreateDto, TUpdateDto>
+export interface CrudServiceInterface<TModel, TCreateDto, TUpdateDto = Partial<TCreateDto>>
 {
     create(dto: TCreateDto): Promise<TModel>;
     findById(id: Id): Promise<TModel>;

@@ -17,7 +17,6 @@ app.use((req, res, next) => {
 
 app.use(
   express.json(),
-  errorHandler
 );
 
 app.use('/api/organizations', organizationRouter);
@@ -27,5 +26,7 @@ app.use('/api/decision-bodies', decisionBodyRouter);
 app.use('/api/award-schemes', awardSchemeRouter);
 app.use('/api/source-documents', sourceDocumentRouter);
 app.use('/api/award-decisions', awardDecisionRouter);
+
+app.use(errorHandler);
 
 export default app;

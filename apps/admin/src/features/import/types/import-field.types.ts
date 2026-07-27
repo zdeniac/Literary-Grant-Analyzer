@@ -1,4 +1,5 @@
 export type ImportFormValues = {
+    saveSourceDocument?: boolean;
     file?: {
         rawFile: File;
     };

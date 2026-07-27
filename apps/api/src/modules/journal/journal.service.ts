@@ -1,7 +1,7 @@
 import { NotFoundError } from "../../common/errors/http.error";
 import { Id } from "../../common/types/types";
 import { JournalRepository } from "./journal.repository";
-import { JournalWithAffiliatedOrganizationsAndSourceDocument } from "./types/journal.types";
+import { JournalWithOrganizations, JournalWithOrganizationsAndSourceDocument } from "./types/journal.types";
 import { JournalAffiliationRepository } from "../journal-affiliation/journal-affiliation.repository";
 import { CreateJournalWithAffiliationsInput, UpdateJournalWithAffiliationsInput } from "./dto/journal.input.dto";
 import { createJournalWithAffiliationsSchema } from "./validate/journal.schema";
@@ -14,16 +14,16 @@ export class JournalService
     ) {
     }
 
-    async create(dto: CreateJournalWithAffiliationsInput): Promise<JournalWithAffiliatedOrganizationsAndSourceDocument>
+    async create(dto: CreateJournalWithAffiliationsInput): Promise<JournalWithOrganizationsAndSourceDocument>
     {
         const validatedDto = createJournalWithAffiliationsSchema.parse(dto);
 
         return this.repository.createWithAffiliations(validatedDto);
     }
 
-    async update(id: Id, dto: UpdateJournalWithAffiliationsInput): Promise<JournalWithAffiliatedOrganizationsAndSourceDocument>
+    async update(id: Id, dto: UpdateJournalWithAffiliationsInput): Promise<JournalWithOrganizationsAndSourceDocument>
     {
-        await this.repository.findByIdWithAffiliations(id);
+        await this.repository.findByIdWithOrganizationsAndSourceDocument(id);
 
         const existing = await this.affiliationRepository.findManyByJournalId(id)
         const existingById = new Map(
@@ -31,7 +31,7 @@ export class JournalService
         );
 
         if (dto.name !== undefined || dto.status !== undefined || dto.issn !== undefined || dto.format !== undefined || dto.foundingYear !== undefined) {
-            await this.repository.update(id, {
+            await this.repository.updateWithOrganizationsAndSourceDocument(id, {
                 name: dto.name,
                 status: dto.status,
                 issn: dto.issn,
@@ -52,7 +52,7 @@ export class JournalService
                 const current = existingById.get(affiliation.id);
 
                 if (!current) {
-                    throw new Error(`JournalAffiliation ${affiliation.id} not found.`);
+                    throw new NotFoundError(`JournalAffiliation ${affiliation.id} not found.`);
                 }
 
                 await this.affiliationRepository.update(affiliation.id, {
@@ -83,17 +83,22 @@ export class JournalService
             }
         }
 
-        return this.repository.findByIdWithAffiliations(id);
+        return this.repository.findByIdWithOrganizationsAndSourceDocument(id);
     }
 
-    async findByIdWithAffiliations(id: Id): Promise<JournalWithAffiliatedOrganizationsAndSourceDocument | null>
+    async findByIdWithAffiliations(id: Id): Promise<JournalWithOrganizationsAndSourceDocument | null>
     {
-        const journal = await this.repository.findByIdWithAffiliations(id);
+        const journal = await this.repository.findByIdWithOrganizationsAndSourceDocument(id);
 
         if (!journal) {
             throw new NotFoundError();
         }
 
         return journal;
+    }
+
+    async findAllWithOrganizations(): Promise<JournalWithOrganizations[]>
+    {
+        return this.repository.findAllWithOrganizations();
     }
 }

@@ -1,9 +1,9 @@
 import { JournalWithAffiliationsDto } from "../dto/journal.dto";
 import { DtoMapper } from "../../../common/types/types";
-import { JournalWithAffiliatedOrganizationsAndSourceDocument } from "../types/journal.types";
+import { JournalWithOrganizationsAndSourceDocument } from "../types/journal.types";
 
 export const toJournalWithAffiliationsDto: DtoMapper<
-    JournalWithAffiliatedOrganizationsAndSourceDocument, 
+    JournalWithOrganizationsAndSourceDocument, 
     JournalWithAffiliationsDto
 > = (journal) => ({
     id: journal.id,
@@ -24,7 +24,8 @@ export const toJournalWithAffiliationsDto: DtoMapper<
 
         organizationId: affiliation.organizationId,
         organizationName: affiliation.organization.name,
-        sourceDocumentName: affiliation.sourceDocument?.title ?? null,
+
+        sourceDocumentTitle: affiliation.sourceDocument?.title ?? null,
         sourceDocumentId: affiliation.sourceDocumentId,
 
         journalId: affiliation.journalId,

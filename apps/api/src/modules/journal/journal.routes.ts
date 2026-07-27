@@ -38,7 +38,7 @@ router.post(
 
 router.get(
     '/',
-    crudController.findAll,
+    controller.findAll,
 );
 
 export default router;

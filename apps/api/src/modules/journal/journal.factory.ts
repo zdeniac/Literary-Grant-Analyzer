@@ -7,7 +7,6 @@ import { JournalController } from "./journal.controller";
 import { JournalRepository } from "./journal.repository";
 import { JournalService } from "./journal.service";
 import { toJournalDto } from "./mapper/journal-dto.mapper";
-import { toJournalWithAffiliationsDto } from "./mapper/journal-with-affiliations.mapper";
 
 export const createJournalModule = () => {
     const controller = new JournalController(
@@ -15,7 +14,6 @@ export const createJournalModule = () => {
             new JournalRepository(prisma.journal),
             new JournalAffiliationRepository(prisma.journalAffiliation)
         ),
-        toJournalWithAffiliationsDto
     )
 
     const crudController = new CrudController(

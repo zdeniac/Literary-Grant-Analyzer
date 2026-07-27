@@ -1,19 +1,18 @@
 import { Request, Response } from "express";
 import { sendData } from "../../common/http/response";
-import { DtoMapper } from "../../common/types/types";
 import { JournalService } from "./journal.service";
-import { JournalWithAffiliationsDto } from "./dto/journal.dto";
-import { JournalWithAffiliatedOrganizationsAndSourceDocument } from "./types/journal.types";
 import { idSchema } from "../../common/validation/schema";
+import { toJournalWithAffiliationsDto } from "./mapper/journal-with-affiliations.mapper";
+import { toJournalListDto } from "./mapper/journal-list-mapper";
 
 export class JournalController
 {
     constructor(
         private readonly service: JournalService,
-        private readonly mapper: DtoMapper<JournalWithAffiliatedOrganizationsAndSourceDocument, JournalWithAffiliationsDto>
     ) {
         this.create = this.create.bind(this);
         this.findById = this.findById.bind(this);
+        this.findAll = this.findAll.bind(this);
     }
 
     async create(req: Request, res: Response): Promise<void>
@@ -22,7 +21,18 @@ export class JournalController
             req.body
         );
 
-        sendData(res, journal);
+        sendData(res, toJournalWithAffiliationsDto(journal));
+    }
+
+    async findAll(req: Request, res: Response): Promise<void>
+    {
+        const journals = await this.service.findAllWithOrganizations();
+
+        sendData(
+            res, 
+            journals.map(toJournalListDto),
+            { total: journals.length }
+        )
     }
 
     async findById(req: Request, res: Response): Promise<void>
@@ -31,7 +41,7 @@ export class JournalController
             idSchema.parse(req.params.id)
         );
 
-        sendData(res, this.mapper(journal!));
+        sendData(res, toJournalWithAffiliationsDto(journal!));
     }
 
     async update(req: Request, res: Response): Promise<void>
@@ -41,6 +51,6 @@ export class JournalController
             req.body
         );
 
-        sendData(res, this.mapper(journal))
+        sendData(res, toJournalWithAffiliationsDto(journal))
     }
 }

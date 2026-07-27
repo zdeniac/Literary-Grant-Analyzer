@@ -17,7 +17,6 @@ export class ImportService
         private readonly options: ImportOptions = {},
     ) {}
 
-    // @todo source document id-t besettelni ImportContext?
     public async import(model: ModelName, file: ImportFile): Promise<number>
     {
         const job = await this.importJobRepository.create({

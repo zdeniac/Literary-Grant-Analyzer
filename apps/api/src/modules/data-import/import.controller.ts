@@ -2,11 +2,15 @@ import { ImportService } from "./service/import.service";
 import { Request, Response } from "express";
 import { toImportFile } from "./mapper/import.mapper";
 import { ImportSchemaService } from "./service/import-schema.service";
+import { CrudService } from "../../common/services/crud.service";
+import { SourceDocumentModel } from "../source-document/dto/source-document.dto";
+import { CreateSourceDocumentInput } from "../source-document/dto/source-document.input.dto";
 
 export class ImportController {
     constructor(
         private readonly importService: ImportService,
         private readonly schemaService: ImportSchemaService,
+        private readonly crudService: CrudService<SourceDocumentModel, CreateSourceDocumentInput>
     ) {
         this.import = this.import.bind(this);
         this.getSchema = this.getSchema.bind(this);
@@ -45,10 +49,16 @@ export class ImportController {
             parsedFile
         );
 
+        if (req.body.saveSourceDocument && total > 0) {
+            this.crudService.create({
+                title: parsedFile.fileName,
+                url: req.body.url,
+                retrievedAt: req.body.retrievedAt,
+            });
+        }
+
         res.json({
-            data: {
-                total
-            }
+            data: { total }
         });
     }
 }

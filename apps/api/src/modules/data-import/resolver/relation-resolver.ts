@@ -1,4 +1,4 @@
-import { ImportError, ImportRelationError } from "../error/import.errors";
+import { ImportRelationError } from "../error/import.errors";
 import { ImportLookupInterface, ImportRow, ModelName, RelationBlueprint } from "../types/import.types";
 
 export class RelationResolver
@@ -35,7 +35,7 @@ export class RelationResolver
         );
 
         if (missing.length) {
-            throw new ImportRelationError(missing as string[]);
+            throw new ImportRelationError(missing);
         }
 
         // We rework the validated data structure by switching the source and its values

@@ -4,7 +4,7 @@ import { Prisma } from "@prisma/client";
 
 export type Issn = z.infer<typeof issnSchema>;
 
-export type JournalWithAffiliatedOrganizationsAndSourceDocument = Prisma.JournalGetPayload<{
+export type JournalWithOrganizationsAndSourceDocument = Prisma.JournalGetPayload<{
     include: {
         affiliations: {
             include: {
@@ -13,4 +13,14 @@ export type JournalWithAffiliatedOrganizationsAndSourceDocument = Prisma.Journal
             };
         };
     };
+}>;
+
+export type JournalWithOrganizations = Prisma.JournalGetPayload<{
+    include: {
+        affiliations: {
+            include: {
+                organization: true;
+            }
+        }
+    }
 }>;

@@ -1,5 +1,5 @@
 import { PrismaDatabase } from "../../db/types";
-import { JournalWithAffiliatedOrganizationsAndSourceDocument } from "./types/journal.types";
+import { JournalWithOrganizations, JournalWithOrganizationsAndSourceDocument } from "./types/journal.types";
 import { Id } from "../../common/types/types";
 import { CreateJournalInput, CreateJournalWithAffiliationsInput } from "./dto/journal.input.dto";
 import { NotFoundError } from "../../common/errors/http.error";
@@ -16,7 +16,7 @@ export class JournalRepository
         return this.model.create({ data });
     }
     
-    async createWithAffiliations(input: CreateJournalWithAffiliationsInput): Promise<JournalWithAffiliatedOrganizationsAndSourceDocument>
+    async createWithAffiliations(input: CreateJournalWithAffiliationsInput): Promise<JournalWithOrganizationsAndSourceDocument>
     {
         return this.model.create({
             data: {
@@ -53,7 +53,7 @@ export class JournalRepository
         });
     }
 
-    async update(id: Id, data: Partial<Pick<JournalWithAffiliatedOrganizationsAndSourceDocument, 'name' | 'status' | 'issn' | 'format' | 'foundingYear'>>): Promise<JournalWithAffiliatedOrganizationsAndSourceDocument>
+    async updateWithOrganizationsAndSourceDocument(id: Id, data: Partial<Pick<JournalWithOrganizationsAndSourceDocument, 'name' | 'status' | 'issn' | 'format' | 'foundingYear'>>): Promise<JournalWithOrganizationsAndSourceDocument>
     {
         return this.model.update({
             where: { id },
@@ -69,7 +69,7 @@ export class JournalRepository
         });
     }
 
-    async findByIdWithAffiliations(id: Id): Promise<JournalWithAffiliatedOrganizationsAndSourceDocument>
+    async findByIdWithOrganizationsAndSourceDocument(id: Id): Promise<JournalWithOrganizationsAndSourceDocument>
     {
         const journal = await this.model.findUnique({
             where: {
@@ -90,5 +90,18 @@ export class JournalRepository
         }
 
         return journal;
+    }
+
+    async findAllWithOrganizations(): Promise<JournalWithOrganizations[]>
+    {
+        return this.model.findMany({
+            include: {
+                affiliations: {
+                    include: {
+                        organization: true,
+                    }
+                }
+            },
+        });
     }
 }

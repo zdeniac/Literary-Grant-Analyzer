@@ -1,6 +1,11 @@
-import { Button, FileInput, Form, required, useNotify, useRefresh, type ButtonProps } from "react-admin";
+import { BooleanInput, Button, DateInput, FileInput, Form, FormDataConsumer, required, TextInput, useNotify, useRefresh, type ButtonProps } from "react-admin";
 import SaveIcon from '@mui/icons-material/Save';
 import type { AcceptedFormat, ImportFormValues } from "../types/import-field.types";
+import { url } from "../../../shared/validation/validators";
+import { Box, Fade } from "@mui/material";
+
+const urlValidation = [url(), required()];
+const retrievedAtValidation = [required()];
 
 export const ImportForm = ({ 
     submitRoute,
@@ -19,26 +24,29 @@ export const ImportForm = ({
         }
         try {
             const formData = new FormData();
-        
-            formData.append('file', params.file?.rawFile);
 
+            formData.append('file', params.file?.rawFile);
+            formData.append('saveSourceDocument', params.saveSourceDocument ? 'true' : 'false');
+            
             const res = await fetch(submitRoute, {
                 method: 'POST',
                 body: formData
             });
 
             if (!res.ok) {
-                throw new Error('Importálási hiba');
+                const body = await res.json();
+                console.log(body);
+                throw new Error(body.error);
             }
 
             refresh();
             notify('Sikeres importálás', {
                 type: 'success'
             });
-        } catch (e: unknown) {
+        } catch (e: any) {
             notify(e.message, {
                 type: 'error'
-            });
+            });        
         }
     };
 
@@ -51,6 +59,24 @@ export const ImportForm = ({
                 multiple={false} 
                 accept={{'text/csv' : ['.csv']}}
             />
+        
+            <BooleanInput label="Dokumentum adatainak mentése" 
+                            source="saveSourceDocument"
+            />
+
+            <FormDataConsumer>
+                {({ formData }) =>
+                    formData.saveSourceDocument ? (
+                        <Fade in={formData.saveSourceDocument}>
+                            <Box>
+                                <TextInput source="url" validate={urlValidation} />
+                                <DateInput source="retrievedAt" validate={retrievedAtValidation} />
+                            </Box>
+                        </Fade>                
+                    ) : null
+                }
+            </FormDataConsumer>
+
             <Button variant="contained" type="submit" {...props}>
                 <SaveIcon />
                 Importálás

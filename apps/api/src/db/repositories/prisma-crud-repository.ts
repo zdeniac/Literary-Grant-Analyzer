@@ -1,7 +1,7 @@
 import { NotFoundError } from "../../common/errors/http.error";
 import { CrudRepository, PrismaModel } from "../types";
 
-export class PrismaCrudRepository<TModel, TCreate, TUpdate>
+export class PrismaCrudRepository<TModel, TCreate, TUpdate = Partial<TCreate>>
     implements CrudRepository<TModel, TCreate, TUpdate>
 {
     constructor(

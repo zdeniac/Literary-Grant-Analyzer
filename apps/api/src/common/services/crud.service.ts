@@ -1,7 +1,8 @@
 import { CrudRepository } from "../../db/types";
 import { CrudServiceInterface, Id } from "../types/types";
 
-export class CrudService<TModel, TCreateDto, TUpdateDto> implements CrudServiceInterface<TModel, TCreateDto, TUpdateDto>
+export class CrudService<TModel, TCreateDto, TUpdateDto = Partial<TCreateDto>> 
+    implements CrudServiceInterface<TModel, TCreateDto, TUpdateDto>
 {
     constructor(
         private readonly repository: CrudRepository<TModel, TCreateDto, TUpdateDto>

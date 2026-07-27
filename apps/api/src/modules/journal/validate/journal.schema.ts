@@ -25,9 +25,9 @@ const importFormatSchema = z
 
 export const issnSchema = z
     .string()
-    .transform(v => v.replace('-', ''))
-    .refine(v => /^\d{8}$/.test(v) || /^\d{7}X$/.test(v));
-
+    .transform(v => v.trim() === '' ? null : v.replace('-', ''))
+    .refine(v => v === null || /^\d{8}$/.test(v) || /^\d{7}X$/.test(v));
+    
 export const journalSchema = z.object({
     id: idSchema,
 
@@ -40,6 +40,16 @@ export const journalSchema = z.object({
     createdAt: z.coerce.date(),
     updatedAt: z.coerce.date(),
 });
+
+export const journalWithOrganizationsSchema = journalSchema
+    .extend({
+        organizations: z.array(
+            z.object({
+                id: idSchema,
+                name: organizationSchema.shape.name,
+            })
+        )
+    });
 
 export const journalWithAffiliationsSchema = journalSchema
     .extend({
@@ -73,6 +83,7 @@ export const updateJournalWithAffiliationsSchema = createJournalSchema
 
 export const importJournalSchema = createJournalSchema
     .extend({
+        foundingYear: z.coerce.number(),
         format: importFormatSchema,
         organizationName: organizationSchema.shape.name,
     });

@@ -10,7 +10,7 @@ export const toImportFile = (file: Express.Multer.File): ImportFile => {
     });
 
     return {
-        name: file.originalname,
+        fileName: file.originalname,
         mimeType: file.mimetype,
         header: Object.keys(rows[0]),
         rows: rows,
