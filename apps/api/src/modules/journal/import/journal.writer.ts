@@ -1,11 +1,11 @@
 import { createRepositories } from "../../../db/repositories/factory";
 import { transaction } from "../../../db/transaction";
 import { ImportWriterInterface } from "../../data-import/types/import.types";
-import { ImportJournalWithOrganizationIdInput } from "../dto/journal.input.dto";
+import { ImportJournalWithOrganizationIdsInput } from "../dto/journal.input.dto";
 
-export class JournalImportWriter implements ImportWriterInterface<ImportJournalWithOrganizationIdInput>
+export class JournalImportWriter implements ImportWriterInterface<ImportJournalWithOrganizationIdsInput>
 {
-    createMany(data: ImportJournalWithOrganizationIdInput[]): Promise<number>
+    createMany(data: ImportJournalWithOrganizationIdsInput[]): Promise<number>
     {
         return transaction(async (tx) => {
             const repositories = createRepositories(tx);
@@ -22,10 +22,12 @@ export class JournalImportWriter implements ImportWriterInterface<ImportJournalW
                     foundingYear: journal.foundingYear
                 });
 
-                await journalAffiliationRepository.create({
-                    journalId: journo.id,
-                    organizationId: journal.organizationId,
-                });
+                await journalAffiliationRepository.createMany(
+                    journal.organizationIds.map(organizationId => ({
+                        journalId: journo.id,
+                        organizationId,
+                    }))
+                );            
             }
             
             return data.length;

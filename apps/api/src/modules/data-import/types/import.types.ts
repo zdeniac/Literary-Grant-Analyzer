@@ -13,7 +13,16 @@ export type ImportFile = {
     rows: ImportRow[];
 };
 
-export type ImportFieldType = 'string' | 'number' | 'email' | 'enum' | 'boolean' | 'date' | 'array[enum]';
+export type ImportFieldType =
+    | 'string' 
+    | 'number' 
+    | 'email' 
+    | 'enum' 
+    | 'boolean' 
+    | 'date' 
+    | 'array[enum]'
+    | 'array[string]';
+
 export type ImportField = {
     name: string;
     type: ImportFieldType;
@@ -50,6 +59,8 @@ export type RelationBlueprint = {
 
     foreignKey: string;
     targetField: string;
+
+    multiple?: boolean;
 };
 
 export type RelationalModelBlueprint = ModelBlueprint & {

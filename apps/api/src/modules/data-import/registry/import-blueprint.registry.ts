@@ -20,9 +20,9 @@ export class ImportBlueprintRegistry {
 
     has(model: ModelName): boolean
     {
-        return model in this.blueprints;
+        return this.blueprints.has(model);
     }
-
+    
     getOrThrow(model: ModelName): Blueprint
     {
         const blueprint = this.get(model);

@@ -20,7 +20,7 @@ export type PrismaModel<T> = {
     createMany(data: any): Promise<GetBatchResult>;
 };
 
-export interface CrudRepository<TModel, TCreate, TUpdate>
+export interface CrudRepository<TModel, TCreate, TUpdate = Partial<TCreate>>
 {
     findById(id: number): Promise<TModel | null>;
     findAll(): Promise<TModel[]>;

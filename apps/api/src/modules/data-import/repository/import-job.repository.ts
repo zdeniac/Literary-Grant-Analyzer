@@ -18,6 +18,7 @@ export class ImportJobRepository
                 mimeType: data.mimeType,
                 sourceDocumentId: data.sourceDocumentId,
                 status: ImportJobStatus.RUNNING,
+                totalRows: data.totalRows,
             }
         });
     }
@@ -30,6 +31,11 @@ export class ImportJobRepository
             }
         });
     }
+    
+    async findAll(): Promise<ImportJob[]>
+    {
+        return this.model.findMany();
+    }
 
     async update(id: Id,data: UpdateImportJobInput): Promise<ImportJob>
     {
@@ -41,7 +47,7 @@ export class ImportJobRepository
         });
     }
 
-    async complete(id: Id, importedRows: number): Promise<ImportJob>
+    async complete(id: Id, importedRows: number, sourceDocumentId?: Id): Promise<ImportJob>
     {
         return this.model.update({
             where: {
@@ -50,18 +56,14 @@ export class ImportJobRepository
             data: {
                 status: ImportJobStatus.COMPLETED,
                 importedRows,
-                finishedAt: new Date()
+                sourceDocumentId,
+                totalRows: importedRows,
+                finishedAt: new Date(),
             }
         });
     }
 
-    async fail(
-        id: Id, 
-        input: {
-            errorMessage: string;
-            failedRows?: number;
-        }
-    ): Promise<ImportJob>
+    async fail(id: Id, input: { errorMessage: string; failedRows?: number; }): Promise<ImportJob>
     {
         return this.model.update({
             where: {

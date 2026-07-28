@@ -34,8 +34,8 @@ export const journalBlueprint: RelationalModelBlueprint =
                 options: Object.keys(JournalFormat)
             },
             {
-                name: 'organizationName',
-                type: 'string',
+                name: 'organizationNames',
+                type: 'array[string]',
                 required: true
             },
         ],
@@ -44,11 +44,13 @@ export const journalBlueprint: RelationalModelBlueprint =
             {
                 model: 'organization',
 
-                sourceField: 'organizationName',
                 lookupField: 'name',
+                sourceField: 'organizationNames',
 
-                foreignKey: 'organizationId',
                 targetField: 'id',
+                foreignKey: 'organizationIds',
+
+                multiple: true,
             },
         ],
     };

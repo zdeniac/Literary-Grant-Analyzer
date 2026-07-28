@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createImportModule } from "./import.factory";
+import { createImportModule } from "./factory/import.factory";
 import multer from "multer";
 
 const router = Router();
@@ -10,13 +10,13 @@ const upload = multer({
 
 router.get(
     '/schema',
-    controller.getSchema.bind(controller),
+    controller.getSchema,
 );
 
 router.post(
     '/:model',
     upload.single('file'),
-    controller.import.bind(controller),
+    controller.import,
 );
 
 export default router;

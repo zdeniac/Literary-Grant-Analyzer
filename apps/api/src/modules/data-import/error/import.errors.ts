@@ -29,4 +29,3 @@ export class ImportRelationError extends ImportError {
         this.name = 'ImportRelationError';
     }
 }
-

@@ -46,6 +46,92 @@ describe('Data import validation', () => {
                 )
             ).not.toThrow();
         });
+
+        it('reports missing header fields', () => {
+            try {
+                validateHeaders(
+                    ['name'],
+                    [
+                        { name: 'name', type: 'string', required: true },
+                        { name: 'email', type: 'email', required: true },
+                    ]
+                );
+
+                expect.fail('Expected ImportValidationError');
+            } catch (error) {
+                expect(error).toBeInstanceOf(ImportValidationError);
+
+                const e = error as ImportValidationError;
+
+                expect(e.errors).toBeInstanceOf(Array);
+                expect(e.errors.length).toBe(1);
+
+                expect(e.errors[0]).toEqual({
+                        row: 1,
+                        issues: [
+                            {
+                                message: 'Missing field: email',
+                            },
+                        ],
+                    },
+                );
+            }
+        });
+
+        it('reports unknown header fields', () => {
+            try {
+                validateHeaders(
+                    ['name', 'foo'],
+                    [
+                        { name: 'name', type: 'string', required: true },
+                    ]
+                );
+
+                expect.fail('Expected ImportValidationError');
+            } catch (error) {
+                const e = error as ImportValidationError;
+
+                expect(e.errors).toEqual([
+                    {
+                        row: 1,
+                        issues: [
+                            {
+                                message: 'Unknown field: foo',
+                            },
+                        ],
+                    },
+                ]);
+            }
+        });
+
+        it('reports both missing and unknown fields', () => {
+            try {
+                validateHeaders(
+                    ['foo'],
+                    [
+                        { name: 'name', type: 'string', required: true },
+                    ]
+                );
+
+                expect.fail('Expected ImportValidationError');
+            } catch (error) {
+                const e = error as ImportValidationError;
+
+                expect(e.errors).toHaveLength(2);
+
+                expect(e.errors[0].issues).toEqual([
+                    {
+                        message: 'Missing field: name',
+                    },
+                ]);
+
+                expect(e.errors[1].issues).toEqual([
+                    {
+                        message: 'Unknown field: foo',
+                    },
+                ]);
+            }
+        });
     });
 
     describe('validateRows', () => {
@@ -87,6 +173,91 @@ describe('Data import validation', () => {
             ).toThrow(ImportValidationError);
 
         });
-    });
 
+        it('parses multiple rows', () => {
+            const schema = z.object({
+                name: z.string(),
+            });
+
+            expect(
+                validateRows(
+                    [
+                        { name: 'one' },
+                        { name: 'two' },
+                    ],
+                    schema
+                )
+            ).toEqual([
+                { name: 'one' },
+                { name: 'two' },
+            ]);
+        });
+
+        it('returns transformed values', () => {
+            const schema = z.object({
+                name: z.string().transform(v => v.toUpperCase()),
+            });
+
+            expect(
+                validateRows(
+                    [{ name: 'john' }],
+                    schema
+                )
+            ).toEqual([
+                {
+                    name: 'JOHN',
+                },
+            ]);
+        });
+
+        it('collects every invalid row', () => {
+            const schema = z.object({
+                name: z.string(),
+            });
+
+            try {
+                validateRows(
+                    [
+                        { name: 1 },
+                        { name: 2 },
+                    ],
+                    schema
+                );
+
+                expect.fail('Expected ImportValidationError');
+            } catch (error) {
+                const e = error as ImportValidationError;
+
+                expect(e.errors).toHaveLength(2);
+
+                expect(e.errors[0].row).toBe(2);
+                expect(e.errors[1].row).toBe(3);
+            }
+        });
+
+        it('collects errors after valid rows', () => {
+            const schema = z.object({
+                name: z.string(),
+            });
+
+            try {
+                validateRows(
+                    [
+                        { name: 'John' },
+                        { name: 123 },
+                        { name: 456 },
+                    ],
+                    schema
+                );
+
+                expect.fail('Expected ImportValidationError');
+            } catch (error) {
+                const e = error as ImportValidationError;
+
+                expect(e.errors).toHaveLength(2);
+                expect(e.errors[0].row).toBe(3);
+                expect(e.errors[1].row).toBe(4);
+            }
+        });    
+    });
 });

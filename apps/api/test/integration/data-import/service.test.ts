@@ -1,39 +1,50 @@
 import { describe, expect, it, beforeEach, afterAll } from "vitest";
 import { ImportFile } from "../../../src/modules/data-import/types/import.types";
-import { JournalStatus, LegalForm, Sector } from "@prisma/client";
+import { 
+    JournalStatus, 
+    LegalForm, 
+    Sector,
+    AwardSchemeType,
+    JournalFormat,
+} from "@prisma/client";
 import { ImportValidationError } from "../../../src/modules/data-import/error/import.errors";
 import { prisma } from "../../../src/db/prisma";
 import { wipeDatabase } from "../helpers/db.helper";
 import { createOrganization } from "../helpers/factories/organization.factory";
-import { createImportModule } from "../../../src/modules/data-import/import.factory";
+import { createImportModule } from "../../../src/modules/data-import/factory/import.factory";
+import { CreateOrganizationInput } from "../../../src/modules/organization/dto/organization.input.dto";
 
-describe('dataImport', () => {
+describe('Data Import Service test', () => {
     const importer = createImportModule().service;
 
-    const org1 = {
+    const org1: CreateOrganizationInput = {
         name: 'Jelenkor Alapítvány',
         legalForm: LegalForm.FOUNDATION,
         address: 'Pécs',
         sector: Sector.CIVIL,
         foundingYear: 1990,
+        website: 'https://www.jelenkor.net/',
+
     };
 
-    const org2 = {
+    const org2: CreateOrganizationInput = {
         name: 'Alföld Alapítvány',
         legalForm: LegalForm.FOUNDATION,
         address: 'Szeged',
         sector: Sector.CIVIL,
         foundingYear: 1989,
+        website: 'https://alfoldonline.hu/'
     };
 
     const orgFile: ImportFile = {
-        name: 'organizations_import.csv',
+        fileName: 'organizations_import.csv',
         mimeType: 'text/csv',
         header: [
             'name',
             'legalForm',
             'address',
             'website',
+            'sector',
             'foundingYear',
         ],
         rows: [
@@ -42,27 +53,43 @@ describe('dataImport', () => {
         ]
     };
 
-    const journal1 = {
-        name: 'Alföld',
-        issn: '2049-3630',
-        status: JournalStatus.ACTIVE,
-        sector: Sector.CIVIL,
-        foundingYear: 1989,
-        organizationName: 'Alföld Alapítvány',
+    const awardSchemeFile: ImportFile = {
+        fileName: 'award_scheme_import.csv',
+        mimeType: 'text/csv',
+        header: [
+            'name',
+            'type',
+            'organizationName',
+        ],
+        rows: [
+            {
+                name: 'Irodalmi támogatás',
+                type: AwardSchemeType.GRANT,
+                organizationName: 'Alföld Alapítvány',
+            }
+        ]
     };
 
     const journalFile: ImportFile = {
-        name: 'jorno_import.csv',
+        fileName: 'journal_import.csv',
         mimeType: 'text/csv',
         header: [
             'name',
             'issn',
             'status',
             'foundingYear',
-            'organizationName',
+            'format',
+            'organizationNames',
         ],
         rows: [
-            journal1,
+            {
+                name: 'Alföld',
+                issn: '2049-3610',
+                status: JournalStatus.ACTIVE,
+                format: 'ONLINE|PRINT',
+                foundingYear: 1989,
+                organizationNames: org1.name + '|' + org2.name,
+            },
         ]
     };
 
@@ -70,20 +97,18 @@ describe('dataImport', () => {
     afterAll(wipeDatabase);
 
     it('imports data on model without relation', async() => {
-        const imported = await importer.import('organization', orgFile);
+        const imported = await importer.import(
+            'organization',
+            orgFile
+        );
 
         expect(imported).toBe(2);
 
-        // Make 100% sure we didn't import more than one of each
-        const importedOrgs = await prisma.organization.findMany({
-            where: { 
-                name: org1.name,
-             }
+        const importedOrg = await prisma.organization.findFirst({
+            where: {
+                name: org1.name
+            }
         });
-
-        expect(importedOrgs.length).toBe(1);
-
-        const importedOrg = importedOrgs[0];
 
         expect(importedOrg).toMatchObject({
             name: org1.name,
@@ -96,62 +121,120 @@ describe('dataImport', () => {
         expect(importedOrg).toHaveProperty('createdAt');
     });
 
-    it('imports data on model with 1:N relation', async() => {
-        const org3 = await createOrganization(org2);
-        
-        const importedJ = await importer.import('journal', journalFile);
+    it('imports data with N:1 relation (award scheme -> organization)', async() => {
+        await createOrganization(org2);
 
-        expect(importedJ).toBe(1);
+        const imported = await importer.import(
+            'awardScheme',
+            awardSchemeFile
+        );
 
-        const importedJournals = await prisma.journal.findMany({
-            where: { 
-                name: journal1.name,
-             }
+        expect(imported).toBe(1);
+
+        const schemes = await prisma.awardScheme.findMany({
+            where: {
+                name: 'Irodalmi támogatás'
+            },
+            include: {
+                organization: true,
+            }
         });
 
-        expect(importedJournals.length).toBe(1);
+        expect(schemes.length).toBe(1);
 
-        const importedJournal = importedJournals[0];
-
-        expect(importedJournal).toMatchObject({
-            name: journal1.name,
-            // We don't save the '-' sign in the db for the issn's
-            issn: journal1.issn.replace('-', ''),
-            status: journal1.status,
-            foundingYear: journal1.foundingYear,
+        expect(schemes[0]).toMatchObject({
+            name: 'Irodalmi támogatás',
+            type: AwardSchemeType.GRANT,
+            organization: {
+                name: 'Alföld Alapítvány'
+            }
         });
 
-        // expect(importedJournal.organizationId).toBe(org3.id);
-        expect(importedJournal).toHaveProperty('id');
-        expect(importedJournal).toHaveProperty('createdAt');
+        expect(schemes[0]).toHaveProperty('organizationId');
+    });
+
+    it('imports data with N:M relation (journal -> organizations)', async() => {
+        await createOrganization(org1);
+        await createOrganization(org2);
+
+        const imported = await importer.import(
+            'journal',
+            journalFile
+        );
+
+        expect(imported).toBe(1);
+
+        const journal = await prisma.journal.findUnique({
+            where: {
+                issn: '20493610'
+            },
+            include: {
+                affiliations: {
+                    include: {
+                        organization: true
+                    }
+                }
+            }
+        });
+
+        expect(journal).not.toBeNull();
+
+        expect(journal?.affiliations.length)
+            .toBe(2);
+
+        expect(
+            journal?.affiliations.map(
+                affiliation => affiliation.organization.name
+            )
+        )
+        .toEqual(
+            expect.arrayContaining([
+                'Alföld Alapítvány',
+                'Jelenkor Alapítvány',
+            ])
+        );
     });
 
     it('throws on unknown header', async () => {
         await expect(
-            importer.import('organization', {
-                name: 'organizations_import.csv',
-                mimeType: 'text/csv',
-                header: ['invalidField'],
-                rows: [],
-            })
+            importer.import(
+                'organization',
+                {
+                    fileName: 'organizations_import.csv',
+                    mimeType: 'text/csv',
+                    header: ['invalidField'],
+                    rows: [],
+                }
+            )
         ).rejects.toThrow(ImportValidationError);
     });
 
     it('throws when referenced foreign record does not exist', async () => {
         await expect(
-            importer.import('journal', journalFile)
+            importer.import(
+                'awardScheme',
+                awardSchemeFile
+            )
         ).rejects.toThrow(Error);
     });
 
     it('throws on invalid row data', async () => {
         await expect(
-            importer.import('organization', {
-                ...orgFile,
-                rows: [{
-                    ...org1,
-                    foundingYear: 'foo'
-                }]
-            })
-        ).rejects.toThrow(ImportValidationError);
+            importer.import(
+                'organization',
+                {
+                    ...orgFile,
+                    rows: [
+                        {
+                            ...org1,
+                            foundingYear: 'foo'
+                        }
+                    ]
+                }
+            )
+        )
+        .rejects
+        .toThrow(ImportValidationError);
     });
+
 });

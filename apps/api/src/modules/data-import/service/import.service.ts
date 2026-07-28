@@ -6,18 +6,22 @@ import { ImportBlueprintRegistry } from "../registry/import-blueprint.registry";
 import { RelationResolver } from "../resolver/relation-resolver";
 import { isRelationalModelBlueprint } from "../types/guards.types";
 import { ImportJobRepository } from "../repository/import-job.repository";
+import { CreateSourceDocumentInput } from "../../source-document/dto/source-document.input.dto";
+import { CrudRepository } from "../../../db/types";
+import { SourceDocumentDto, SourceDocumentModel } from "../../source-document/dto/source-document.dto";
 
 export class ImportService
 {
     constructor(
         private readonly importJobRepository: ImportJobRepository,
+        private readonly sourceDocumentRepository: CrudRepository<SourceDocumentModel, CreateSourceDocumentInput>,
         private readonly registry: ImportBlueprintRegistry,
         private readonly writers: Record<ModelName, ImportWriterInterface<ImportRow>>,
         private readonly relationResolver: RelationResolver,
         private readonly options: ImportOptions = {},
     ) {}
 
-    public async import(model: ModelName, file: ImportFile): Promise<number>
+    public async import(model: ModelName, file: ImportFile, sourceDocument?: CreateSourceDocumentInput): Promise<number>
     {
         const job = await this.importJobRepository.create({
             model,
@@ -52,7 +56,17 @@ export class ImportService
 
             const total = await writer.createMany(validatedRows);
 
-            await this.importJobRepository.complete(job.id, total);
+            let sourceDocument: SourceDocumentDto | undefined;
+
+            if (sourceDocument && total > 0) {
+                sourceDocument = await this.sourceDocumentRepository.create(sourceDocument);
+            }
+
+            await this.importJobRepository.complete(
+                job.id, 
+                total,
+                sourceDocument?.id
+            );
 
             return total;
         } catch(error) {
@@ -61,14 +75,12 @@ export class ImportService
                     errorMessage: error.message,
                     failedRows: error.errors.length
                 });
-            }
-            else if (error instanceof ImportRelationError) {
+            } else if (error instanceof ImportRelationError) {
                 await this.importJobRepository.fail(job.id, {
                     errorMessage: error.message,
                     failedRows: file.rows.length
                 });
-            }
-            else {
+            } else {
                 await this.importJobRepository.fail(job.id, {
                     errorMessage: error instanceof Error
                         ? error.message

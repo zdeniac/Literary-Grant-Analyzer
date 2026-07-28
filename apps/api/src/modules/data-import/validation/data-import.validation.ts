@@ -23,7 +23,7 @@ export function validateRows<T extends ImportRow>(
         
         validated.push(result.data);
     });
-
+    
     if (errors.length) throw new ImportValidationError(errors);
 
     return validated;
@@ -41,36 +41,37 @@ export function validateHeaders(
     );
 
     // Find the missing header fields compared to the fields
-    const missing = fieldNames.filter(
+    const missingHeaderFields = fieldNames.filter(
         field => !headers.includes(field)
     );
 
-    if (missing.length) {
+    if (missingHeaderFields.length) {
         errors.push({
             row: 1,
-            issues: missing.map(field => ({
-                message: `Missing field: ${field}`
+            issues: missingHeaderFields.map(field => ({
+                message: `Missing header field: ${field}`
             }))
         });
     }
 
     // Find the missing fields compared to the header
-    let unexpectedFields: ImportHeader = [];
+    let unexpectedHeaderFields: ImportHeader = [];
     if (!allowUnknownFields) {
-        unexpectedFields = headers.filter(
+        unexpectedHeaderFields = headers.filter(
             header => !fieldNames.includes(header)
         );
 
-        errors.push({
-            row: 1,
-            issues: unexpectedFields.map(field => ({
-                message: `Unknown field: ${field}`
-            }))
-        });
-
+        if (unexpectedHeaderFields.length) {
+            errors.push({
+                row: 1,
+                issues: unexpectedHeaderFields.map(field => ({
+                    message: `Unknown header field: ${field}`
+                }))
+            });
+        }
     }
-    
-    if (missing.length || unexpectedFields.length) {
+
+    if (missingHeaderFields.length || unexpectedHeaderFields.length) {
         throw new ImportValidationError(errors);
     }
 }

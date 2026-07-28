@@ -36,6 +36,15 @@ export class JournalAffiliationRepository
         return this.model.create({ data });
     }
 
+    async createMany(data: CreateJournalAffiliationInput[]): Promise<number>
+    {
+        const result = await this.model.createMany({
+            data,
+        });
+
+        return result.count;
+    }
+
     async delete(id: Id): Promise<JournalAffiliation>
     {
         return this.model.delete({

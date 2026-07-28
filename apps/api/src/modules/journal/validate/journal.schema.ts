@@ -23,6 +23,17 @@ const importFormatSchema = z
         z.array(z.enum(JournalFormat)).min(1)
     );
 
+export const organizationNamesSchema = z
+    .string()
+    .transform(value =>
+        value
+            .split('|')
+            .map(v => v.trim())
+    )
+    .pipe(
+        z.array(organizationSchema.shape.name)
+    );
+
 export const issnSchema = z
     .string()
     .transform(v => v.trim() === '' ? null : v.replace('-', ''))
@@ -63,9 +74,9 @@ export const createJournalSchema = journalSchema
         foundingYear: yearSchema.nullable().optional(),
     });
 
-export const createJournalWithOrganizationIdSchema = createJournalSchema
+export const createJournalWithOrganizationIdsSchema = createJournalSchema
     .extend({
-        organizationId: idSchema,
+        organizationIds: z.array(idSchema),
     });
 
 export const createJournalWithAffiliationsSchema = createJournalSchema
@@ -85,5 +96,5 @@ export const importJournalSchema = createJournalSchema
     .extend({
         foundingYear: z.coerce.number(),
         format: importFormatSchema,
-        organizationName: organizationSchema.shape.name,
+        organizationNames: organizationNamesSchema,
     });

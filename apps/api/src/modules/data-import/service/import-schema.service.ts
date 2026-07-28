@@ -1,7 +1,8 @@
 import { ImportBlueprintRegistry } from "../registry/import-blueprint.registry";
 import { ImportSchema } from "../types/import.types";
 
-export class ImportSchemaService {
+export class ImportSchemaService
+{
     constructor(
         private readonly blueprintRegistry: ImportBlueprintRegistry
     ) {}
