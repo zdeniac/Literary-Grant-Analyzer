@@ -21,6 +21,8 @@ import { JournalModel } from "../../journal/dto/journal.dto";
 import { OrganizationModel } from "../../organization/dto/organization.dto";
 import { AwardSchemeModel } from "../../award-scheme/dto/award-scheme.dto";
 import { DecisionBodyModel } from "../../decision-body/dto/decision-body.dto";
+import { EventDispatcher } from "../../../common/events/event-dispatcher";
+import { ImportCompletedWithSourceDocumentsHandler } from "../event/import-completed-with-documents.handler";
 
 export const createImportModule = () => {
     const registry = new ImportBlueprintRegistry(
@@ -62,9 +64,13 @@ export const createImportModule = () => {
     const importJobRepo = new ImportJobRepository(prisma.importJob);
     const sourceDocRepo = new PrismaCrudRepository(prisma.sourceDocument);
 
+    const eventDispatcher = new EventDispatcher([
+        new ImportCompletedWithSourceDocumentsHandler(),
+    ]);
+
     const importService = new ImportService(
         importJobRepo,
-        sourceDocRepo,
+        eventDispatcher,
         registry,
         writers,
         relationResolver,

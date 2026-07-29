@@ -4,6 +4,7 @@ import type { AcceptedFormat, ImportFormValues } from "../types/import-field.typ
 import { url } from "../../../shared/validation/validators";
 import { Box, Fade } from "@mui/material";
 
+const titleValidation = [required()];
 const urlValidation = [url(), required()];
 const retrievedAtValidation = [required()];
 
@@ -27,7 +28,13 @@ export const ImportForm = ({
 
             formData.append('file', params.file?.rawFile);
             formData.append('saveSourceDocument', params.saveSourceDocument ? 'true' : 'false');
-            
+
+            if (params.saveSourceDocument) {
+                formData.append('title', params.title);
+                formData.append('url', params.url);
+                formData.append('retrievedAt', params.retrievedAt);
+            }
+                        
             const res = await fetch(submitRoute, {
                 method: 'POST',
                 body: formData
@@ -69,7 +76,8 @@ export const ImportForm = ({
                     formData.saveSourceDocument ? (
                         <Fade in={formData.saveSourceDocument}>
                             <Box>
-                                <TextInput source="url" validate={urlValidation} />
+                                <TextInput source="title" validate={urlValidation} />
+                                <TextInput source="url" validate={titleValidation} />
                                 <DateInput source="retrievedAt" validate={retrievedAtValidation} />
                             </Box>
                         </Fade>                

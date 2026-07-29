@@ -7,21 +7,21 @@ import { RelationResolver } from "../resolver/relation-resolver";
 import { isRelationalModelBlueprint } from "../types/guards.types";
 import { ImportJobRepository } from "../repository/import-job.repository";
 import { CreateSourceDocumentInput } from "../../source-document/dto/source-document.input.dto";
-import { CrudRepository } from "../../../db/types";
-import { SourceDocumentDto, SourceDocumentModel } from "../../source-document/dto/source-document.dto";
+import { EventDispatcher } from "../../../common/events/event-dispatcher";
+import { ImportCompletedWithSourceDocumentsEvent } from "../event/import-completed-with-documents.event";
 
 export class ImportService
 {
     constructor(
         private readonly importJobRepository: ImportJobRepository,
-        private readonly sourceDocumentRepository: CrudRepository<SourceDocumentModel, CreateSourceDocumentInput>,
+        private readonly eventDispatcher: EventDispatcher,
         private readonly registry: ImportBlueprintRegistry,
         private readonly writers: Record<ModelName, ImportWriterInterface<ImportRow>>,
         private readonly relationResolver: RelationResolver,
         private readonly options: ImportOptions = {},
     ) {}
 
-    public async import(model: ModelName, file: ImportFile, sourceDocument?: CreateSourceDocumentInput): Promise<number>
+    public async import(model: ModelName, file: ImportFile, sourceDocuments?: CreateSourceDocumentInput[]): Promise<number>
     {
         const job = await this.importJobRepository.create({
             model,
@@ -56,17 +56,18 @@ export class ImportService
 
             const total = await writer.createMany(validatedRows);
 
-            let sourceDocument: SourceDocumentDto | undefined;
+            const importJob = await this.importJobRepository.complete(job.id, total);
 
-            if (sourceDocument && total > 0) {
-                sourceDocument = await this.sourceDocumentRepository.create(sourceDocument);
+            if (sourceDocuments?.length && total > 0) {
+                this.eventDispatcher.dispatch(
+                    new ImportCompletedWithSourceDocumentsEvent(
+                        importJob.id,
+                        model,
+                        total,
+                        sourceDocuments
+                    )
+                );
             }
-
-            await this.importJobRepository.complete(
-                job.id, 
-                total,
-                sourceDocument?.id
-            );
 
             return total;
         } catch(error) {

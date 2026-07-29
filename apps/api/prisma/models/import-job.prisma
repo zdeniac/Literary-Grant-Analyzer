@@ -13,13 +13,10 @@ model ImportJob {
 
     errorMessage    String?
 
+    sourceDocuments ImportJobSourceDocument[]
+
     startedAt       DateTime        @default(now())
     finishedAt      DateTime?
-
-    createdAt       DateTime        @default(now())
-
-    sourceDocumentId Int?
-    sourceDocument SourceDocument? @relation(fields: [sourceDocumentId], references: [id], onDelete: Restrict)
 }
 
 enum ImportJobStatus {

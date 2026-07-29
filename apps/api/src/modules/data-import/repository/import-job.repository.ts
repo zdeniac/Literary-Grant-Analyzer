@@ -47,7 +47,7 @@ export class ImportJobRepository
         });
     }
 
-    async complete(id: Id, importedRows: number, sourceDocumentId?: Id): Promise<ImportJob>
+    async complete(id: Id, importedRows: number): Promise<ImportJob>
     {
         return this.model.update({
             where: {
@@ -56,7 +56,6 @@ export class ImportJobRepository
             data: {
                 status: ImportJobStatus.COMPLETED,
                 importedRows,
-                sourceDocumentId,
                 totalRows: importedRows,
                 finishedAt: new Date(),
             }

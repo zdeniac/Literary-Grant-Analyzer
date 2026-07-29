@@ -54,12 +54,14 @@ export type RelationBlueprint = {
 
     // the header field from the ImportFile
     sourceField: string;
+    
     // the foreign model's actual field from the db
     lookupField: string;
 
     foreignKey: string;
     targetField: string;
 
+    // can have multiple values for the same field (e.g.: N:M relation)
     multiple?: boolean;
 };
 

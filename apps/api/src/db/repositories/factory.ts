@@ -12,18 +12,24 @@ import { DecisionBodyModel } from "../../modules/decision-body/dto/decision-body
 import { SourceDocumentModel } from "../../modules/source-document/dto/source-document.dto";
 import { CreateSourceDocumentInput, UpdateSourceDocumentInput } from "../../modules/source-document/dto/source-document.input.dto";
 import { JournalAffiliationRepository } from "../../modules/journal-affiliation/journal-affiliation.repository";
+import { ImportJobRepository } from "../../modules/data-import/repository/import-job.repository";
+import { ImportJobSourceDocumentRepository } from "../../modules/import-job-source-document/import-job-source-document.repository";
 
 export function createRepositories(db: PrismaDatabase)
 {
+    let actor: ActorRepository | undefined;
+
     let organization: PrismaCrudRepository<OrganizationModel, CreateOrganizationInputWithActorId, UpdateOrganizationInput> | undefined;
     let journal: JournalRepository | undefined;
     let journalAffiliation: JournalAffiliationRepository | undefined;
 
     let awardScheme: PrismaCrudRepository<AwardSchemeModel, CreateAwardSchemeInput, UpdateAwardSchemeInput> | undefined;
     let decisionBody: PrismaCrudRepository<DecisionBodyModel, CreateDecisionBodyData, UpdateDecisionBodyInput> | undefined;
-    let sourceDocument: PrismaCrudRepository<SourceDocumentModel, CreateSourceDocumentInput, UpdateSourceDocumentInput> | undefined;
     let awardDecision: AwardDecisionRepository | undefined;
-    let actor: ActorRepository | undefined;
+
+    let sourceDocument: PrismaCrudRepository<SourceDocumentModel, CreateSourceDocumentInput, UpdateSourceDocumentInput> | undefined;
+    let importJob: ImportJobRepository | undefined;
+    let importJobSourceDocument: ImportJobSourceDocumentRepository | undefined;
 
     return {
         get organization() {
@@ -56,6 +62,14 @@ export function createRepositories(db: PrismaDatabase)
 
         get actor() {
             return actor ??= new ActorRepository(db.actor);
-        }
+        },
+
+        get importJob() {
+            return importJob ??= new ImportJobRepository(db.importJob);
+        },
+
+        get importJobSourceDocument() {
+            return importJobSourceDocument ??= new ImportJobSourceDocumentRepository(db.importJobSourceDocument);
+        },
     };
 }

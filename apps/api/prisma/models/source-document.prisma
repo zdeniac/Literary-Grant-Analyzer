@@ -1,3 +1,4 @@
+// Inner representation of the documents we parse the data from
 model SourceDocument {
   id                    Int               @id  @default(autoincrement())
 	
@@ -7,7 +8,7 @@ model SourceDocument {
 
   decisions             AwardDecision[]
   journalAffiliations   JournalAffiliation[]
-  importJobs            ImportJob[]
+  importJobs            ImportJobSourceDocument[]
 
   createdAt             DateTime          @default(now())
   updatedAt             DateTime          @updatedAt

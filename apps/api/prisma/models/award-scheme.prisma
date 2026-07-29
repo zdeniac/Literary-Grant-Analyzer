@@ -1,6 +1,7 @@
 // Támogatási konstrukciók, pl. Kossuth-díj, irodalmi laptámogatás
 model AwardScheme {
 	id				Int			@id @default(autoincrement())
+	
 	name			String
 	type			AwardSchemeType
 
