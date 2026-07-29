@@ -8,5 +8,6 @@ export const CustomMenu = () => (
         <Menu.ResourceItem name="award-schemes" />
         <Menu.ResourceItem name="award-decisions" />
         <Menu.ResourceItem name="source-documents" />
+        <Menu.ResourceItem name="import-jobs" />
     </Menu>
 );

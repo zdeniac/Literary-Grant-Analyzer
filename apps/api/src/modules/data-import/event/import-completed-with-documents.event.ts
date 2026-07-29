@@ -1,4 +1,4 @@
-import { EventInterface } from "../../../common/events/types.event";
+import { EventInterface } from "../../../common/events/event.types";
 import { CreateSourceDocumentInput } from "../../source-document/dto/source-document.input.dto";
 import { ModelName } from "../types/import.types";
 

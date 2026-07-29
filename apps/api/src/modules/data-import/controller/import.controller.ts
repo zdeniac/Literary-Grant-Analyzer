@@ -5,6 +5,8 @@ import { ImportSchemaService } from "../service/import-schema.service";
 import { CrudService } from "../../../common/services/crud.service";
 import { SourceDocumentModel } from "../../source-document/dto/source-document.dto";
 import { CreateSourceDocumentInput } from "../../source-document/dto/source-document.input.dto";
+import { createSourceDocumentSchema } from "../../source-document/validation/source-document.schema";
+import z from "zod";
 
 export class ImportController {
     constructor(
@@ -43,20 +45,20 @@ export class ImportController {
 
         const parsedFile = toImportFile(uploadedFile);
 
-        let sourceDocument: CreateSourceDocumentInput | undefined;
+        let sourceDocuments: CreateSourceDocumentInput[] | undefined;
 
         if (req.body.saveSourceDocument) {
-            sourceDocument = {
-                title: req.body.title,
-                url: req.body.url,
-                retrievedAt: req.body.url,
-            };
+            /**
+             * @todo: rethrow error as importvalidation error
+             */
+            sourceDocuments = z.array(createSourceDocumentSchema)
+                .parse(req.body.sourceDocuments);        
         }
 
         const total = await this.importService.import(
             req.params.model as string,
             parsedFile,
-            sourceDocument,
+            sourceDocuments,
         );
 
         res.json({

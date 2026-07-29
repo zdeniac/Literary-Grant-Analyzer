@@ -38,10 +38,17 @@ export const createOrganizationSchema = organizationSchema
         foundingYear: yearSchema.optional(),
     });
 
-export const createOrganizationWithActorIdSchema = createOrganizationSchema.extend({
-    actorId: idSchema,
-});
+export const createOrganizationWithActorIdSchema = createOrganizationSchema
+    .extend({
+        actorId: idSchema,
+    });
 
 export const updateOrganizationSchema = createOrganizationSchema.partial();
 
-export const importOrganizationSchema = createOrganizationSchema;
+export const importOrganizationSchema = createOrganizationSchema
+    .extend({
+        foundingYear: z.preprocess(
+            value => value === '' ? null : value,
+            yearSchema.nullable()
+        ),
+    });

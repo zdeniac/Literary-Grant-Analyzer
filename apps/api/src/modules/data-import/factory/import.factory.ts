@@ -16,7 +16,6 @@ import { organizationBlueprint } from "../../organization/import/organization.bl
 import { journalBlueprint } from "../../journal/import/journal.blueprint";
 import { ImportJobRepository } from "../repository/import-job.repository";
 import { JournalImportWriter } from "../../journal/import/journal.writer";
-import { PrismaCrudRepository } from "../../../db/repositories/prisma-crud-repository";
 import { JournalModel } from "../../journal/dto/journal.dto";
 import { OrganizationModel } from "../../organization/dto/organization.dto";
 import { AwardSchemeModel } from "../../award-scheme/dto/award-scheme.dto";
@@ -62,7 +61,6 @@ export const createImportModule = () => {
     const relationResolver = new RelationResolver(lookups);
     
     const importJobRepo = new ImportJobRepository(prisma.importJob);
-    const sourceDocRepo = new PrismaCrudRepository(prisma.sourceDocument);
 
     const eventDispatcher = new EventDispatcher([
         new ImportCompletedWithSourceDocumentsHandler(),

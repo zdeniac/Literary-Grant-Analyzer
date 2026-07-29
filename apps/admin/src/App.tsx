@@ -25,6 +25,8 @@ import { AwardDecisionList } from './pages/award-decisions/list';
 import { AwardDecisionCreate } from './pages/award-decisions/create';
 import { AwardDecisionEdit } from './pages/award-decisions/edit';
 import MilitaryTechIcon from '@mui/icons-material/MilitaryTech';
+import { ImportJobList } from './pages/import-jobs/list';
+import FilePresentIcon from '@mui/icons-material/FilePresent';
 
 const App = () => (
 	<Admin layout={CustomLayout} dataProvider={dataProvider} >
@@ -69,6 +71,12 @@ const App = () => (
 			create={AwardDecisionCreate}
 			edit={AwardDecisionEdit}
 			icon={MilitaryTechIcon}
+		/>
+
+		<Resource
+			name="import-jobs"
+			list={ImportJobList}
+			icon={FilePresentIcon}
 		/>
 	</Admin>
 );

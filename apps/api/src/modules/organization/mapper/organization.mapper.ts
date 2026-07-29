@@ -14,6 +14,8 @@ export const toOrganizationDto: DtoMapper<Organization, OrganizationDto> = (
     address: org.address,
     foundingYear: org.foundingYear,
 
+    actorId: org.actorId,
+
     createdAt: org.createdAt,
     updatedAt: org.updatedAt,
 });

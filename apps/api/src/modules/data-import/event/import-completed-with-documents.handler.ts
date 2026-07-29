@@ -1,4 +1,4 @@
-import { EventHandlerInterface } from "../../../common/events/types.event";
+import { EventHandlerInterface } from "../../../common/events/event.types";
 import { createRepositories } from "../../../db/repositories/factory";
 import { transaction } from "../../../db/transaction";
 import { ImportCompletedWithSourceDocumentsEvent } from "./import-completed-with-documents.event";

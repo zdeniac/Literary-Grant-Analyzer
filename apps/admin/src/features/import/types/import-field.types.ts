@@ -7,10 +7,12 @@ export type ImportFormValues =
     }
     | {
         saveSourceDocument: true;
-        title: string;
-        url: string;
-        retrievedAt: string;
-        file?: {
+        sourceDocuments?: {
+            title: string;
+            url: string;
+            retrievedAt: string;
+        }[];
+        file: {
             rawFile: File;
         };
     };

@@ -10,7 +10,11 @@ import { CreateOrganizationInput, CreateOrganizationInputWithActorId, UpdateOrga
 export class OrganizationService
 {
     constructor(
-        private readonly repository: CrudRepository<OrganizationModel, CreateOrganizationInputWithActorId, UpdateOrganizationInput>,
+        private readonly repository: CrudRepository<
+            OrganizationModel, 
+            CreateOrganizationInputWithActorId, 
+            UpdateOrganizationInput
+        >,
         private readonly actorRepository: ActorRepository,
     ) {
     }

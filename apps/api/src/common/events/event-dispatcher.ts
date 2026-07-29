@@ -1,4 +1,4 @@
-import { EventHandlerInterface, EventInterface } from "./types.event";
+import { EventHandlerInterface, EventInterface } from "./event.types";
 
 export class EventDispatcher
 {

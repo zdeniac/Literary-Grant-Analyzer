@@ -21,8 +21,11 @@ export class ImportService
         private readonly options: ImportOptions = {},
     ) {}
 
-    public async import(model: ModelName, file: ImportFile, sourceDocuments?: CreateSourceDocumentInput[]): Promise<number>
-    {
+    public async import(
+        model: ModelName, 
+        file: ImportFile, 
+        sourceDocuments?: CreateSourceDocumentInput[]
+    ): Promise<number> {
         const job = await this.importJobRepository.create({
             model,
             mimeType: file.mimeType,

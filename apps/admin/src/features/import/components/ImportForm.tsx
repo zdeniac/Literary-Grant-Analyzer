@@ -1,8 +1,22 @@
-import { BooleanInput, Button, DateInput, FileInput, Form, FormDataConsumer, required, TextInput, useNotify, useRefresh, type ButtonProps } from "react-admin";
-import SaveIcon from '@mui/icons-material/Save';
+import { 
+    ArrayInput, 
+    BooleanInput, 
+    DateInput, 
+    FileInput, 
+    FormDataConsumer, 
+    required, 
+    SaveButton, 
+    SimpleForm, 
+    SimpleFormIterator, 
+    TextInput, 
+    Toolbar, 
+    useNotify, 
+    useRefresh, 
+    type ButtonProps 
+} from "react-admin";
 import type { AcceptedFormat, ImportFormValues } from "../types/import-field.types";
 import { url } from "../../../shared/validation/validators";
-import { Box, Fade } from "@mui/material";
+import { Box } from "@mui/material";
 
 const titleValidation = [required()];
 const urlValidation = [url(), required()];
@@ -29,12 +43,23 @@ export const ImportForm = ({
             formData.append('file', params.file?.rawFile);
             formData.append('saveSourceDocument', params.saveSourceDocument ? 'true' : 'false');
 
-            if (params.saveSourceDocument) {
-                formData.append('title', params.title);
-                formData.append('url', params.url);
-                formData.append('retrievedAt', params.retrievedAt);
+            if (params.saveSourceDocument && params.sourceDocuments) {
+                params.sourceDocuments.forEach((document, index) => {
+                    formData.append(
+                        `sourceDocuments[${index}][title]`,
+                        document.title
+                    );
+                    formData.append(
+                        `sourceDocuments[${index}][url]`,
+                        document.url
+                    );
+                    formData.append(
+                        `sourceDocuments[${index}][retrievedAt]`,
+                        document.retrievedAt
+                    );
+                });
             }
-                        
+
             const res = await fetch(submitRoute, {
                 method: 'POST',
                 body: formData
@@ -42,7 +67,6 @@ export const ImportForm = ({
 
             if (!res.ok) {
                 const body = await res.json();
-                console.log(body);
                 throw new Error(body.error);
             }
 
@@ -58,37 +82,76 @@ export const ImportForm = ({
     };
 
     return (
-        <Form onSubmit={fileImport}>
-            <FileInput 
-                source="file" 
-                name="file"
-                validate={required()}
-                multiple={false} 
-                accept={{'text/csv' : ['.csv']}}
-            />
-        
-            <BooleanInput label="Dokumentum adatainak mentése" 
-                            source="saveSourceDocument"
-            />
+        <SimpleForm 
+            onSubmit={fileImport}
+            toolbar={
+                <Toolbar sx={{ justifyContent: 'center' }}>
+                    <SaveButton label="Import" />
+                </Toolbar>
+            }
+        >
 
-            <FormDataConsumer>
-                {({ formData }) =>
-                    formData.saveSourceDocument ? (
-                        <Fade in={formData.saveSourceDocument}>
-                            <Box>
-                                <TextInput source="title" validate={urlValidation} />
-                                <TextInput source="url" validate={titleValidation} />
-                                <DateInput source="retrievedAt" validate={retrievedAtValidation} />
-                            </Box>
-                        </Fade>                
-                    ) : null
-                }
-            </FormDataConsumer>
+            <Box
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                }}
+            >
 
-            <Button variant="contained" type="submit" {...props}>
-                <SaveIcon />
-                Importálás
-            </Button>
-        </Form>
+                <FileInput 
+                    source="file" 
+                    name="file"
+                    validate={required()}
+                    multiple={false} 
+                    accept={{'text/csv' : ['.csv']}}
+                />
+            
+                <BooleanInput label="Dokumentumok adatainak mentése" 
+                                source="saveSourceDocument"
+                />
+
+                <FormDataConsumer>
+
+                {({ formData }) => formData.saveSourceDocument ? (
+                    
+                    <ArrayInput
+                        source="sourceDocuments"
+                        defaultValue={[
+                            {
+                                title: '',
+                                url: '',
+                                retrievedAt: undefined,
+                            },
+                        ]}
+                    >
+
+                        <SimpleFormIterator disableReordering>                                
+                            <TextInput
+                                source="title"
+                                validate={titleValidation}
+                            />
+
+                            <TextInput
+                                source="url"
+                                validate={urlValidation}
+                            />
+
+                            <DateInput
+                                source="retrievedAt"
+                                validate={retrievedAtValidation}
+                            />
+
+                        </SimpleFormIterator>
+
+                    </ArrayInput>
+
+                ) : null }
+
+                </FormDataConsumer>
+
+            </Box>
+            
+        </SimpleForm>
     );
 };
