@@ -48,7 +48,7 @@ export class ImportController
 
         let sourceDocuments: CreateSourceDocumentInput[] | undefined;
 
-        if (req.body.saveSourceDocument) {
+        if (req.body.saveSourceDocument === 'true') {
             try {
                 sourceDocuments = this.validateSourceDocuments(req.body.sourceDocuments);
             } catch(e: unknown) {

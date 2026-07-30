@@ -52,7 +52,7 @@ export class RelationResolver
                 .map(value => ({
                     field: relation.sourceField,
                     value,
-                    message: `Unknown ${relation.sourceField}: ${String(value)}`,
+                    message: `No ${relation.sourceField} with value "${String(value)}" found in the database.`,
                 }));
 
             if (issues.length) {

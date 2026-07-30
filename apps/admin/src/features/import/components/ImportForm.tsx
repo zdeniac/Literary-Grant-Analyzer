@@ -117,10 +117,6 @@ export const ImportForm = ({
             }
         >
 
-        {importErrors?.length > 0 && (
-            <ImportErrorList errors={importErrors!} />
-        )}
-
             <Box
                 sx={{
                     display: 'flex',
@@ -180,8 +176,13 @@ export const ImportForm = ({
 
                 </FormDataConsumer>
 
+            {importErrors?.length > 0 && (
+                <ImportErrorList errors={importErrors!} />
+            )}
+
+
             </Box>
-            
+
         </SimpleForm>
     );
 };

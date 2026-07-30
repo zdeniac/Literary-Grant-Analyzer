@@ -1,13 +1,13 @@
 import { prisma } from "../../../db/prisma";
-import { ImportJobController } from "../controller/import-job.controller";
 import { ImportJobRepository } from "../repository/import-job.repository";
 import { ImportJobService } from "../service/import-job.service";
+import { createImportJobController } from "./import-job-controller.factory";
 
 export const createImportJobModule = () => {
     const repository = new ImportJobRepository(prisma.importJob);
     const service = new ImportJobService(repository);
 
     return {
-        controller: new ImportJobController(service),
+        controller: createImportJobController(service),
     };
 };
