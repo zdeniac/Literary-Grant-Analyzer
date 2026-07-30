@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { ImportValidationError, ImportRelationError } from "../../modules/data-import/error/import.errors";
+import { ImportValidationError } from "../../modules/data-import/error/import.errors";
 import { AppError } from "../errors/app.error";
 
 export function errorHandler(
@@ -10,15 +10,6 @@ export function errorHandler(
 ): void
 {
     if (error instanceof ImportValidationError) {
-        res.status(422).json({
-            error: error.message,
-            errors: error.errors,
-        });
-
-        return;
-    }
-
-    if (error instanceof ImportRelationError) {
         res.status(422).json({
             error: error.message,
             errors: error.errors,

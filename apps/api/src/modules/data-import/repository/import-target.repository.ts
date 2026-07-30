@@ -1,4 +1,4 @@
-import { ImportLookupInterface, ImportWriterInterface } from "../types/import.types";
+import { ImportLookupInterface, ImportWriterInterface, LookupQueryOptions } from "../types/import.types";
 import { ModelDelegate } from "../../../db/types";
 
 export class ImportTargetRepository<TModel, TCreate> implements ImportLookupInterface<TModel>, ImportWriterInterface<TCreate>
@@ -23,14 +23,20 @@ export class ImportTargetRepository<TModel, TCreate> implements ImportLookupInte
         return result.count;
     }
 
-    async findManyBy(field: string, values: unknown[]): Promise<TModel[]>
+    async findManyBy(field: string, values: unknown[], options?: LookupQueryOptions): Promise<TModel[]>
     {
+        const whereValue: any = {
+            in: values,
+        };
+
+        if (options?.mode) {
+            whereValue.mode = options.mode;
+        }
+
         return this.delegate.findMany({
             where: {
-                [field]: {
-                    in: values
-                }
+                [field]: whereValue
             }
-        });
+        });    
     }
 }

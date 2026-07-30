@@ -17,6 +17,10 @@ import {
 import type { AcceptedFormat, ImportFormValues } from "../types/import-field.types";
 import { url } from "../../../shared/validation/validators";
 import { Box } from "@mui/material";
+import { ImportValidationApiError, type ImportRowError } from "../errors/ImportValidationApiError";
+import { ImportSourceDocumentApiError } from "../errors/ImportSourceDocumentApiError";
+import { useState } from "react";
+import { ImportErrorList } from "./ImportErrorList";
 
 const titleValidation = [required()];
 const urlValidation = [url(), required()];
@@ -32,6 +36,7 @@ export const ImportForm = ({
 } & ButtonProps) => {
     const refresh = useRefresh();
     const notify = useNotify();
+    const [importErrors, setImportErrors] = useState<ImportRowError[]>([]);
 
     const fileImport = async (params: ImportFormValues) => {
         if (!params.file?.rawFile) {
@@ -67,7 +72,16 @@ export const ImportForm = ({
 
             if (!res.ok) {
                 const body = await res.json();
-                throw new Error(body.error);
+
+                if (ImportValidationApiError.codes.includes(body.error)) {
+                    throw new ImportValidationApiError(
+                        body.errors
+                    );
+                } else if (body.error === ImportSourceDocumentApiError.code) {
+                    throw new ImportSourceDocumentApiError();
+                } else {
+                    throw new Error(body.error);
+                }
             }
 
             refresh();
@@ -75,6 +89,18 @@ export const ImportForm = ({
                 type: 'success'
             });
         } catch (e: any) {
+            if (e instanceof ImportValidationApiError) {
+                setImportErrors(e.errors ?? []);
+                return;
+            }
+
+            if (e instanceof ImportSourceDocumentApiError) {
+                notify(e.message, {
+                    type: 'error'
+                });
+                return;
+            }
+
             notify(e.message, {
                 type: 'error'
             });        
@@ -90,6 +116,10 @@ export const ImportForm = ({
                 </Toolbar>
             }
         >
+
+        {importErrors?.length > 0 && (
+            <ImportErrorList errors={importErrors!} />
+        )}
 
             <Box
                 sx={{

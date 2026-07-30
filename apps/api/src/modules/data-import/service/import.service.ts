@@ -1,6 +1,6 @@
 import { ImportOptions, ImportRow, ImportWriterInterface, ModelName } from "../types/import.types";
 import { ImportFile, } from "../types/import.types";
-import { ImportError, ImportRelationError, ImportValidationError } from "../error/import.errors";
+import { ImportError, ImportValidationError } from "../error/import.errors";
 import { validateHeaders, validateRows } from "../validation/data-import.validation";
 import { ImportBlueprintRegistry } from "../registry/import-blueprint.registry";
 import { RelationResolver } from "../resolver/relation-resolver";
@@ -78,11 +78,6 @@ export class ImportService
                 await this.importJobRepository.fail(job.id, {
                     errorMessage: error.message,
                     failedRows: error.errors.length
-                });
-            } else if (error instanceof ImportRelationError) {
-                await this.importJobRepository.fail(job.id, {
-                    errorMessage: error.message,
-                    failedRows: file.rows.length
                 });
             } else {
                 await this.importJobRepository.fail(job.id, {

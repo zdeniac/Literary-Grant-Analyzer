@@ -1,6 +1,6 @@
 import { ZodType } from "zod";
-import { ImportRowError, ImportValidationError } from "../error/import.errors";
-import { ImportField, ImportHeader, ImportRow } from "../types/import.types";
+import { ImportValidationError } from "../error/import.errors";
+import { ImportField, ImportHeader, ImportRow, ImportRowError } from "../types/import.types";
 
 export function validateRows<T extends ImportRow>(
     rows: ImportRow[],

@@ -1,6 +1,29 @@
 import z, { ZodObject } from "zod";
 import { modelNameSchema } from "../validation/data-import.validation.schema";
 
+export type LookupConfig = Map<string, LookupFieldConfig>;
+export type LookupFieldConfig = {
+    normalizers: Normalizer[];
+    query?: LookupQueryOptions;
+};
+
+export type Normalizer = (value: unknown) => unknown;
+
+export type LookupQueryOptions = {
+    mode: 'default' | 'insensitive';
+};
+
+export type ImportRowError = {
+    row: number;
+    issues: ImportIssue[];
+};
+
+export type ImportIssue = {
+    message: string;
+    field?: string;
+    value?: unknown;
+};
+
 export type ImportHeader = string[];
 export type ImportRow = Record<string, unknown>;
 export type ModelName = z.infer<typeof modelNameSchema>;
@@ -79,7 +102,7 @@ export type ImportOptions = {
 
 export interface ImportLookupInterface<TModel>
 {
-    findManyBy(field: string, values: unknown[]): Promise<TModel[]>;
+    findManyBy(field: string, values: unknown[], options?: LookupQueryOptions): Promise<TModel[]>;
 }
 
 export interface ImportWriterInterface<TCreate>

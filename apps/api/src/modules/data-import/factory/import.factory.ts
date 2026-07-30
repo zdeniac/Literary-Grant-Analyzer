@@ -8,7 +8,7 @@ import { RelationResolver } from "../resolver/relation-resolver";
 import { OrganizationImportWriter } from "../../organization/import/organization.writer";
 import { ImportWriter } from "../handler/writer";
 import { ImportLookup } from "../handler/lookup";
-import { ImportOptions, ImportRow } from "../types/import.types";
+import { ImportOptions, ImportRow, LookupConfig } from "../types/import.types";
 import { decisionBodyBlueprint } from "../../decision-body/import/decision-body.blueprint";
 import { DecisionBodyImportWriter } from "../../decision-body/import/decision-body.writer";
 import { awardSchemeBlueprint } from "../../award-scheme/import/award-scheme.blueprint";
@@ -22,6 +22,7 @@ import { AwardSchemeModel } from "../../award-scheme/dto/award-scheme.dto";
 import { DecisionBodyModel } from "../../decision-body/dto/decision-body.dto";
 import { EventDispatcher } from "../../../common/events/event-dispatcher";
 import { ImportCompletedWithSourceDocumentsHandler } from "../event/import-completed-with-documents.handler";
+import { toLowerCase, trim } from "zod";
 
 export const createImportModule = () => {
     const registry = new ImportBlueprintRegistry(
@@ -38,9 +39,25 @@ export const createImportModule = () => {
         decisionBody: new ImportTargetRepository<DecisionBodyModel, ImportRow>(prisma.decisionBody),
     };
 
+    /** @todo: export */ 
+    const orgNameLookupConfig: LookupConfig = new Map([
+        [
+            'organizationName',
+            {
+                normalizers: [
+                    trim,
+                    toLowerCase
+                ],
+                query: {
+                    mode: 'insensitive'
+                }
+            }
+        ]
+    ]);
+
     const lookups = {
-        journal: new ImportLookup(importRepos.journal),
-        organization: new ImportLookup(importRepos.organization),
+        journal: new ImportLookup(importRepos.journal, orgNameLookupConfig),
+        organization: new ImportLookup(importRepos.organization,),
         awardScheme: new ImportLookup(importRepos.awardScheme),
         decisionBody: new ImportLookup(importRepos.decisionBody)
     }
