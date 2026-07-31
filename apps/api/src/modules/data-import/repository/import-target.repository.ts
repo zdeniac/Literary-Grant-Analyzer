@@ -37,6 +37,6 @@ export class ImportTargetRepository<TModel, TCreate> implements ImportLookupInte
             where: {
                 [field]: whereValue
             }
-        });    
+        });
     }
 }

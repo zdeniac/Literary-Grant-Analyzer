@@ -37,7 +37,7 @@ export class ImportService
             const writer = this.writers[model]; 
 
             if (!writer) throw new ImportError(`Missing import writer for ${model}`);
-
+            
             validateHeaders(
                 file.header, 
                 blueprint.fields, 
@@ -47,7 +47,7 @@ export class ImportService
             if (!file.rows.length) throw new ImportError(`Missing rows for ${model}.`);
 
             let validatedRows = validateRows(file.rows, blueprint.schema);
-            
+
             if (isRelationalModelBlueprint(blueprint)) {
                 for (const relationBlueprint of blueprint.relations) {
                     validatedRows = await this.relationResolver.resolve(

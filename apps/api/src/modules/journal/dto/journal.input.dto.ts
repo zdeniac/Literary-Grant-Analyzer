@@ -12,4 +12,3 @@ export type CreateJournalInput = z.infer<typeof createJournalSchema>;
 export type ImportJournalWithOrganizationIdsInput = z.infer<typeof createJournalWithOrganizationIdsSchema>;
 
 export type UpdateJournalWithAffiliationsInput = z.infer<typeof updateJournalWithAffiliationsSchema>;
-

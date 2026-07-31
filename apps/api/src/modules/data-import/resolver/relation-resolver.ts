@@ -11,18 +11,31 @@ export class RelationResolver
     {
         const sourceField = relationBlueprint.sourceField;
         const lookupField = relationBlueprint.lookupField;
+        const models = Array.isArray(relationBlueprint.model)
+            ? relationBlueprint.model
+            : [relationBlueprint.model];
 
         // Get the foreign data by the given field's values, e.g. 'organizationName'
         const foreignTableValues = relationBlueprint.multiple
             ? rows.flatMap(row => row[sourceField] as unknown[])
             : rows.map(row => row[sourceField]);
 
-        // Check if they are in the db by the lookup field, e.g. 'name' (in organizations)
-        const foreignData: Record<string, unknown>[] = 
-            await this.lookups[relationBlueprint.model].findManyBy(
+        let foreignData: Record<string, unknown>[] = [];
+
+        for (const model of models) {
+            // Check if they are in the db by the lookup field, e.g. 'name' (in organizations)
+            const data = await this.lookups[model].findManyBy(
                 lookupField,
                 foreignTableValues
             );
+            foreignData.push(...data);
+        }
+
+        // const foreignData: Record<string, unknown>[] = 
+        //     await this.lookups[model].findManyBy(
+        //         lookupField,
+        //         foreignTableValues
+        //     );
 
         const found = new Map<unknown, Record<string, unknown>>();
 

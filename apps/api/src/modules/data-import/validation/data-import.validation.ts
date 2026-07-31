@@ -23,7 +23,7 @@ export function validateRows<T extends ImportRow>(
         
         validated.push(result.data);
     });
-    
+
     if (errors.length) throw new ImportValidationError(errors);
 
     return validated;

@@ -1,8 +1,8 @@
 import * as z from "zod";
-import { idSchema } from "../../../common/validation/schema";
-import { Prisma } from "@prisma/client";
-
-const decimalSchema = z.custom<Prisma.Decimal>();
+import { decimalSchema, idSchema, nameSchema } from "../../../common/validation/schema";
+import { awardSchemeSchema } from "../../award-scheme/validation/award-scheme.schema";
+import { organizationSchema } from "../../organization/validation/organization.schema";
+import { decisionBodySchema } from "../../decision-body/validation/decision-body.schema";
 
 export const awardDecisionSchema = z.object({
     id: idSchema,
@@ -48,3 +48,21 @@ export const updateAwardDecisionSchema = awardDecisionSchema
         updatedAt: true,
     })
     .partial();
+
+
+export const importAwardDecisionSchema = z.object({
+    recipientName: organizationSchema.shape.name,
+    awardSchemeName: awardSchemeSchema.shape.name,
+    decisionMakerName: z.union([
+        organizationSchema.shape.name,
+        decisionBodySchema.shape.name
+    ]),
+
+    amount: awardDecisionSchema.shape.amount,
+    purpose: z.string().optional(),
+    sourceIdentifier: z.string().optional(),
+
+    sourceDocumentId: idSchema,
+
+    decisionDate: z.coerce.date(),
+});

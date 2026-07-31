@@ -1,4 +1,5 @@
 import { RelationalModelBlueprint } from "../../data-import/types/import.types";
+import { importAwardDecisionSchema } from "../validation/award-decision.schema";
 
 export const awardDecisionBlueprint: RelationalModelBlueprint = 
     {
@@ -35,7 +36,7 @@ export const awardDecisionBlueprint: RelationalModelBlueprint =
                 required: false,
             },
         ],
-        // schema: ,
+        schema: importAwardDecisionSchema,
         relations: [
             {
                 model: 'organization',
@@ -44,7 +45,7 @@ export const awardDecisionBlueprint: RelationalModelBlueprint =
                 lookupField: 'name',
 
                 foreignKey: 'recipientId',
-                targetField: 'id',
+                targetField: 'actorId',
             },
             {
                 model: 'awardScheme',
@@ -56,13 +57,13 @@ export const awardDecisionBlueprint: RelationalModelBlueprint =
                 targetField: 'id',
             },
             {
-                model: 'decisionBody',
+                model: ['decisionBody', 'organization'],
                 
                 sourceField: 'decisionMakerName',
                 lookupField: 'name',
 
                 foreignKey: 'decisionMakerId',
-                targetField: 'id',
-            }
+                targetField: 'actorId',
+            },
         ],
     };

@@ -6,7 +6,12 @@ import { createImportRepositories } from "./repositories.factory";
 
 export const createImportWriters = (repos: ReturnType<typeof createImportRepositories>) => ({
     journal: new JournalImportWriter(),
+
     organization: new OrganizationImportWriter(),
+
     awardScheme: new ImportWriter(repos.awardScheme),
+
     decisionBody: new DecisionBodyImportWriter(),
+
+    awardDecision: new ImportWriter(repos.awardDecision),
 });

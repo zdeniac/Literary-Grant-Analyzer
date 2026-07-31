@@ -73,7 +73,7 @@ export type ModelBlueprint = {
  * lookupField: 'name'
  */
 export type RelationBlueprint = {
-    model: ModelName;
+    model: ModelName | ModelName[];
 
     // the header field from the ImportFile
     sourceField: string;
