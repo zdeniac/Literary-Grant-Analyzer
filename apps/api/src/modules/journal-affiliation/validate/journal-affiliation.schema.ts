@@ -38,13 +38,21 @@ const journalAffiliationInputSchema = journalAffiliationSchema
     });
 
 /**
- * Used when creating a Journal together with its affiliations.
+ * Used when creating a Journal with affiliations.
  * The journalId is assigned by the JournalService.
  */
-export const createJournalAffiliationInputSchema = journalAffiliationInputSchema
-    .omit({
-        journalId: true,
-    });
+export const createJournalAffiliationForNewJournalSchema = z.object({
+    organizationId: idSchema,
+
+    fromYear: yearSchema.nullable().optional(),
+    toYear: yearSchema.nullable().optional(),
+
+    note: z.string().nullable().optional(),
+
+    isCurrent: z.boolean().default(true),
+
+    sourceDocumentId: idSchema.nullable().optional(),
+});
 
 /**
  * Used when creating an affiliation for an existing Journal.
@@ -55,9 +63,14 @@ export const createJournalAffiliationSchema = journalAffiliationInputSchema;
  * Only the affiliation metadata can be updated.
  * The Journal and Organization cannot be changed.
  */
-export const updateJournalAffiliationSchema = journalAffiliationInputSchema
-        .omit({
-            journalId: true,
-            organizationId: true,
-        })
-        .partial();
+export const updateJournalAffiliationSchema = journalAffiliationSchema
+    .omit({
+        journalId: true,
+        organizationId: true,
+        createdAt: true,
+        updatedAt: true,
+    })
+    .partial()
+    .extend({
+        id: idSchema,
+    });

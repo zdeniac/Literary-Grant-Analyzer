@@ -32,7 +32,7 @@ export class JournalRepository
                             connect: {
                                 id: affiliation.organizationId
                             }
-                        },            
+                        },
                         
                         sourceDocumentId: affiliation.sourceDocumentId,
                         note: affiliation.note,

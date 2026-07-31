@@ -1,12 +1,13 @@
 import { ImportJobStatus } from "@prisma/client";
 import { Id } from "../../../common/types/types";
+import { ModelName } from "../types/import.types";
 
 export type ImportJobDto = {
     id: Id;
 
     sourceDocumentId: Id | null;
 
-    model: string;
+    model: ModelName;
     fileName: string | null;
     mimeType: string | null;
 
@@ -25,7 +26,7 @@ export type ImportJobDto = {
 };
 
 export type CreateImportJobInput = {
-    model: string;
+    model: ModelName;
 
     totalRows?: number;
     fileName?: string;

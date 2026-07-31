@@ -5,6 +5,7 @@ export const ImportJobList = () => (
         <DataTable>
 
             <DataTable.Col source="id" />
+            <DataTable.Col source="model" />
             <DataTable.Col source="fileName" />
             <DataTable.Col source="mimeType" />
             <DataTable.Col source="status" />

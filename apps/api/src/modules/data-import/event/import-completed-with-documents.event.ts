@@ -6,7 +6,6 @@ export class ImportCompletedWithSourceDocumentsEvent implements EventInterface
 {
     constructor(
         public readonly importJobId: number,
-        public readonly model: ModelName,
         public readonly total: number,
         public readonly sourceDocuments: CreateSourceDocumentInput[],
     ) {}

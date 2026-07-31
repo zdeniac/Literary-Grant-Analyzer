@@ -1,4 +1,4 @@
-import { DataTable, List } from "react-admin";
+import { DataTable, List, UrlField } from "react-admin";
 import { OrganizationListActions } from "./actions";
 import { AuditColumns } from "../../../components/table/AuditColumns";
 import { CustomEmpty } from "../../../components/table/CustomEmpty";
@@ -9,10 +9,10 @@ export const OrganizationList = () => {
             <DataTable>
                 <DataTable.Col source="id" />
                 <DataTable.Col source="name" />
+                <DataTable.Col source="website" field={UrlField} />
                 <DataTable.Col source="address" />
                 <DataTable.Col source="legalForm" />
                 <DataTable.Col source="sector" />
-                <DataTable.Col source="foundingYear" />
 
                 <AuditColumns />
             </DataTable>

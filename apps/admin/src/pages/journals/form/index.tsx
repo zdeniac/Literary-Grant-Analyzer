@@ -1,4 +1,4 @@
-import { ReferenceInput, required, SelectArrayInput, SelectInput, SimpleForm, TextInput } from "react-admin";
+import { ArrayInput, ReferenceInput, required, SelectArrayInput, SelectInput, SimpleForm, SimpleFormIterator, TextInput } from "react-admin";
 import { YearInput } from "../../../components/inputs/YearInput";
 import { journalFormats, journalStatuses } from "../constants";
 
@@ -29,7 +29,22 @@ export const JournalForm = () => (
 
         <YearInput source="foundingYear" />
 
-        <ReferenceInput source="organizationId" reference="organizations" />
+        <ArrayInput source="affiliations">
+            <SimpleFormIterator>
+                <ReferenceInput
+                    source="organizationId"
+                    reference="organizations"
+                >
+                    <SelectInput optionText="name" />
+                </ReferenceInput>
+
+                <YearInput source="fromYear" />
+
+                <YearInput source="toYear" />
+
+                <TextInput source="note" />
+            </SimpleFormIterator>
+        </ArrayInput>
 
     </SimpleForm>
 );

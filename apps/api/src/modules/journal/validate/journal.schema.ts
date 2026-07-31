@@ -3,9 +3,11 @@ import z from "zod";
 import { organizationSchema } from "../../organization/validation/organization.schema";
 import { idSchema, nameSchema, yearSchema } from "../../../common/validation/schema";
 import { 
+    createJournalAffiliationForNewJournalSchema,
     createJournalAffiliationSchema, 
     journalAffiliationSchema, 
-    journalAffiliationWithOrganizationAndSourceDocumentSchema, 
+    journalAffiliationWithOrganizationAndSourceDocumentSchema,
+    updateJournalAffiliationSchema, 
 } from "../../journal-affiliation/validate/journal-affiliation.schema";
 
 const ommittedFields = {
@@ -69,7 +71,7 @@ export const journalWithAffiliationsSchema = journalSchema
 
 export const createJournalSchema = journalSchema
     .omit(ommittedFields)
-    .extend({   
+    .extend({
         issn: issnSchema.nullable().optional(),
         foundingYear: yearSchema.nullable().optional(),
     });
@@ -81,14 +83,21 @@ export const createJournalWithOrganizationIdsSchema = createJournalSchema
 
 export const createJournalWithAffiliationsSchema = createJournalSchema
     .extend({
-        affiliations: z.array(createJournalAffiliationSchema).min(1, 'At least one affiliation is required'),
+        affiliations: z
+            .array(createJournalAffiliationForNewJournalSchema)
+            .min(1, 'At least one affiliation is required'),
     });
 
 // When updating a journal, we expect that it already has at least one affiliation,
 // so we use the full journalAffiliationSchema
 export const updateJournalWithAffiliationsSchema = createJournalSchema
     .extend({
-        affiliations: z.array(journalAffiliationSchema),
+        affiliations: z.array(
+            z.union([
+                updateJournalAffiliationSchema,
+                createJournalAffiliationSchema
+            ])
+        ),
     })
     .partial();
 

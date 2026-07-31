@@ -22,6 +22,7 @@ export const AwardDecisionForm = () => (
              />
         </ReferenceInput>
 
+        {/* decisionMaker lehet organization is, tehát itt az actor táblából kell szelektálni */}
         <ReferenceInput
             source="decisionMakerId"
             reference="decision-bodies"

@@ -1,11 +1,11 @@
+import z from "zod";
 import { ImportService } from "../service/import.service";
 import { Request, Response } from "express";
 import { toImportFile } from "../mapper/import.mapper";
 import { ImportSchemaService } from "../service/import-schema.service";
 import { CreateSourceDocumentInput } from "../../source-document/dto/source-document.input.dto";
 import { createSourceDocumentSchema } from "../../source-document/validation/source-document.schema";
-import z from "zod";
-import { ImportValidationError } from "../error/import.errors";
+import { ImportError } from "../error/import.errors";
 
 export class ImportController
 {
@@ -53,7 +53,7 @@ export class ImportController
                 sourceDocuments = this.validateSourceDocuments(req.body.sourceDocuments);
             } catch(e: unknown) {
                 if (e instanceof z.ZodError) {
-                    throw new ImportValidationError([], 'IMPORT_SOURCE_DOCUMENTS_ERROR');
+                    throw new ImportError('IMPORT_SOURCE_DOCUMENTS_ERROR');
                 }
             }
         }

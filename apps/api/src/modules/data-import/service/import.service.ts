@@ -65,7 +65,6 @@ export class ImportService
                 this.eventDispatcher.dispatch(
                     new ImportCompletedWithSourceDocumentsEvent(
                         importJob.id,
-                        model,
                         total,
                         sourceDocuments
                     )
