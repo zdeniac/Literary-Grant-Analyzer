@@ -3,57 +3,57 @@ import { ActorType } from "@prisma/client";
 import { wipeDatabase } from "../helpers/db.helper";
 import { prisma } from "../../../src/db/prisma";
 import {
-    createDecisionBody,
-    deleteDecisionBody,
-    getDecisionBody,
-    updateDecisionBody,
-} from "../helpers/api/decision-body.api";
+    createDecisionAuthority,
+    deleteDecisionAuthority,
+    getDecisionAuthority,
+    updateDecisionAuthority,
+} from "../helpers/api/decision-authority.api";
 import { createOrganization } from "../helpers/api/organization.api";
 
 describe('Decision body routes test', () => {
 
-    const decisionBodyName = 'Szépirodalom Kollégium';
+    const decisionAuthorityName = 'Szépirodalom Kollégium';
 
     beforeEach(wipeDatabase);
     afterAll(wipeDatabase);
 
-    const createRouteDecisionBody = async (
+    const createRouteDecisionAuthority = async (
         overrides: Partial<{
             organizationId: number;
             name: string;
         }> = {}
     ) => {
-        return createDecisionBody({
-            name: overrides.name ?? decisionBodyName,
+        return createDecisionAuthority({
+            name: overrides.name ?? decisionAuthorityName,
             organizationId: overrides.organizationId,
         });
     };
 
-    it('POST / creates decisionBody', async () => {
-        const res = await createDecisionBody();
+    it('POST / creates decisionAuthority', async () => {
+        const res = await createDecisionAuthority();
 
         expect(res.status).toBe(200);
-        expect(res.body.data.name).toBe(decisionBodyName);
+        expect(res.body.data.name).toBe(decisionAuthorityName);
     });
 
     it('POST / creates actor', async () => {
-        const res = await createDecisionBody();
+        const res = await createDecisionAuthority();
 
-        const decisionBody = await prisma.decisionBody.findUniqueOrThrow({
+        const decisionAuthority = await prisma.decisionAuthority.findUniqueOrThrow({
             where: { id: res.body.data.id },
         });
 
         const actor = await prisma.actor.findUnique({
-            where: { id: decisionBody.actorId },
+            where: { id: decisionAuthority.actorId },
         });
 
         expect(actor).not.toBeNull();
-        expect(actor?.type).toBe(ActorType.DECISION_BODY)
+        expect(actor?.type).toBe(ActorType.DECISION_AUTHORITY)
     });
 
 
     it('POST / rejects invalid payload', async () => {
-        const res = await createRouteDecisionBody({
+        const res = await createRouteDecisionAuthority({
             name: '',
         });
 
@@ -61,25 +61,25 @@ describe('Decision body routes test', () => {
         expect(res.body.error).toBe('VALIDATION_ERROR');
     });
 
-    it('GET /:id returns decisionBody', async () => {
-        const created = await createDecisionBody();
+    it('GET /:id returns decisionAuthority', async () => {
+        const created = await createDecisionAuthority();
 
         const id = created.body.data.id;
 
-        const res = await getDecisionBody(id);
+        const res = await getDecisionAuthority(id);
 
         expect(res.status).toBe(200);
         expect(res.body.data.id).toBe(id);
     });
 
-    it('PATCH /:id updates decisionBody', async () => {
-        const created = await createRouteDecisionBody();
+    it('PATCH /:id updates decisionAuthority', async () => {
+        const created = await createRouteDecisionAuthority();
         const org = await createOrganization({ name: 'NKA' });
 
         const id = created.body.data.id;
         const orgId = org.body.data.id;
 
-        const res = await updateDecisionBody(id, {
+        const res = await updateDecisionAuthority(id, {
             name: 'asd',
             organizationId: orgId,
         });
@@ -90,9 +90,9 @@ describe('Decision body routes test', () => {
     });
 
     it('PATCH /:id rejects invalid payload', async () => {
-        const created = await createDecisionBody();
+        const created = await createDecisionAuthority();
 
-        const res = await updateDecisionBody(
+        const res = await updateDecisionAuthority(
             created.body.data.id,
             {
                 name: '',
@@ -103,30 +103,30 @@ describe('Decision body routes test', () => {
         expect(res.body.error).toBe('VALIDATION_ERROR');
     });
 
-    it('DELETE /:id deletes decisionBody', async () => {
-        const created = await createDecisionBody();
+    it('DELETE /:id deletes decisionAuthority', async () => {
+        const created = await createDecisionAuthority();
         const id = created.body.data.id;
-        const res = await deleteDecisionBody(id);
+        const res = await deleteDecisionAuthority(id);
 
         expect(res.status).toBe(204);
 
-        const deleted = await getDecisionBody(id);
+        const deleted = await getDecisionAuthority(id);
 
         expect(deleted.status).toBe(404);
     });
 
     it('DELETE /:id deletes actor', async () => {
-        const created = await createDecisionBody();
+        const created = await createDecisionAuthority();
         const id = created.body.data.id;
 
-        const decisionBody = await prisma.decisionBody.findUniqueOrThrow({
+        const decisionAuthority = await prisma.decisionAuthority.findUniqueOrThrow({
             where: { id },
         });
 
-        const res = await deleteDecisionBody(id);
+        const res = await deleteDecisionAuthority(id);
 
         const actor = await prisma.actor.findUnique({
-            where: { id: decisionBody.actorId },
+            where: { id: decisionAuthority.actorId },
         });
 
         expect(actor).toBeNull();

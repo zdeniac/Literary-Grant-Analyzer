@@ -1,13 +1,13 @@
 import { describe, expect, it } from "vitest";
 import {
-    createDecisionBodyInputSchema,
-    createDecisionBodySchema,
-    decisionBodySchema,
-    importDecisionBodySchema,
-    updateDecisionBodySchema,
-} from "../../../src/modules/decision-body/validation/decision-body.schema";
+    createDecisionAuthorityInputSchema,
+    createDecisionAuthoritySchema,
+    decisionAuthoritySchema,
+    importDecisionAuthoritySchema,
+    updateDecisionAuthoritySchema,
+} from "../../../src/modules/decision-authority/validation/decision-authority.schema";
 
-const validDecisionBody = {
+const validDecisionAuthority = {
     id: 1,
     name: 'Valid decision',
     organizationId: 12,
@@ -18,19 +18,19 @@ const validDecisionBody = {
 
 describe('Decision Body schema test', () => {
     it('accepts valid decision body', () => {
-        const parsed = decisionBodySchema.parse(validDecisionBody);
+        const parsed = decisionAuthoritySchema.parse(validDecisionAuthority);
 
         expect(parsed).toEqual({
-            ...validDecisionBody,
-            createdAt: new Date(validDecisionBody.createdAt),
-            updatedAt: new Date(validDecisionBody.updatedAt),
+            ...validDecisionAuthority,
+            createdAt: new Date(validDecisionAuthority.createdAt),
+            updatedAt: new Date(validDecisionAuthority.updatedAt),
         });
     });
 
     it('rejects invalid name', () => {
         expect(() =>
-            decisionBodySchema.parse({
-                ...validDecisionBody,
+            decisionAuthoritySchema.parse({
+                ...validDecisionAuthority,
                 name: '',
             })
         ).toThrow();
@@ -43,21 +43,21 @@ describe('Decision Body schema test', () => {
             actorId: 3,
         };
 
-        const parsed = createDecisionBodySchema.parse(payload);
+        const parsed = createDecisionAuthoritySchema.parse(payload);
 
         expect(parsed).toEqual(payload);
     });
 
     it('requires organizationId for create input schema', () => {
         expect(() =>
-            createDecisionBodyInputSchema.parse({
+            createDecisionAuthorityInputSchema.parse({
                 name: 'New decision body',
             })
         ).toThrow();
     });
 
     it('allows partial updates', () => {
-        const parsed = updateDecisionBodySchema.parse({
+        const parsed = updateDecisionAuthoritySchema.parse({
             name: 'Updated decision body',
         });
 
@@ -67,7 +67,7 @@ describe('Decision Body schema test', () => {
     });
 
     it('accepts import payloads with organizationName', () => {
-        const parsed = importDecisionBodySchema.parse({
+        const parsed = importDecisionAuthoritySchema.parse({
             name: 'Imported decision body',
             organizationName: 'Example Org',
         });

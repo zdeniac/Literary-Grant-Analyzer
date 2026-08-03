@@ -7,7 +7,7 @@ import { wipeDatabase } from "../helpers/db.helper";
 import { createOrganization } from "../helpers/factories/organization.factory";
 import { createImportModule } from "../../../src/modules/data-import/factory/import.factory";
 import { createAwardScheme } from "../helpers/factories/award-scheme.factory";
-import { createDecisionBody } from "../helpers/factories/decision-body.factory";
+import { createDecisionAuthority } from "../helpers/factories/decision-authority.factory";
 import { createSourceDocument } from "../helpers/factories/source-document.factory";
 
 describe('AwardDecision Import Service', () => {
@@ -33,7 +33,7 @@ describe('AwardDecision Import Service', () => {
             foundingYear: 1993,
         });
 
-        const decisionBody = await createDecisionBody({
+        const decisionAuthority = await createDecisionAuthority({
             name: 'Szépirodalom Kollégium',
             organizationId: decisionOrganization.id,
         });
@@ -65,7 +65,7 @@ describe('AwardDecision Import Service', () => {
                     recipientName: organization.name,
                     awardSchemeName: awardScheme.name,
                     awardSchemeOrganizationName: decisionOrganization.name,
-                    decisionMakerName: decisionBody.name,
+                    decisionMakerName: decisionAuthority.name,
                     amount: 500,
                     purpose: 'Folyóirat támogatás',
                     sourceIdentifier: 'NKA-2024-001',
@@ -89,7 +89,7 @@ describe('AwardDecision Import Service', () => {
                 },
                 decisionMaker: {
                     include: {
-                        decisionBody: true,
+                        decisionAuthority: true,
                     },
                 },
                 awardScheme: true,
@@ -114,8 +114,8 @@ describe('AwardDecision Import Service', () => {
                 },
             },
             decisionMaker: {
-                decisionBody: {
-                    id: decisionBody.id,
+                decisionAuthority: {
+                    id: decisionAuthority.id,
                     name: 'Szépirodalom Kollégium',
                 },
             },
@@ -134,7 +134,7 @@ describe('AwardDecision Import Service', () => {
             foundingYear: 1993,
         });
 
-        const decisionBody = await createDecisionBody({
+        const decisionAuthority = await createDecisionAuthority({
             name: 'Szépirodalom Kollégium',
             organizationId: decisionOrganization.id,
         });
@@ -160,7 +160,7 @@ describe('AwardDecision Import Service', () => {
                     recipientName: 'Unknown Organization',
                     awardSchemeName: 'Irodalmi támogatás',
                     awardSchemeOrganizationName: decisionOrganization.name,
-                    decisionMakerName: decisionBody.name,
+                    decisionMakerName: decisionAuthority.name,
                     amount: 500,
                     purpose: 'Folyóirat támogatás',
                     sourceIdentifier: 'NKA-2024-002',
@@ -192,7 +192,7 @@ describe('AwardDecision Import Service', () => {
             foundingYear: 1993,
         });
 
-        const decisionBody = await createDecisionBody({
+        const decisionAuthority = await createDecisionAuthority({
             name: 'Szépirodalom Kollégium',
             organizationId: decisionOrganization.id,
         });
@@ -224,7 +224,7 @@ describe('AwardDecision Import Service', () => {
                     recipientName: organization.name,
                     awardSchemeName: awardScheme.name,
                     awardSchemeOrganizationName: 'Wrong Organization',
-                    decisionMakerName: decisionBody.name,
+                    decisionMakerName: decisionAuthority.name,
                     amount: 500,
                     purpose: 'Folyóirat támogatás',
                     sourceIdentifier: 'NKA-2024-004',
@@ -256,7 +256,7 @@ describe('AwardDecision Import Service', () => {
             foundingYear: 1993,
         });
 
-        const decisionBody = await createDecisionBody({
+        const decisionAuthority = await createDecisionAuthority({
             name: 'Szépirodalom Kollégium',
             organizationId: decisionOrganization.id,
         });
@@ -288,7 +288,7 @@ describe('AwardDecision Import Service', () => {
                     recipientName: organization.name,
                     awardSchemeName: awardScheme.name,
                     awardSchemeOrganizationName: decisionOrganization.name,
-                    decisionMakerName: decisionBody.name,
+                    decisionMakerName: decisionAuthority.name,
                     amount: 'not-a-number',
                     purpose: 'Folyóirat támogatás',
                     sourceIdentifier: 'NKA-2024-003',

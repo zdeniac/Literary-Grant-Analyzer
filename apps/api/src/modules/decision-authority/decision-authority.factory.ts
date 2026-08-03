@@ -4,14 +4,14 @@ import { prisma } from "../../db/prisma";
 import { PrismaCrudRepository } from "../../db/repositories/prisma-crud-repository";
 import { ActorRepository } from "../actor/actor.repository";
 import { DecisionBodyController } from "./decision-authority.controller";
-import { DecisionBodyService } from "./decision-authority.service";
+import { DecisionAuthorityService } from "./decision-authority.service";
 import { toDecisionBodyDto } from "./mapper/decision-body.mapper";
 
 export const createDecisionAuthorityModule = () => {
     const crudRepository = new PrismaCrudRepository(prisma.decisionBody);
     const crudService = new CrudService(crudRepository);
 
-    const service = new DecisionBodyService(
+    const service = new DecisionAuthorityService(
         crudRepository,
         new ActorRepository(prisma.actor),
     );

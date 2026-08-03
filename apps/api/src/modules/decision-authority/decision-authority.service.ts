@@ -1,24 +1,24 @@
 import { ActorType } from "@prisma/client";
-import { DecisionBodyDto } from "./dto/decision-body.dto";
+import { DecisionAuthorityDto } from "./dto/decision-authority.dto";
 import { ActorRepository } from "../actor/actor.repository";
 import { transaction } from "../../db/transaction";
 import { Id } from "../../common/types/types";
 import { PrismaCrudRepository } from "../../db/repositories/prisma-crud-repository";
 import { createRepositories } from "../../db/repositories/factory";
-import { CreateDecisionBodyData, CreateDecisionBodyInput, UpdateDecisionBodyInput } from "./dto/decision-body.input.dto";
+import { CreateDecisionAuthorityData, CreateDecisionAuthorityInput, UpdateDecisionAuthorityInput } from "./dto/decision-authority.input.dto";
 
-export class DecisionBodyService
+export class DecisionAuthorityService
 {
     constructor(
-        private readonly repository: PrismaCrudRepository<DecisionBodyDto, CreateDecisionBodyData, UpdateDecisionBodyInput>,
+        private readonly repository: PrismaCrudRepository<DecisionAuthorityDto, CreateDecisionAuthorityData, UpdateDecisionAuthorityInput>,
         private readonly actorRepository: ActorRepository,
     ) {
     }
 
-    async create(dto: CreateDecisionBodyInput): Promise<DecisionBodyDto>
+    async create(dto: CreateDecisionAuthorityInput): Promise<DecisionAuthorityDto>
     {
         const actor = await this.actorRepository.create(
-            ActorType.DECISION_BODY
+            ActorType.DECISION_AUTHORITY
         );
         return this.repository.create({
             ...dto,
@@ -26,16 +26,16 @@ export class DecisionBodyService
         });
     }
 
-    async delete(id: Id): Promise<DecisionBodyDto>
+    async delete(id: Id): Promise<DecisionAuthorityDto>
     {
         return transaction(async tx => {
             const repositories = createRepositories(tx);
 
-            const decisionBody = await repositories.decisionAuthority.delete(id);
+            const decisionAuthority = await repositories.decisionAuthority.delete(id);
 
-            await repositories.actor.delete(decisionBody.actorId);
+            await repositories.actor.delete(decisionAuthority.actorId);
 
-            return decisionBody;
+            return decisionAuthority;
         });
     }
 }

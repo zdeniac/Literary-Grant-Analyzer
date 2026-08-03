@@ -5,12 +5,12 @@ import { createOrganization } from "./organization.api";
 
 const route = "/api/decision-bodies";
 
-type CreateDecisionBodyInput = {
+type CreateDecisionAuthorityInput = {
     name?: string;
     organizationId?: Id;
 };
 
-export const createDecisionBody = async (input: CreateDecisionBodyInput = {}) => {
+export const createDecisionAuthority = async (input: CreateDecisionAuthorityInput = {}) => {
     const organizationId = input.organizationId
         ?? (await createOrganization({ name: `NKA_${Date.now()}` })).body.data.id;
 
@@ -22,15 +22,15 @@ export const createDecisionBody = async (input: CreateDecisionBodyInput = {}) =>
         });
 };
 
-export const getDecisionBody = async (id: Id) =>
+export const getDecisionAuthority = async (id: Id) =>
     request(app)
         .get(`${route}/${id}`);
 
-export const updateDecisionBody = async (id: Id, data: object) =>
+export const updateDecisionAuthority = async (id: Id, data: object) =>
     request(app)
         .patch(`${route}/${id}`)
         .send(data);
 
-export const deleteDecisionBody = async (id: Id) =>
+export const deleteDecisionAuthority = async (id: Id) =>
     request(app)
         .delete(`${route}/${id}`);
