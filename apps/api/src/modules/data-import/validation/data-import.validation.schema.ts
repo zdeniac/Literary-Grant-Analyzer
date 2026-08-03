@@ -8,4 +8,4 @@ export const modelNameSchema = z
         "Model's name must be camelCase"
     );
 
-export { importableModelSchema, ImportableModel };
+export { importableModelSchema, type ImportableModel };

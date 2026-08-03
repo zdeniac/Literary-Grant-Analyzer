@@ -5,10 +5,10 @@ import { PrismaCrudRepository } from "../../db/repositories/prisma-crud-reposito
 import { ActorRepository } from "../actor/actor.repository";
 import { DecisionBodyController } from "./decision-authority.controller";
 import { DecisionAuthorityService } from "./decision-authority.service";
-import { toDecisionBodyDto } from "./mapper/decision-body.mapper";
+import { toDecisionAuthorityDto } from "./mapper/decision-authority.mapper";
 
 export const createDecisionAuthorityModule = () => {
-    const crudRepository = new PrismaCrudRepository(prisma.decisionBody);
+    const crudRepository = new PrismaCrudRepository(prisma.decisionAuthority);
     const crudService = new CrudService(crudRepository);
 
     const service = new DecisionAuthorityService(
@@ -17,7 +17,7 @@ export const createDecisionAuthorityModule = () => {
     );
     
     return {
-        controller: new DecisionBodyController(service, toDecisionBodyDto),
-        crudController: new CrudController(crudService, toDecisionBodyDto)
+        controller: new DecisionBodyController(service, toDecisionAuthorityDto),
+        crudController: new CrudController(crudService, toDecisionAuthorityDto)
     }
 };

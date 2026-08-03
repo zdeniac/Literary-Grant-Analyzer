@@ -1,38 +1,38 @@
 import { Id } from "../../../../src/common/types/types";
 import { prisma } from "../../../../src/db/prisma";
-import { DecisionBodyService } from "../../../../src/modules/decision-body/decision-body.service";
+import { DecisionAuthorityService } from "../../../../src/modules/decision-authority/decision-authority.service";
 import { ActorRepository } from "../../../../src/modules/actor/actor.repository";
 import { PrismaCrudRepository } from "../../../../src/db/repositories/prisma-crud-repository";
 import { CrudService } from "../../../../src/common/services/crud.service";
-import { DecisionBodyModel } from "../../../../src/modules/decision-body/dto/decision-body.dto";
-import { UpdateDecisionBodyInput } from "../../../../src/modules/decision-body/dto/decision-body.input.dto";
+import { DecisionAuthorityModel } from "../../../../src/modules/decision-authority/dto/decision-authority.dto";
+import { UpdateDecisionAuthorityInput } from "../../../../src/modules/decision-authority/dto/decision-authority.input.dto";
 
-const repo = new PrismaCrudRepository(prisma.decisionBody)
-const decisionBodyService = new DecisionBodyService(
+const repo = new PrismaCrudRepository(prisma.decisionAuthority)
+const decisionAuthorityService = new DecisionAuthorityService(
     repo,
     new ActorRepository(prisma.actor)
 );
 
 const crudService = new CrudService(repo);
 
-export const createDecisionBody = async (overrides: {
+export const createDecisionAuthority = async (overrides: {
     name?: string,
     organizationId: Id, 
-}): Promise<DecisionBodyModel> => {
-    return decisionBodyService.create({
+}): Promise<DecisionAuthorityModel> => {
+    return decisionAuthorityService.create({
         name: overrides.name ?? 'Szépirodalom Kollégium',
         organizationId: overrides.organizationId, 
     });
 };
 
-export const findDecisionBodyById = async (id: Id): Promise<DecisionBodyModel | undefined> => 
+export const findDecisionAuthorityById = async (id: Id): Promise<DecisionAuthorityModel | undefined> => 
     await crudService.findById(id);
 
-export const findEveryDecisionBody = async (): Promise<DecisionBodyModel[]> => 
+export const findEveryDecisionAuthority = async (): Promise<DecisionAuthorityModel[]> => 
     await crudService.findAll();
 
-export const deleteDecisionBody = async (id: Id): Promise<DecisionBodyModel> => 
-    await decisionBodyService.delete(id);
+export const deleteDecisionAuthority = async (id: Id): Promise<DecisionAuthorityModel> => 
+    await decisionAuthorityService.delete(id);
 
-export const updateDecisionBody = async (id: Id, data: UpdateDecisionBodyInput): Promise<DecisionBodyModel> => 
+export const updateDecisionAuthority = async (id: Id, data: UpdateDecisionAuthorityInput): Promise<DecisionAuthorityModel> => 
     await crudService.update(id, data);
