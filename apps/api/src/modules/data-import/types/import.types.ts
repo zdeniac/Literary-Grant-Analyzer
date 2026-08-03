@@ -37,12 +37,12 @@ export type ImportFile = {
 };
 
 export type ImportFieldType =
-    | 'string' 
-    | 'number' 
-    | 'email' 
-    | 'enum' 
-    | 'boolean' 
-    | 'date' 
+    | 'string'
+    | 'number'
+    | 'email'
+    | 'enum'
+    | 'boolean'
+    | 'date'
     | 'array[enum]'
     | 'array[string]';
 
@@ -54,7 +54,7 @@ export type ImportField = {
 };
 
 export type AcceptedFormat =  
-    | { mimeType: 'text/csv'; extension: '.csv' };
+    | { mimeType: 'text/csv', extension: '.csv' };
 
 export type ImportSchema = {
     fields: ImportField[],
@@ -68,25 +68,69 @@ export type ModelBlueprint = {
 };
 
 /**
- * model: 'organization'
+ * Represents a value from the imported row to a related database record.
+ *
+ * Example:
  * sourceField: 'organizationName'
  * lookupField: 'name'
+ *
+ * means that the value of the imported 'organizationName' column
+ * is matched against the Organization.name column.
  */
-export type RelationBlueprint = {
+export type RelationBlueprint = SimpleRelationBlueprint | CompositeRelationBlueprint;
+    
+export type SimpleRelationBlueprint = {
+    // The related model. Can be a single model or an array of models, 
+    // e.g. for polymorphic relations.
     model: ModelName | ModelName[];
 
-    // the header field from the ImportFile
-    sourceField: string;
-    
-    // the foreign model's actual field from the db
-    lookupField: string;
+    // One or more fields used to uniquely identify the related record.
+    lookup: SimpleLookup;
 
+    // Field written to the imported row after the relation is resolved.
     foreignKey: string;
+
+    // Field copied from the matched related record.
     targetField: string;
 
-    // can have multiple values for the same field (e.g.: N:M relation)
+    // Whether the imported column may contain multiple values
+    // (e.g. 'Org A|Org B' for an N:M relation).
     multiple?: boolean;
 };
+
+export type CompositeRelationBlueprint = {
+    // The related model. Can be a single model or an array of models, 
+    // e.g. for polymorphic relations.
+    model: ModelName | ModelName[];
+
+    // One or more fields used to uniquely identify the related record.
+    lookup: CompositeLookup;
+
+    // Field written to the imported row after the relation is resolved.
+    foreignKey: string;
+
+    // Field copied from the matched related record.
+    targetField: string;
+};
+
+export type SimpleLookup = {
+    // Column name in the imported file.
+    sourceField: string;
+
+    // Field of the related model used for the lookup.
+    lookupField: string;
+};
+
+export type CompositeLookup = {
+    sourceField: string;
+    
+    lookupField: string;
+    
+    // Used when the input sourceField's value is not unique 
+    // (e.g., multiple records with the same name).
+    model?: ModelName;
+    foreignKey?: string;
+}[];
 
 export type RelationalModelBlueprint = ModelBlueprint & {
     relations: RelationBlueprint[];
@@ -98,6 +142,16 @@ export type ImportOptions = {
     validation?: {
         allowUnknownFields: boolean;
     };
+}
+
+export type RelationResolverRegistry = {
+    simple: RelationResolverInterface<SimpleRelationBlueprint>;
+    composite: RelationResolverInterface<CompositeRelationBlueprint>;
+};
+
+export interface RelationResolverInterface<T extends RelationBlueprint>
+{
+    resolve(rows: ImportRow[], relationBlueprint: T): Promise<ImportRow[]>;
 }
 
 export interface ImportLookupInterface<TModel>

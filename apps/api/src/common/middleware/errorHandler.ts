@@ -10,9 +10,10 @@ export function errorHandler(
 ): void
 {
     if (error instanceof ImportValidationError) {
-        res.status(422).json({
-            error: error.message,
-            errors: error.errors,
+        res.status(error.statusCode).json({
+            error: (error as any).code ?? error.message,
+            message: error.message,
+            errors: error.errors ?? [],
         });
 
         return;

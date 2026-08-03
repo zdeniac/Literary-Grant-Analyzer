@@ -1,10 +1,10 @@
 import { Router } from "express";
-import { createDecisionBodyModule } from "./decision-body.factory";
+import { createDecisionAuthorityModule } from "./decision-authority.factory";
 import { createDecisionBodyInputSchema, updateDecisionBodySchema } from "./validation/decision-body.schema";
 import { validate } from "../../common/middleware/validate";
 
 const router = Router();
-const { controller, crudController } = createDecisionBodyModule();
+const { controller, crudController } = createDecisionAuthorityModule();
 
 router.get(
     '/:id',

@@ -1,16 +1,18 @@
-import { ImportValidationError } from "../error/import.errors";
-import { ImportLookupInterface, ImportRow, ImportRowError, ModelName, RelationBlueprint } from "../types/import.types";
+import { ImportRelationError } from "../error/import.errors";
+import { ImportLookupInterface, ImportRow, ImportRowError, SimpleLookup, ModelName, RelationResolverInterface, SimpleRelationBlueprint } from "../types/import.types";
 
-export class RelationResolver
+export class SimpleRelationResolver implements RelationResolverInterface<SimpleRelationBlueprint>
 {
     constructor(
         private readonly lookups: Record<ModelName, ImportLookupInterface<any>>,
     ) {}
 
-    public async resolve(rows: ImportRow[], relationBlueprint: RelationBlueprint): Promise<ImportRow[]> 
+    public async resolve(rows: ImportRow[], relationBlueprint: SimpleRelationBlueprint): Promise<ImportRow[]> 
     {
-        const sourceField = relationBlueprint.sourceField;
-        const lookupField = relationBlueprint.lookupField;
+        const lookup: SimpleLookup = relationBlueprint.lookup;
+
+        const sourceField = lookup.sourceField;
+        const lookupField = lookup.lookupField;
         const models = Array.isArray(relationBlueprint.model)
             ? relationBlueprint.model
             : [relationBlueprint.model];
@@ -31,41 +33,36 @@ export class RelationResolver
             foreignData.push(...data);
         }
 
-        // const foreignData: Record<string, unknown>[] = 
-        //     await this.lookups[model].findManyBy(
-        //         lookupField,
-        //         foreignTableValues
-        //     );
-
         const found = new Map<unknown, Record<string, unknown>>();
 
         for (const item of foreignData) {
             found.set(item[lookupField], item);
         }
 
-        this.validateRelations(rows, relationBlueprint, found);
+        this.validateRelations(rows, lookup, found, relationBlueprint?.multiple ?? false);
 
         return this.transformRows(rows, relationBlueprint, found);
     }
 
     private validateRelations(
         rows: ImportRow[],
-        relation: RelationBlueprint,
+        lookup: SimpleLookup,
         found: Map<unknown, Record<string, unknown>>,
+        multiple: boolean,
     ): void {
         const missing: ImportRowError[] = [];
 
         rows.forEach((row, rowIndex) => {
-            const values = relation.multiple
-                ? (row[relation.sourceField] as unknown[])
-                : [row[relation.sourceField]];
+            const values = multiple
+                ? (row[lookup.sourceField] as unknown[])
+                : [row[lookup.sourceField]];
 
             const issues = values
                 .filter(value => !found.has(value))
                 .map(value => ({
-                    field: relation.sourceField,
+                    field: lookup.sourceField,
                     value,
-                    message: `No ${relation.sourceField} with value "${String(value)}" found in the database.`,
+                    message: `No ${lookup.sourceField} with value "${String(value)}" found in the database.`,
                 }));
 
             if (issues.length) {
@@ -77,20 +74,17 @@ export class RelationResolver
         });
 
         if (missing.length) {
-            throw new ImportValidationError(
-                missing,
-                'IMPORT_RELATION_ERROR',
-            );
+            throw new ImportRelationError(missing);
         }
     }
 
     private transformRows(
         rows: ImportRow[], 
-        relation: RelationBlueprint, 
+        relation: SimpleRelationBlueprint, 
         found: Map<unknown, Record<string, unknown>>,
     ): ImportRow[] {
         const {
-            sourceField,
+            lookup: { sourceField },
             foreignKey,
             targetField,
             multiple,

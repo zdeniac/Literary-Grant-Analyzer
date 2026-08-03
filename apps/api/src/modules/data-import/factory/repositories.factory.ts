@@ -1,6 +1,6 @@
 import { prisma } from "../../../db/prisma";
 import { AwardSchemeModel } from "../../award-scheme/dto/award-scheme.dto";
-import { DecisionBodyModel } from "../../decision-body/dto/decision-body.dto";
+import { DecisionAuthorityModel } from "../../decision-authority/dto/decision-authority.dto";
 import { JournalModel } from "../../journal/dto/journal.dto";
 import { OrganizationModel } from "../../organization/dto/organization.dto";
 import { ImportJobRepository } from "../repository/import-job.repository";
@@ -15,7 +15,7 @@ export const createImportRepositories = () => ({
 
     awardScheme: new ImportTargetRepository<AwardSchemeModel, ImportRow>(prisma.awardScheme),
 
-    decisionBody: new ImportTargetRepository<DecisionBodyModel, ImportRow>(prisma.decisionBody),
+    decisionAuthority: new ImportTargetRepository<DecisionAuthorityModel, ImportRow>(prisma.decisionAuthority),
 
     awardDecision: new ImportTargetRepository<AwardDecisionModel, ImportRow>(prisma.awardDecision),
     

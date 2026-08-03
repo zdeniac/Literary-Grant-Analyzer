@@ -1,5 +1,5 @@
 // Döntési testületeket, szervezetek, pl. NKA Szépirodalom Kollégium
-model DecisionBody {
+model DecisionAuthority {
 	id				Int				@id @default(autoincrement())
 	name			String
 

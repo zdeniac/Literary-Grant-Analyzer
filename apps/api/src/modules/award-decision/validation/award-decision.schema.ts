@@ -1,8 +1,8 @@
 import * as z from "zod";
-import { decimalSchema, idSchema, nameSchema } from "../../../common/validation/schema";
+import { decimalSchema, idSchema } from "../../../common/validation/schema";
 import { awardSchemeSchema } from "../../award-scheme/validation/award-scheme.schema";
 import { organizationSchema } from "../../organization/validation/organization.schema";
-import { decisionBodySchema } from "../../decision-body/validation/decision-body.schema";
+import { decisionAuthoritySchema } from "../../decision-authority/validation/decision-authority.schema";
 
 export const awardDecisionSchema = z.object({
     id: idSchema,
@@ -53,12 +53,13 @@ export const updateAwardDecisionSchema = awardDecisionSchema
 export const importAwardDecisionSchema = z.object({
     recipientName: organizationSchema.shape.name,
     awardSchemeName: awardSchemeSchema.shape.name,
+    awardSchemeOrganizationName: organizationSchema.shape.name,
     decisionMakerName: z.union([
         organizationSchema.shape.name,
-        decisionBodySchema.shape.name
+        decisionAuthoritySchema.shape.name
     ]),
 
-    amount: awardDecisionSchema.shape.amount,
+    amount: z.coerce.number().positive().nullable().optional(),
     purpose: z.string().optional(),
     sourceIdentifier: z.string().optional(),
 

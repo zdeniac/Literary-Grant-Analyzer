@@ -8,7 +8,7 @@ export const toAwardDecisionWithActorsDto: DtoMapper<AwardDecisionWithActors, Aw
     id: awardDecisionWithActors.id,
 
     amount: awardDecisionWithActors.amount
-        ? Number(awardDecisionWithActors.amount)
+        ? awardDecisionWithActors.amount
         : null,
 
     purpose: awardDecisionWithActors.purpose,
@@ -20,13 +20,13 @@ export const toAwardDecisionWithActorsDto: DtoMapper<AwardDecisionWithActors, Aw
     decisionMakerId: awardDecisionWithActors.decisionMakerId,
     decisionMakerName:
         awardDecisionWithActors.decisionMaker.organization?.name ??
-        awardDecisionWithActors.decisionMaker.decisionBody?.name ??
+        awardDecisionWithActors.decisionMaker.decisionAuthority?.name ??
         '',
 
     recipientId: awardDecisionWithActors.recipientId,
     recipientName:
         awardDecisionWithActors.recipient.organization?.name ??
-        awardDecisionWithActors.recipient.decisionBody?.name ??
+        awardDecisionWithActors.recipient.decisionAuthority?.name ??
         '',
 
     sourceDocumentId: awardDecisionWithActors.sourceDocumentId,

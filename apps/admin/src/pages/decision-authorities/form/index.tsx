@@ -2,7 +2,7 @@ import { ReferenceInput, required, SimpleForm, TextInput } from "react-admin";
 
 const validateName = [required()];
 
-export const DecisionBodyForm = () => {
+export const DecisionAuthorityForm = () => {
     return (
         <>
             <SimpleForm>

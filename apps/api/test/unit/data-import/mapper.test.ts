@@ -17,7 +17,7 @@ Alföld,Szeged,1989
         const result = toImportFile(file);
 
         expect(result).toMatchObject({
-            name: 'organizations.csv',
+            fileName: 'organizations.csv',
             mimeType: 'text/csv',
             header: [
                 'name',

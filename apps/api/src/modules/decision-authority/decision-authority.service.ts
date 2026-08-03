@@ -31,7 +31,7 @@ export class DecisionBodyService
         return transaction(async tx => {
             const repositories = createRepositories(tx);
 
-            const decisionBody = await repositories.decisionBody.delete(id);
+            const decisionBody = await repositories.decisionAuthority.delete(id);
 
             await repositories.actor.delete(decisionBody.actorId);
 

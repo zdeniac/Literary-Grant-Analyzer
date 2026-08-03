@@ -49,7 +49,7 @@ export function validateHeaders(
         errors.push({
             row: 1,
             issues: missingHeaderFields.map(field => ({
-                message: `Missing header field: ${field}`
+                message: `Missing field: ${field}`
             }))
         });
     }
@@ -65,7 +65,7 @@ export function validateHeaders(
             errors.push({
                 row: 1,
                 issues: unexpectedHeaderFields.map(field => ({
-                    message: `Unknown header field: ${field}`
+                    message: `Unknown field: ${field}`
                 }))
             });
         }

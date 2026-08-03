@@ -27,10 +27,10 @@ export const awardSchemeBlueprint: RelationalModelBlueprint =
         relations: [
             {
                 model: 'organization',
-
-                sourceField: 'organizationName',
-                lookupField: 'name',
-
+                lookup: {
+                    sourceField: 'organizationName',
+                    lookupField: 'name',
+                },
                 foreignKey: 'organizationId',
                 targetField: 'id',
             },

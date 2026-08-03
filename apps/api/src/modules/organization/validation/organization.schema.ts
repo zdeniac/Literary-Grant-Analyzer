@@ -48,7 +48,7 @@ export const updateOrganizationSchema = createOrganizationSchema.partial();
 export const importOrganizationSchema = createOrganizationSchema
     .extend({
         foundingYear: z.preprocess(
-            value => value === '' ? null : value,
-            yearSchema.nullable()
+            value => value === '' ? undefined : value,
+            yearSchema.optional()
         ),
     });

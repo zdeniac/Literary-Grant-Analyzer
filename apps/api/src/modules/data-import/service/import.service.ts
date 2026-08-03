@@ -1,10 +1,8 @@
-import { ImportOptions, ImportRow, ImportWriterInterface, ModelName } from "../types/import.types";
-import { ImportFile, } from "../types/import.types";
-import { ImportError, ImportValidationError } from "../error/import.errors";
+import { ImportFile, ImportOptions, ImportRow, ImportWriterInterface, ModelName, RelationalModelBlueprint, RelationResolverRegistry } from "../types/import.types";
+import { ImportEmptyFileError, ImportError, ImportValidationError } from "../error/import.errors";
 import { validateHeaders, validateRows } from "../validation/data-import.validation";
 import { ImportBlueprintRegistry } from "../registry/import-blueprint.registry";
-import { RelationResolver } from "../resolver/relation-resolver";
-import { isRelationalModelBlueprint } from "../types/guards.types";
+import { isCompositeRelationBlueprint, isRelationalModelBlueprint } from "../types/guards.types";
 import { ImportJobRepository } from "../repository/import-job.repository";
 import { CreateSourceDocumentInput } from "../../source-document/dto/source-document.input.dto";
 import { EventDispatcher } from "../../../common/events/event-dispatcher";
@@ -17,7 +15,7 @@ export class ImportService
         private readonly eventDispatcher: EventDispatcher,
         private readonly registry: ImportBlueprintRegistry,
         private readonly writers: Record<ModelName, ImportWriterInterface<ImportRow>>,
-        private readonly relationResolver: RelationResolver,
+        private readonly relationResolvers: RelationResolverRegistry,
         private readonly options: ImportOptions = {},
     ) {}
 
@@ -30,6 +28,7 @@ export class ImportService
             model,
             mimeType: file.mimeType,
             fileName: file.fileName,
+            totalRows: file.rows.length,
         });
 
         try {
@@ -44,17 +43,12 @@ export class ImportService
                 this.options.validation?.allowUnknownFields ?? false
             );
 
-            if (!file.rows.length) throw new ImportError(`Missing rows for ${model}.`);
+            if (!file.rows.length) throw new ImportEmptyFileError(`Missing rows for ${model}.`);
 
             let validatedRows = validateRows(file.rows, blueprint.schema);
 
             if (isRelationalModelBlueprint(blueprint)) {
-                for (const relationBlueprint of blueprint.relations) {
-                    validatedRows = await this.relationResolver.resolve(
-                        validatedRows,
-                        relationBlueprint
-                    ); 
-                }        
+                validatedRows = await this.resolveRelations(validatedRows, blueprint);
             }
 
             const total = await writer.createMany(validatedRows);
@@ -88,5 +82,23 @@ export class ImportService
 
             throw error;        
         }
+    }
+
+    private async resolveRelations(rows: ImportRow[], blueprint: RelationalModelBlueprint): Promise<ImportRow[]> 
+    {
+        for (const relation of blueprint.relations) {
+            if (isCompositeRelationBlueprint(relation)) {
+                rows = await this.relationResolvers.composite.resolve(rows, relation);
+                continue;
+            }
+
+            if (!this.relationResolvers.simple) {
+                throw new ImportError(`Missing relation resolver for ${relation} relations.`);
+            }
+
+            rows = await this.relationResolvers.simple.resolve(rows, relation);
+        }
+
+        return rows;
     }
 }

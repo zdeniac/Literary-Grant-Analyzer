@@ -1,8 +1,9 @@
 import { describe, vi, it, expect, beforeEach } from "vitest";
-import { RelationResolver } from "../../../src/modules/data-import/resolver/relation-resolver";
+import { CompositeRelationResolver } from "../../../src/modules/data-import/resolver/composite-relation-resolver";
+import { SimpleRelationResolver } from "../../../src/modules/data-import/resolver/simple-relation-resolver";
 import { ImportLookupInterface, ImportRow, ImportWriterInterface, ModelName } from "../../../src/modules/data-import/types/import.types";
 import { JournalStatus } from "@prisma/client";
-import { ImportRelationError } from "../../../src/modules/data-import/error/import.errors";
+import { ImportValidationError as ImportRelationError } from "../../../src/modules/data-import/error/import.errors";
 
 describe('RelationResolver', () => {
     const findManyBy = vi.fn<ImportLookupInterface<any>['findManyBy']>();
@@ -18,11 +19,11 @@ describe('RelationResolver', () => {
         }
     } satisfies Record<ModelName, ImportLookupInterface<any> & ImportWriterInterface<any>>;
     
-    let resolver: RelationResolver;
+    let resolver: SimpleRelationResolver;
     
     beforeEach(() => {
         vi.clearAllMocks();
-        resolver = new RelationResolver(repositories);
+        resolver = new SimpleRelationResolver(repositories);
     });
 
     it('maps the foreign data and checks the db with them', async () => {
@@ -41,8 +42,10 @@ describe('RelationResolver', () => {
         await expect(
             resolver.resolve(importRows, {
                 model: 'organization',
-                sourceField: 'organizationName',
-                lookupField: 'name',
+                lookup: {
+                    sourceField: 'organizationName',
+                    lookupField: 'name',
+                },
                 targetField: 'id',
                 foreignKey: 'organizationId',
             })
@@ -73,11 +76,13 @@ describe('RelationResolver', () => {
         ];
 
         const result = await resolver.resolve(importRows, {
-                model: 'organization',
+            model: 'organization',
+            lookup: {
                 sourceField: 'organizationName',
                 lookupField: 'name',
-                targetField: 'id',
-                foreignKey: 'organizationId',
+            },
+            targetField: 'id',
+            foreignKey: 'organizationId',
         });
 
         expect(result).toEqual([
@@ -112,8 +117,10 @@ describe('RelationResolver', () => {
         try {
             await resolver.resolve(importRows, {
                 model: 'organization',
-                sourceField: 'organizationName',
-                lookupField: 'name',
+                lookup: {
+                    sourceField: 'organizationName',
+                    lookupField: 'name',
+                },
                 targetField: 'id',
                 foreignKey: 'organizationId',
             });
@@ -121,10 +128,11 @@ describe('RelationResolver', () => {
             expect.fail('Expected ImportRelationError');
         } catch (e) {
             expect(e).toBeInstanceOf(ImportRelationError);
-            expect(e.name).toBe('ImportRelationError');
-            expect(e.message).toBe('IMPORT_RELATION_ERROR');
-            expect(e.errors).toBeInstanceOf(Array);
-            expect(e.errors.length).toBe(1);
+            const error = e as ImportRelationError;
+            expect(error.name).toBe('ImportValidationError');
+            expect(error.message).toBe('IMPORT_RELATION_ERROR');
+            expect(error.errors).toBeInstanceOf(Array);
+            expect(error.errors.length).toBe(1);
         }
     });
 
@@ -144,8 +152,10 @@ describe('RelationResolver', () => {
         await expect(
             resolver.resolve(importRows, {
                 model: 'organization',
-                sourceField: 'organizationName',
-                lookupField: 'name',
+                lookup: {
+                    sourceField: 'organizationName',
+                    lookupField: 'name',
+                },
                 targetField: 'id',
                 foreignKey: 'organizationId',
             })
@@ -182,8 +192,10 @@ describe('RelationResolver', () => {
 
         const result = await resolver.resolve(importRows, {
             model: 'organization',
-            sourceField: 'organizationName',
-            lookupField: 'name',
+            lookup: {
+                sourceField: 'organizationName',
+                lookupField: 'name',
+            },
             targetField: 'id',
             foreignKey: 'organizationId',
         });
@@ -226,8 +238,10 @@ describe('RelationResolver', () => {
         try {
             await resolver.resolve(importRows, {
                 model: 'organization',
-                sourceField: 'organizationName',
-                lookupField: 'name',
+                lookup: {
+                    sourceField: 'organizationName',
+                    lookupField: 'name',
+                },
                 targetField: 'id',
                 foreignKey: 'organizationId',
             });
@@ -243,7 +257,9 @@ describe('RelationResolver', () => {
                     row: 2,
                     issues: [
                         {
-                            message: 'Unknown organizationName: Missing Alapítvány',
+                            field: 'organizationName',
+                            value: 'Missing Alapítvány',
+                            message: 'No organizationName with value "Missing Alapítvány" found in the database.',
                         },
                     ],
                 },
@@ -251,7 +267,9 @@ describe('RelationResolver', () => {
                     row: 3,
                     issues: [
                         {
-                            message: 'Unknown organizationName: Unknown Alapítvány',
+                            field: 'organizationName',
+                            value: 'Unknown Alapítvány',
+                            message: 'No organizationName with value "Unknown Alapítvány" found in the database.',
                         },
                     ],
                 },
@@ -278,8 +296,10 @@ describe('RelationResolver', () => {
 
         await resolver.resolve(importRows, {
             model: 'organization',
-            sourceField: 'organizationName',
-            lookupField: 'name',
+            lookup: {
+                sourceField: 'organizationName',
+                lookupField: 'name',
+            },
             targetField: 'id',
             foreignKey: 'organizationId',
         });
@@ -292,8 +312,10 @@ describe('RelationResolver', () => {
 
         const result = await resolver.resolve([], {
             model: 'organization',
-            sourceField: 'organizationName',
-            lookupField: 'name',
+            lookup: {
+                sourceField: 'organizationName',
+                lookupField: 'name',
+            },
             targetField: 'id',
             foreignKey: 'organizationId',
         });
@@ -328,8 +350,10 @@ describe('RelationResolver', () => {
 
         const result = await resolver.resolve(importRows, {
             model: 'organization',
-            sourceField: 'organizationName',
-            lookupField: 'name',
+            lookup: {
+                sourceField: 'organizationName',
+                lookupField: 'name',
+            },
             targetField: 'id',
             foreignKey: 'organizationId',
         });
@@ -344,5 +368,81 @@ describe('RelationResolver', () => {
                 organizationId: 5,
             },
         ]);
+    });
+});
+
+describe('CompositeRelationResolver', () => {
+    const organizationFindManyBy = vi.fn<ImportLookupInterface<any>['findManyBy']>();
+    const awardSchemeFindManyBy = vi.fn<ImportLookupInterface<any>['findManyBy']>();
+    const compositeRepositories = {
+        organization: {
+            findManyBy: organizationFindManyBy,
+        },
+        awardScheme: {
+            findManyBy: awardSchemeFindManyBy,
+        },
+    } satisfies Record<ModelName, ImportLookupInterface<any>>;
+
+    let compositeResolver: CompositeRelationResolver;
+
+    beforeEach(() => {
+        vi.clearAllMocks();
+        compositeResolver = new CompositeRelationResolver(compositeRepositories);
+    });
+
+    it('resolves award scheme by name and organization name for composite lookup', async () => {
+        organizationFindManyBy.mockResolvedValue([
+            { id: 11, name: 'Central Foundation' },
+        ]);
+
+        awardSchemeFindManyBy.mockResolvedValue([
+            { id: 100, name: 'Best Grant', organizationId: 11 },
+        ]);
+
+        const importRows: ImportRow[] = [
+            {
+                awardSchemeName: 'Best Grant',
+                awardSchemeOrganizationName: 'Central Foundation',
+            },
+        ];
+
+        const result = await compositeResolver.resolve(importRows, {
+            model: 'awardScheme',
+            lookup: [
+                {
+                    sourceField: 'awardSchemeName',
+                    lookupField: 'name',
+                },
+                {
+                    sourceField: 'awardSchemeOrganizationName',
+                    lookupField: 'name',
+                    model: 'organization',
+                    foreignKey: 'organizationId',
+                },
+            ],
+            foreignKey: 'awardSchemeId',
+            targetField: 'id',
+        });
+
+        expect(result).toEqual([
+            {
+                awardSchemeId: 100,
+            },
+        ]);
+
+        expect(organizationFindManyBy).toHaveBeenCalledWith(
+            'name',
+            ['Central Foundation'],
+        );
+
+        expect(awardSchemeFindManyBy).toHaveBeenCalledWith(
+            'name',
+            ['Best Grant'],
+        );
+
+        expect(awardSchemeFindManyBy).toHaveBeenCalledWith(
+            'organizationId',
+            [11],
+        );
     });
 });

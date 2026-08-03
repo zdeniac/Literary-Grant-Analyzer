@@ -16,25 +16,33 @@ const ommittedFields = {
     updatedAt: true,
 } as const;
 
-const importFormatSchema = z
-    .string()
-    .transform(value =>
-        value.split('|').map(v => v.trim()) as JournalFormat[]
-    )
-    .pipe(
-        z.array(z.enum(JournalFormat)).min(1)
-    );
+const importFormatSchema = z.union([
+    z.string(),
+    z.array(z.enum(JournalFormat)),
+]).transform(value => {
+    if (typeof value === 'string') {
+        return value.split('|').map(v => v.trim()) as JournalFormat[];
+    }
 
-export const organizationNamesSchema = z
-    .string()
-    .transform(value =>
-        value
+    return value;
+}).pipe(
+    z.array(z.enum(JournalFormat)).min(1)
+);
+
+export const organizationNamesSchema = z.union([
+    z.string(),
+    z.array(organizationSchema.shape.name),
+]).transform(value => {
+    if (typeof value === 'string') {
+        return value
             .split('|')
-            .map(v => v.trim())
-    )
-    .pipe(
-        z.array(organizationSchema.shape.name)
-    );
+            .map(v => v.trim());
+    }
+
+    return value;
+}).pipe(
+    z.array(organizationSchema.shape.name)
+);
 
 export const issnSchema = z
     .string()
@@ -103,7 +111,18 @@ export const updateJournalWithAffiliationsSchema = createJournalSchema
 
 export const importJournalSchema = createJournalSchema
     .extend({
-        foundingYear: z.coerce.number(),
+        foundingYear: z.preprocess(
+            value => value === '' ? undefined : value,
+            yearSchema.optional()
+        ),
         format: importFormatSchema,
-        organizationNames: organizationNamesSchema,
-    });
+        organizationNames: organizationNamesSchema.optional(),
+        organizationName: organizationSchema.shape.name.optional(),
+    })
+    .refine(
+        data => Boolean(data.organizationNames) || Boolean(data.organizationName),
+        {
+            message: 'At least one organization is required',
+            path: ['organizationNames'],
+        }
+    );

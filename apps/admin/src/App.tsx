@@ -8,9 +8,9 @@ import { JournalEdit } from './pages/journals/edit';
 import { CustomLayout } from './CustomLayout';
 import ArticleIcon from '@mui/icons-material/Article';
 import BusinessIcon from "@mui/icons-material/Business";
-import { DecisionBodyList } from './pages/decision-bodies/list';
-import { DecisionBodyCreate } from './pages/decision-bodies/create';
-import { DecisionBodyEdit } from './pages/decision-bodies/edit';
+import { DecisionAuthorityList } from './pages/decision-authorities/list';
+import { DecisionAuthorityCreate } from './pages/decision-authorities/create';
+import { DecisionAuthorityEdit } from './pages/decision-authorities/edit';
 import SupervisorAccountIcon from "@mui/icons-material/SupervisorAccount";
 import { AwardSchemeList } from './pages/award-schemes/list';
 import { AwardSchemeCreate } from './pages/award-schemes/create';
@@ -45,10 +45,10 @@ const App = () => (
 			icon={ArticleIcon}
 		/>
 		<Resource
-			name="decision-bodies"
-			list={DecisionBodyList}
-			create={DecisionBodyCreate}
-			edit={DecisionBodyEdit}
+			name="decision-authorities"
+			list={DecisionAuthorityList}
+			create={DecisionAuthorityCreate}
+			edit={DecisionAuthorityEdit}
 			icon={SupervisorAccountIcon}
 		/>
 		<Resource

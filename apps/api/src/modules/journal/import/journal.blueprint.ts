@@ -43,13 +43,12 @@ export const journalBlueprint: RelationalModelBlueprint =
         relations: [
             {
                 model: 'organization',
-
-                lookupField: 'name',
-                sourceField: 'organizationNames',
-
-                targetField: 'id',
+                lookup: {
+                    sourceField: 'organizationNames',
+                    lookupField: 'name',
+                },
                 foreignKey: 'organizationIds',
-
+                targetField: 'id',
                 multiple: true,
             },
         ],

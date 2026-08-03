@@ -8,13 +8,13 @@ export type AwardDecisionWithActors = Prisma.AwardDecisionGetPayload<{
         decisionMaker: {
             include: {
                 organization: true;
-                decisionBody: true;
+                decisionAuthority: true;
             };
         };
         recipient: {
             include: {
                 organization: true;
-                decisionBody: true;
+                decisionAuthority: true;
             };
         };
     };

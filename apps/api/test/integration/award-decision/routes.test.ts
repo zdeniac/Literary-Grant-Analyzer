@@ -1,7 +1,5 @@
 import { describe, it, expect, afterAll, beforeEach } from "vitest";
 import { wipeDatabase } from "../helpers/db.helper";
-import { prisma } from "../../../src/db/prisma";
-import { ActorType } from "@prisma/client";
 import {
     createAwardDecision,
     deleteAwardDecision,

@@ -3,7 +3,7 @@ import type { ButtonProps } from "react-admin";
 export type ModelName = 
     | 'organization' 
     | 'journal'
-    | 'decisionBody'
+    | 'decisionAuthority'
     | 'awardScheme';
 
 export type ImportButtonProps = ButtonProps & {

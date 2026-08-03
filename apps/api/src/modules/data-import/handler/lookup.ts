@@ -23,7 +23,7 @@ export class ImportLookup<TModel> implements ImportLookupInterface<TModel>
         const config = this.lookupRules?.get(field);
 
         if (!config) {
-            throw new Error(`Missing normalizers for ${field} in Lookup.`);
+            throw new Error(`Missing normalizers for ${field} in lookup.`);
         }
 
         let result = values;

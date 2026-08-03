@@ -16,6 +16,11 @@ export const awardDecisionBlueprint: RelationalModelBlueprint =
                 required: true
             },
             {
+                name: 'awardSchemeOrganizationName',
+                type: 'string',
+                required: true,
+            },
+            {
                 name: 'decisionMakerName',
                 type: 'string',
                 required: true,
@@ -40,28 +45,36 @@ export const awardDecisionBlueprint: RelationalModelBlueprint =
         relations: [
             {
                 model: 'organization',
-
-                sourceField: 'recipientName',
-                lookupField: 'name',
-
+                lookup: {
+                    sourceField: 'recipientName',
+                    lookupField: 'name',
+                },
                 foreignKey: 'recipientId',
                 targetField: 'actorId',
             },
             {
                 model: 'awardScheme',
-
-                sourceField: 'awardSchemeName',
-                lookupField: 'name',
-
+                lookup: [
+                    {
+                        sourceField: 'awardSchemeName',
+                        lookupField: 'name',
+                    },
+                    {
+                        sourceField: 'awardSchemeOrganizationName',
+                        lookupField: 'name',
+                        model: 'organization',
+                        foreignKey: 'organizationId',
+                    }
+                ],
                 foreignKey: 'awardSchemeId',
                 targetField: 'id',
             },
             {
-                model: ['decisionBody', 'organization'],
-                
-                sourceField: 'decisionMakerName',
-                lookupField: 'name',
-
+                model: ['decisionAuthority', 'organization'],
+                lookup: {
+                    sourceField: 'decisionMakerName',
+                    lookupField: 'name',
+                },
                 foreignKey: 'decisionMakerId',
                 targetField: 'actorId',
             },

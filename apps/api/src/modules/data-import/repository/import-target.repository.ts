@@ -25,8 +25,14 @@ export class ImportTargetRepository<TModel, TCreate> implements ImportLookupInte
 
     async findManyBy(field: string, values: unknown[], options?: LookupQueryOptions): Promise<TModel[]>
     {
+        const filteredValues = values.filter(value => value !== undefined);
+
+        if (!filteredValues.length) {
+            return [];
+        }
+
         const whereValue: any = {
-            in: values,
+            in: filteredValues,
         };
 
         if (options?.mode) {

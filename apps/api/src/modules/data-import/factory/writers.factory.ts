@@ -1,4 +1,4 @@
-import { DecisionBodyImportWriter } from "../../decision-body/import/decision-body.writer";
+import { DecisionAuthorityImportWriter } from "../../decision-authority/import/decision-authority.writer";
 import { JournalImportWriter } from "../../journal/import/journal.writer";
 import { OrganizationImportWriter } from "../../organization/import/organization.writer";
 import { ImportWriter } from "../handler/writer";
@@ -11,7 +11,7 @@ export const createImportWriters = (repos: ReturnType<typeof createImportReposit
 
     awardScheme: new ImportWriter(repos.awardScheme),
 
-    decisionBody: new DecisionBodyImportWriter(),
+    decisionAuthority: new DecisionAuthorityImportWriter(),
 
     awardDecision: new ImportWriter(repos.awardDecision),
 });

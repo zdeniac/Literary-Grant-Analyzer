@@ -1,5 +1,9 @@
 import z from "zod";
-import { journalSchema, journalWithAffiliationsSchema, journalWithOrganizationsSchema } from "../validate/journal.schema";
+import { 
+    journalSchema, 
+    journalWithAffiliationsSchema, 
+    journalWithOrganizationsSchema 
+} from "../validate/journal.schema";
 
 export type JournalModel = JournalDto;
 

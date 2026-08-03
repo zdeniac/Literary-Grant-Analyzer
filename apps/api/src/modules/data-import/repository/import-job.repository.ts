@@ -56,7 +56,6 @@ export class ImportJobRepository
             data: {
                 status: ImportJobStatus.COMPLETED,
                 importedRows,
-                totalRows: importedRows,
                 finishedAt: new Date(),
             }
         });

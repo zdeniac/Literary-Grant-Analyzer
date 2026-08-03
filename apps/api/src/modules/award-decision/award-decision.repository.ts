@@ -15,13 +15,13 @@ export class AwardDecisionRepository
                 decisionMaker: {
                     include: {
                         organization: true,
-                        decisionBody: true,
+                        decisionAuthority: true,
                     },
                 },
                 recipient: {
                     include: {
                         organization: true,
-                        decisionBody: true,
+                        decisionAuthority: true,
                     },
                 },
             },
@@ -36,13 +36,13 @@ export class AwardDecisionRepository
                 decisionMaker: {
                     include: {
                         organization: true,
-                        decisionBody: true,
+                        decisionAuthority: true,
                     },
                 },
                 recipient: {
                     include: {
                         organization: true,
-                        decisionBody: true,
+                        decisionAuthority: true,
                     },
                 },
             },

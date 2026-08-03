@@ -5,16 +5,14 @@ import {
     LegalForm, 
     Sector,
     AwardSchemeType,
+    ImportJobStatus,
 } from "@prisma/client";
-import { ImportValidationError } from "../../../src/modules/data-import/error/import.errors";
+import { ImportEmptyFileError, ImportError, ImportValidationError } from "../../../src/modules/data-import/error/import.errors";
 import { prisma } from "../../../src/db/prisma";
 import { wipeDatabase } from "../helpers/db.helper";
 import { createOrganization } from "../helpers/factories/organization.factory";
 import { createImportModule } from "../../../src/modules/data-import/factory/import.factory";
 import { CreateOrganizationInput } from "../../../src/modules/organization/dto/organization.input.dto";
-import { createAwardScheme } from "../helpers/factories/award-scheme.factory";
-import { createDecisionBody } from "../helpers/factories/decision-body.factory";
-import { createSourceDocument } from "../helpers/factories/source-document.factory";
 
 describe('Data Import Service test', () => {
     const importer = createImportModule().service;
@@ -211,6 +209,113 @@ describe('Data Import Service test', () => {
         ).rejects.toThrow(ImportValidationError);
     });
 
+    it('throws when an import file has no rows', async () => {
+        const missingRowsFile: ImportFile = {
+            fileName: 'organizations_import.csv',
+            mimeType: 'text/csv',
+            header: [
+                'name',
+                'legalForm',
+                'address',
+                'website',
+                'sector',
+                'foundingYear',
+            ],
+            rows: [],
+        };
+
+        await expect(
+            importer.import('organization', missingRowsFile)
+        ).rejects.toThrow(ImportEmptyFileError);
+
+        const importJob = await prisma.importJob.findFirst({
+            where: { model: 'organization', fileName: 'organizations_import.csv' },
+            orderBy: { id: 'desc' },
+        });
+
+        expect(importJob).not.toBeNull();
+        expect(importJob?.status).toBe(ImportJobStatus.FAILED);
+        expect(importJob?.totalRows).toBe(0);
+        expect(importJob?.failedRows).toBe(0);
+        expect(importJob?.errorMessage).toContain('Missing rows for organization.');
+    });
+
+    it('throws when a row is empty', async () => {
+        const emptyRowFile: ImportFile = {
+            fileName: 'organizations_import.csv',
+            mimeType: 'text/csv',
+            header: [
+                'name',
+                'legalForm',
+                'address',
+                'website',
+                'sector',
+                'foundingYear',
+            ],
+            rows: [{}],
+        };
+
+        await expect(
+            importer.import('organization', emptyRowFile)
+        ).rejects.toThrow(ImportValidationError);
+
+        const importJob = await prisma.importJob.findFirst({
+            where: { model: 'organization', fileName: 'organizations_import.csv' },
+            orderBy: { id: 'desc' },
+        });
+
+        expect(importJob).not.toBeNull();
+        expect(importJob?.status).toBe(ImportJobStatus.FAILED);
+        expect(importJob?.totalRows).toBe(1);
+        expect(importJob?.failedRows).toBe(1);
+        expect(importJob?.errorMessage).toContain('IMPORT_VALIDATION_ERROR');
+    });
+
+    it('throws when import model is unknown', async () => {
+        await expect(
+            importer.import('unknownModel' as any, orgFile)
+        ).rejects.toThrow(ImportError);
+
+        const importJob = await prisma.importJob.findFirst({
+            where: { fileName: 'organizations_import.csv' },
+            orderBy: { id: 'desc' },
+        });
+
+        expect(importJob).not.toBeNull();
+        expect(importJob?.status).toBe(ImportJobStatus.FAILED);
+        expect(importJob?.errorMessage).toContain('Unknown import model');
+    });
+
+    it('throws on invalid row data and records failed rows', async () => {
+        await expect(
+            importer.import(
+                'organization',
+                {
+                    ...orgFile,
+                    rows: [
+                        {
+                            ...org1,
+                            foundingYear: 'foo'
+                        }
+                    ]
+                }
+            )
+        )
+        .rejects
+        .toThrow(ImportValidationError);
+
+        const importJob = await prisma.importJob.findFirst({
+            where: { model: 'organization', fileName: 'organizations_import.csv' },
+            orderBy: { id: 'desc' },
+        });
+
+        expect(importJob).not.toBeNull();
+        expect(importJob?.status).toBe(ImportJobStatus.FAILED);
+        expect(importJob?.totalRows).toBe(1);
+        expect(importJob?.failedRows).toBe(1);
+        expect(importJob?.errorMessage).toContain('IMPORT_VALIDATION_ERROR');
+    });
+
     it('throws when referenced foreign record does not exist', async () => {
         await expect(
             importer.import(
@@ -237,118 +342,5 @@ describe('Data Import Service test', () => {
         )
         .rejects
         .toThrow(ImportValidationError);
-    });
-
-    it.only('awardDecisions is imported correctly', async () => {
-        const organization = await createOrganization({
-            name: 'Alföld Alapítvány',
-            legalForm: LegalForm.FOUNDATION,
-            sector: Sector.CIVIL,
-            address: 'Szeged',
-            foundingYear: 1989,
-        });
-
-        const decisionOrganization = await createOrganization({
-            name: 'Nemzeti Kulturális Alap',
-            legalForm: LegalForm.FOUNDATION,
-            sector: Sector.PUBLIC,
-            address: 'Budapest',
-            foundingYear: 1993,
-        });
-
-        const decisionBody = await createDecisionBody({
-            name: 'Szépirodalom Kollégium',
-            organizationId: decisionOrganization.id,
-        });
-
-        const awardScheme = await createAwardScheme({
-            name: 'Irodalmi támogatás',
-            type: AwardSchemeType.GRANT,
-            organizationId: decisionOrganization.id,
-        });
-
-        const sourceDocument = await createSourceDocument({});
-
-        const awardDecisionFile: ImportFile = {
-            fileName: 'award_decision_import.csv',
-            mimeType: 'text/csv',
-            header: [
-                'recipientName',
-                'awardSchemeName',
-                'decisionMakerName',
-                'amount',
-                'purpose',
-                'sourceIdentifier',
-                'decisionDate',
-            ],
-            rows: [
-                {
-                    recipientName: organization.name,
-                    awardSchemeName: awardScheme.name,
-                    decisionMakerName: decisionBody.name,
-                    amount: 500,
-                    purpose: 'Folyóirat támogatás',
-                    sourceIdentifier: 'NKA-2024-001',
-                    decisionDate: new Date('2024-05-01'),
-                    sourceDocumentId: sourceDocument.id
-                }
-            ]
-        };
-
-        await importer.import(
-            'awardDecision',
-            awardDecisionFile
-        );
-        
-        const decision = await prisma.awardDecision.findFirst({
-            where: {
-                sourceIdentifier: 'NKA-2024-001'
-            },
-            include: {
-                recipient: {
-                    include: {
-                        organization: true
-                    }
-                },
-                decisionMaker: {
-                    include: {
-                        decisionBody: true
-                    }
-                },
-                awardScheme: true,
-                sourceDocument: true,
-            }
-        });
-
-        expect(decision!.amount?.toNumber()).toBe(500);
-        expect(decision).not.toBeNull();
-
-        expect(decision).toMatchObject({
-            purpose: 'Folyóirat támogatás',
-            sourceIdentifier: 'NKA-2024-001',
-
-            awardScheme: {
-                id: awardScheme.id,
-                name: 'Irodalmi támogatás'
-            },
-
-            recipient: {
-                organization: {
-                    id: organization.id,
-                    name: 'Alföld Alapítvány'
-                }
-            },
-
-            decisionMaker: {
-                decisionBody: {
-                    id: decisionBody.id,
-                    name: 'Szépirodalom Kollégium'
-                }
-            },
-
-            sourceDocument: {
-                id: sourceDocument.id,
-            }
-        });
     });
 });

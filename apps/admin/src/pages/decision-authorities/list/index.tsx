@@ -1,10 +1,10 @@
 import { DataTable, List, ReferenceField } from "react-admin";
-import { DecisionBodyListActions } from "./actions";
+import { DecisionAuthorityListActions } from "./actions";
 import { AuditColumns } from "../../../components/table/AuditColumns";
 import { CustomEmpty } from "../../../components/table/CustomEmpty";
 
-export const DecisionBodyList = () => (
-    <List actions={<DecisionBodyListActions />} empty={<CustomEmpty hasImport model="decisionBody" />}>
+export const DecisionAuthorityList = () => (
+    <List actions={<DecisionAuthorityListActions />} empty={<CustomEmpty hasImport model="decisionAuthority" />}>
         <DataTable>
             <DataTable.Col source="id" />
             <DataTable.Col source="name" />

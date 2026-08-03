@@ -11,7 +11,7 @@ model Organization {
 	actor			Actor 		@relation(fields: [actorId], references: [id], onDelete: Restrict)
 	
 	journalAffiliations		JournalAffiliation[]
-	decisionBodies			DecisionBody[]
+	decisionAuthorities		DecisionAuthority[]
 	awardSchemes			AwardScheme[]
 
 	createdAt 		DateTime 	@default(now())

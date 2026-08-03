@@ -5,10 +5,10 @@ import { ActorRepository } from "../../modules/actor/actor.repository";
 import { JournalRepository } from "../../modules/journal/journal.repository";
 import { CreateOrganizationInputWithActorId, UpdateOrganizationInput } from "../../modules/organization/dto/organization.input.dto";
 import { CreateAwardSchemeInput, UpdateAwardSchemeInput } from "../../modules/award-scheme/dto/award-scheme.input.dto";
-import { CreateDecisionBodyData, UpdateDecisionBodyInput } from "../../modules/decision-body/dto/decision-body.input.dto";
+import { CreateDecisionBodyData, UpdateDecisionBodyInput } from "../../modules/decision-authority/dto/decision-authority.input.dto";
 import { OrganizationModel } from "../../modules/organization/dto/organization.dto";
 import { AwardSchemeModel } from "../../modules/award-scheme/dto/award-scheme.dto";
-import { DecisionBodyModel } from "../../modules/decision-body/dto/decision-body.dto";
+import { DecisionAuthorityModel } from "../../modules/decision-authority/dto/decision-authority.dto";
 import { SourceDocumentModel } from "../../modules/source-document/dto/source-document.dto";
 import { CreateSourceDocumentInput, UpdateSourceDocumentInput } from "../../modules/source-document/dto/source-document.input.dto";
 import { JournalAffiliationRepository } from "../../modules/journal-affiliation/journal-affiliation.repository";
@@ -24,7 +24,7 @@ export function createRepositories(db: PrismaDatabase)
     let journalAffiliation: JournalAffiliationRepository | undefined;
 
     let awardScheme: PrismaCrudRepository<AwardSchemeModel, CreateAwardSchemeInput, UpdateAwardSchemeInput> | undefined;
-    let decisionBody: PrismaCrudRepository<DecisionBodyModel, CreateDecisionBodyData, UpdateDecisionBodyInput> | undefined;
+    let decisionAuthority: PrismaCrudRepository<DecisionAuthorityModel, CreateDecisionBodyData, UpdateDecisionBodyInput> | undefined;
     let awardDecision: AwardDecisionRepository | undefined;
 
     let sourceDocument: PrismaCrudRepository<SourceDocumentModel, CreateSourceDocumentInput, UpdateSourceDocumentInput> | undefined;
@@ -48,8 +48,8 @@ export function createRepositories(db: PrismaDatabase)
             return awardScheme ??= new PrismaCrudRepository(db.awardScheme);
         },
 
-        get decisionBody() {
-            return decisionBody ??= new PrismaCrudRepository(db.decisionBody);
+        get decisionAuthority() {
+            return decisionAuthority ??= new PrismaCrudRepository(db.decisionAuthority);
         },
 
         get sourceDocument() {
