@@ -1,4 +1,4 @@
-import { AwardScheme, AwardSchemeType } from "@prisma/client";
+import { AwardScheme, AwardSchemeType, FundingArea } from "@prisma/client";
 import { Id } from "../../../../src/common/types/types";
 import { prisma } from "../../../../src/db/prisma";
 import { PrismaCrudRepository } from "../../../../src/db/repositories/prisma-crud-repository";
@@ -12,11 +12,13 @@ const awardSchemeCrudService = new CrudService(
 export const createAwardScheme = async (overrides: {
     name: string,
     type: AwardSchemeType,
+    fundingArea: FundingArea,
     organizationId: Id, 
 }): Promise<AwardScheme> => {
     return awardSchemeCrudService.create({
         name: overrides.name,
         type: overrides.type,
+        fundingArea: overrides.fundingArea,
         organizationId: overrides.organizationId,
     } as AwardSchemeDto);
 };

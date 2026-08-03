@@ -4,6 +4,7 @@ model AwardScheme {
 	
 	name			String
 	type			AwardSchemeType
+	fundingArea		FundingArea
 
 	organizationId 	Int
 	organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
@@ -15,7 +16,42 @@ model AwardScheme {
 }
 
 enum AwardSchemeType {
+	// pályázati támogatás
 	GRANT
+
+	// ösztöndíj
 	SCHOLARSHIP
+
+	// díj, kitüntetés
 	AWARD
+
+	OTHER
+}
+
+enum FundingArea {
+    // Alkotói tevékenység, szépirodalmi művek és egyéb művészeti alkotások létrehozása
+    CREATIVE_WORK
+
+    // Folyóiratok, lapok és egyéb periodikus kiadványok megjelentetése
+    PERIODICAL
+
+    // Irodalmi és kulturális rendezvények, rendezvénysorozatok megvalósítása
+    EVENT
+
+    // Könyvkiadás, könyvkiadói programok és könyvszakmai tevékenységek támogatása
+    BOOK_PUBLISHING
+
+    // Műfordítási és fordítói alkotótevékenység támogatása
+    TRANSLATION
+
+    // Irodalomtudományi, kritikai, kutatási és elemző tevékenységek támogatása
+    RESEARCH
+
+    // Oktatási, ismeretterjesztő és kulturális nevelési programok támogatása
+    EDUCATION
+
+    // Díjak, kitüntetések és egyéb szakmai elismerések
+    RECOGNITION
+
+    OTHER
 }

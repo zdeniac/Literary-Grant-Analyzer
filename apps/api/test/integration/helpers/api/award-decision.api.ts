@@ -1,7 +1,7 @@
 import request from "supertest";
 import app from "../../../../src/app";
 import { prisma } from "../../../../src/db/prisma";
-import { ActorType, AwardSchemeType, LegalForm, Sector } from "@prisma/client";
+import { ActorType, AwardSchemeType, FundingArea, LegalForm, Sector } from "@prisma/client";
 import { Id } from "../../../../src/common/types/types";
 
 const route = "/api/award-decisions";
@@ -56,6 +56,7 @@ const createAwardScheme = async (): Promise<number> => {
             name: "NKA laptámogatás",
             type: AwardSchemeType.GRANT,
             organizationId: organization.id,
+            fundingArea: FundingArea.RECOGNITION,
         },
     });
 

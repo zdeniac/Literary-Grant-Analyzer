@@ -1,4 +1,4 @@
-import { AwardSchemeType } from "@prisma/client";
+import { AwardSchemeType, FundingArea } from "@prisma/client";
 import { RelationalModelBlueprint } from "../../data-import/types/import.types";
 import { importAwardSchemeSchema } from "../../award-scheme/validation/award-scheme.schema";
 
@@ -15,13 +15,19 @@ export const awardSchemeBlueprint: RelationalModelBlueprint =
                 name: 'type',
                 type: 'enum',
                 required: true,
-                options: Object.keys(AwardSchemeType)
+                options: Object.keys(AwardSchemeType),
             },
             {
                 name: 'organizationName',
                 type: 'string',
                 required: true
             },
+            {
+                name: 'fundingArea',
+                type: 'enum',
+                required: true,
+                options: Object.keys(FundingArea),
+            }
         ],
         schema: importAwardSchemeSchema,
         relations: [

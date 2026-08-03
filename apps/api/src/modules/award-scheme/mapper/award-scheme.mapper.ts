@@ -8,6 +8,9 @@ export const toAwardSchemeDto: DtoMapper<AwardSchemeModel, AwardSchemeDto> = (
 
     name: awardScheme.name,
     type: awardScheme.type,
+    fundingArea: awardScheme.fundingArea,
+
+
     organizationId: awardScheme.organizationId,
 
     createdAt: awardScheme.createdAt,

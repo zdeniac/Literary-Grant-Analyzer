@@ -1,17 +1,17 @@
 import { describe, it, expect, afterAll, beforeEach } from "vitest";
-import { AwardSchemeType } from "@prisma/client";
+import { AwardSchemeType, FundingArea } from "@prisma/client";
 import { wipeDatabase } from "../helpers/db.helper";
 import { Name } from "../../../src/common/types/types";
 import {
     createAwardScheme,
+    CreateAwardSchemeInput,
     deleteAwardScheme,
     getAwardScheme,
     updateAwardScheme,
 } from "../helpers/api/award-scheme.api";
 
-describe('Award scheme routes test', () => {
+describe('Award Scheme routes test', () => {
 
-    const route = '/api/award-schemes';
     const awardSchemeName: Name = 'Irodalmi laptámogatás';
     const awardSchemeType = AwardSchemeType.GRANT;
 
@@ -19,15 +19,12 @@ describe('Award scheme routes test', () => {
     afterAll(wipeDatabase);
 
     const createRouteAwardScheme = async (
-        overrides: Partial<{
-            name: string;
-            type: AwardSchemeType | string;
-            organizationId: number;
-        }> = {}
+        overrides: Partial<CreateAwardSchemeInput> = {}
     ) => {
         return createAwardScheme({
             name: overrides.name ?? awardSchemeName,
             type: overrides.type ?? awardSchemeType,
+            fundingArea: overrides.fundingArea ?? FundingArea.CREATIVE_WORK,
             organizationId: overrides.organizationId,
         });
     };

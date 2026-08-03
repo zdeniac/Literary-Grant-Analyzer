@@ -1,5 +1,5 @@
 import { describe, expect, it, beforeEach, afterAll } from "vitest";
-import { AwardSchemeType, LegalForm, Sector } from "@prisma/client";
+import { AwardSchemeType, FundingArea, LegalForm, Sector } from "@prisma/client";
 import { ImportFile } from "../../../src/modules/data-import/types/import.types";
 import { ImportValidationError } from "../../../src/modules/data-import/error/import.errors";
 import { prisma } from "../../../src/db/prisma";
@@ -28,12 +28,14 @@ describe('AwardScheme Import Service', () => {
             header: [
                 'name',
                 'type',
+                'fundingArea',
                 'organizationName',
             ],
             rows: [
                 {
                     name: 'Irodalmi támogatás',
                     type: AwardSchemeType.GRANT,
+                    fundingArea: FundingArea.CREATIVE_WORK,
                     organizationName: organization.name,
                 },
             ],
@@ -52,6 +54,7 @@ describe('AwardScheme Import Service', () => {
         expect(awardScheme).toMatchObject({
             name: 'Irodalmi támogatás',
             type: AwardSchemeType.GRANT,
+            fundingArea: FundingArea.CREATIVE_WORK,
             organization: {
                 name: organization.name,
             },
@@ -67,6 +70,7 @@ describe('AwardScheme Import Service', () => {
             header: [
                 'name',
                 'type',
+                'fundingArea',
                 'organizationName',
             ],
             rows: [
@@ -74,6 +78,7 @@ describe('AwardScheme Import Service', () => {
                     name: 'Irodalmi támogatás',
                     type: AwardSchemeType.GRANT,
                     organizationName: 'Unknown Organization',
+                    fundingArea: FundingArea.CREATIVE_WORK,
                 },
             ],
         };
@@ -98,12 +103,14 @@ describe('AwardScheme Import Service', () => {
             header: [
                 'name',
                 'type',
+                'fundingArea',
                 'organizationName',
             ],
             rows: [
                 {
                     name: 'Invalid Scheme',
                     type: 'UNKNOWN_TYPE',
+                    fundingArea: FundingArea.RECOGNITION,
                     organizationName: organization.name,
                 },
             ],

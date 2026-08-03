@@ -1,4 +1,4 @@
-import { AwardSchemeType } from "@prisma/client";
+import { AwardSchemeType, FundingArea } from "@prisma/client";
 import { describe, expect, it } from "vitest";
 import {
     awardSchemeSchema,
@@ -11,6 +11,7 @@ const validAwardScheme = {
     id: 1,
     name: 'Kossuth-díj',
     type: AwardSchemeType.AWARD,
+    fundingArea: FundingArea.RECOGNITION,
     organizationId: 123,
     createdAt: '2024-01-01T00:00:00.000Z',
     updatedAt: '2024-01-02T00:00:00.000Z',
@@ -45,16 +46,27 @@ describe('AwardSchemeSchema', () => {
         ).toThrow();
     });
 
+    it('fails when fundingArea is invalid enum value', () => {
+        expect(() =>
+            awardSchemeSchema.parse({
+                ...validAwardScheme,
+                fundingArea: 'INVALID' as FundingArea,
+            })
+        ).toThrow();
+    });
+
     it('accepts a create payload without id and timestamps', () => {
         const parsed = createAwardSchemeSchema.parse({
             name: 'Kossuth-díj',
             type: AwardSchemeType.AWARD,
+            fundingArea: FundingArea.BOOK_PUBLISHING,
             organizationId: 123,
         });
 
         expect(parsed).toEqual({
             name: 'Kossuth-díj',
             type: AwardSchemeType.AWARD,
+            fundingArea: FundingArea.BOOK_PUBLISHING,
             organizationId: 123,
         });
     });
@@ -73,12 +85,14 @@ describe('AwardSchemeSchema', () => {
         const parsed = importAwardSchemeSchema.parse({
             name: 'Imported award scheme',
             type: AwardSchemeType.AWARD,
+            fundingArea: FundingArea.CREATIVE_WORK,
             organizationName: 'Example Org',
         });
 
         expect(parsed).toEqual({
             name: 'Imported award scheme',
             type: AwardSchemeType.AWARD,
+            fundingArea: FundingArea.CREATIVE_WORK,
             organizationName: 'Example Org',
         });
     });

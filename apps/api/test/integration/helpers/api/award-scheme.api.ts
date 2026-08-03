@@ -1,15 +1,16 @@
 import request from "supertest";
 import app from "../../../../src/app";
-import { AwardSchemeType } from "@prisma/client";
+import { AwardSchemeType, FundingArea } from "@prisma/client";
 import { Id } from "../../../../src/common/types/types";
 import { createOrganization } from "./organization.api";
 
 const route = "/api/award-schemes";
 
-type CreateAwardSchemeInput = {
+export type CreateAwardSchemeInput = {
     name?: string;
     type?: AwardSchemeType | string;
     organizationId?: Id;
+    fundingArea?: FundingArea | string;
 };
 
 export const createAwardScheme = async (input: CreateAwardSchemeInput = {}) => {
@@ -19,8 +20,9 @@ export const createAwardScheme = async (input: CreateAwardSchemeInput = {}) => {
     return request(app)
         .post(route)
         .send({
-            name: input.name ?? "Irodalmi laptámogatás",
-            type: input.type ?? AwardSchemeType.GRANT,
+            name: input.name ?? 'Esemény',
+            type: input.type ?? AwardSchemeType.AWARD,
+            fundingArea: input.fundingArea ?? FundingArea.EVENT,
             organizationId,
         });
 };

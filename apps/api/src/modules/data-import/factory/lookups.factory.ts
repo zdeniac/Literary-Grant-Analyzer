@@ -9,7 +9,7 @@ export const createImportLookups = (repos: ReturnType<typeof createImportReposit
 
     awardScheme: new ImportLookup(repos.awardScheme),
     
-    decisionBody: new ImportLookup(repos.decisionBody),
+    decisionAuthority: new ImportLookup(repos.decisionAuthority),
 
     awardDecision: new ImportLookup(repos.awardDecision),
 });

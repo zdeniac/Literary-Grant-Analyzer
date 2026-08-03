@@ -7,7 +7,7 @@ import { wipeDatabase } from "../helpers/db.helper";
 import { createOrganization } from "../helpers/factories/organization.factory";
 import { createImportModule } from "../../../src/modules/data-import/factory/import.factory";
 
-describe('DecisionBody Import Service', () => {
+describe('DecisionAuthority Import Service', () => {
     const importer = createImportModule().service;
 
     beforeEach(wipeDatabase);
@@ -22,7 +22,7 @@ describe('DecisionBody Import Service', () => {
             foundingYear: 1993,
         });
 
-        const decisionBodyFile: ImportFile = {
+        const decisionAuthorityFile: ImportFile = {
             fileName: 'decision_body_import.csv',
             mimeType: 'text/csv',
             header: [
@@ -37,17 +37,17 @@ describe('DecisionBody Import Service', () => {
             ],
         };
 
-        const imported = await importer.import('decisionBody', decisionBodyFile);
+        const imported = await importer.import('decisionAuthority', decisionAuthorityFile);
 
         expect(imported).toBe(1);
 
-        const decisionBody = await prisma.decisionBody.findFirst({
+        const decisionAuthority = await prisma.decisionAuthority.findFirst({
             where: { name: 'Szépirodalom Kollégium' },
             include: { organization: true },
         });
 
-        expect(decisionBody).not.toBeNull();
-        expect(decisionBody).toMatchObject({
+        expect(decisionAuthority).not.toBeNull();
+        expect(decisionAuthority).toMatchObject({
             name: 'Szépirodalom Kollégium',
             organization: {
                 name: decisionOrganization.name,
@@ -56,7 +56,7 @@ describe('DecisionBody Import Service', () => {
     });
 
     it('throws when referenced organization does not exist', async () => {
-        const decisionBodyFile: ImportFile = {
+        const decisionAuthorityFile: ImportFile = {
             fileName: 'decision_body_import.csv',
             mimeType: 'text/csv',
             header: [
@@ -72,7 +72,7 @@ describe('DecisionBody Import Service', () => {
         };
 
         await expect(
-            importer.import('decisionBody', decisionBodyFile)
+            importer.import('decisionAuthority', decisionAuthorityFile)
         ).rejects.toThrow(ImportValidationError);
     });
 
@@ -85,7 +85,7 @@ describe('DecisionBody Import Service', () => {
             foundingYear: 1993,
         });
 
-        const invalidDecisionBodyFile: ImportFile = {
+        const invalidDecisionAuthorityFile: ImportFile = {
             fileName: 'decision_body_import.csv',
             mimeType: 'text/csv',
             header: [
@@ -101,7 +101,7 @@ describe('DecisionBody Import Service', () => {
         };
 
         await expect(
-            importer.import('decisionBody', invalidDecisionBodyFile)
+            importer.import('decisionAuthority', invalidDecisionAuthorityFile)
         ).rejects.toThrow(ImportValidationError);
     });
 });

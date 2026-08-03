@@ -15,7 +15,7 @@ export const createOrganization = async (input: {
     return request(app)
         .post(route)
         .send({
-            name: input.name ?? "Tiszatáj Alapítvány",
+            name: input.name ?? 'Tiszatáj Alapítvány',
             legalForm: input.legalForm ?? LegalForm.FOUNDATION,
             sector: input.sector ?? Sector.CIVIL,
             address: input.address,

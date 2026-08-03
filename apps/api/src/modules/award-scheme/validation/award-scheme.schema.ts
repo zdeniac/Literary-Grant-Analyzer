@@ -1,6 +1,6 @@
 import * as z from "zod";
 import { idSchema, nameSchema } from "../../../common/validation/schema";
-import { AwardSchemeType } from "@prisma/client";
+import { AwardSchemeType, FundingArea } from "@prisma/client";
 import { organizationSchema } from "../../organization/validation/organization.schema";
 
 export const awardSchemeSchema = z.object({
@@ -8,6 +8,7 @@ export const awardSchemeSchema = z.object({
 
     name: nameSchema,
     type: z.enum(AwardSchemeType),
+    fundingArea: z.enum(FundingArea),
 
     organizationId: idSchema,
 

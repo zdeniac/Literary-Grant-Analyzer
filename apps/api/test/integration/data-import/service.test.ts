@@ -6,6 +6,7 @@ import {
     Sector,
     AwardSchemeType,
     ImportJobStatus,
+    FundingArea,
 } from "@prisma/client";
 import { ImportEmptyFileError, ImportError, ImportValidationError } from "../../../src/modules/data-import/error/import.errors";
 import { prisma } from "../../../src/db/prisma";
@@ -59,12 +60,14 @@ describe('Data Import Service test', () => {
         header: [
             'name',
             'type',
+            'fundingArea',
             'organizationName',
         ],
         rows: [
             {
-                name: 'Irodalmi támogatás',
+                name: 'Irodalmi laptámogatás',
                 type: AwardSchemeType.GRANT,
+                fundingArea: FundingArea.PERIODICAL,
                 organizationName: 'Alföld Alapítvány',
             }
         ]
@@ -133,7 +136,7 @@ describe('Data Import Service test', () => {
 
         const schemes = await prisma.awardScheme.findMany({
             where: {
-                name: 'Irodalmi támogatás'
+                name: 'Irodalmi laptámogatás'
             },
             include: {
                 organization: true,
@@ -143,8 +146,9 @@ describe('Data Import Service test', () => {
         expect(schemes.length).toBe(1);
 
         expect(schemes[0]).toMatchObject({
-            name: 'Irodalmi támogatás',
+            name: 'Irodalmi laptámogatás',
             type: AwardSchemeType.GRANT,
+            fundingArea: FundingArea.PERIODICAL,
             organization: {
                 name: 'Alföld Alapítvány'
             }

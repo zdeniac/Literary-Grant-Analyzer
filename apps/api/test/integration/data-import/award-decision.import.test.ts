@@ -1,7 +1,7 @@
 import { describe, expect, it, beforeEach, afterAll } from "vitest";
 import { ImportFile } from "../../../src/modules/data-import/types/import.types";
 import { ImportValidationError } from "../../../src/modules/data-import/error/import.errors";
-import { LegalForm, Sector, AwardSchemeType } from "@prisma/client";
+import { LegalForm, Sector, AwardSchemeType, FundingArea } from "@prisma/client";
 import { prisma } from "../../../src/db/prisma";
 import { wipeDatabase } from "../helpers/db.helper";
 import { createOrganization } from "../helpers/factories/organization.factory";
@@ -41,6 +41,7 @@ describe('AwardDecision Import Service', () => {
         const awardScheme = await createAwardScheme({
             name: 'Irodalmi támogatás',
             type: AwardSchemeType.GRANT,
+            fundingArea: FundingArea.CREATIVE_WORK,
             organizationId: decisionOrganization.id,
         });
 
@@ -200,6 +201,7 @@ describe('AwardDecision Import Service', () => {
         const awardScheme = await createAwardScheme({
             name: 'Irodalmi támogatás',
             type: AwardSchemeType.GRANT,
+            fundingArea: FundingArea.CREATIVE_WORK,
             organizationId: decisionOrganization.id,
         });
 
@@ -264,6 +266,7 @@ describe('AwardDecision Import Service', () => {
         const awardScheme = await createAwardScheme({
             name: 'Irodalmi támogatás',
             type: AwardSchemeType.GRANT,
+            fundingArea: FundingArea.CREATIVE_WORK,
             organizationId: decisionOrganization.id,
         });
 
