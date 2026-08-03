@@ -3,7 +3,7 @@ import app from "../../../../src/app";
 import { Id } from "../../../../src/common/types/types";
 import { createOrganization } from "./organization.api";
 
-const route = "/api/decision-bodies";
+const route = "/api/decision-authorities";
 
 type CreateDecisionAuthorityInput = {
     name?: string;
