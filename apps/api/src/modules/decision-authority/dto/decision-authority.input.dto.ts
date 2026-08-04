@@ -1,11 +1,11 @@
 import z from "zod";
 import { 
     createDecisionAuthorityInputSchema, 
-    createDecisionBodySchema, 
-    updateDecisionBodySchema,
+    createDecisionAuthoritySchema, 
+    updateDecisionAuthoritySchema,
 } from "../validation/decision-authority.schema";
 
 export type CreateDecisionAuthorityInput = z.infer<typeof createDecisionAuthorityInputSchema>;
-export type CreateDecisionAuthorityData = z.infer<typeof createDecisionBodySchema>;
+export type CreateDecisionAuthorityData = z.infer<typeof createDecisionAuthoritySchema>;
 
-export type UpdateDecisionAuthorityInput = z.infer<typeof updateDecisionBodySchema>;
+export type UpdateDecisionAuthorityInput = z.infer<typeof updateDecisionAuthoritySchema>;

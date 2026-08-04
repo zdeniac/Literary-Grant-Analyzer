@@ -1,0 +1,25 @@
+model Person {
+	id Int @id @default(autoincrement())
+
+	name String
+
+    birthYear Int?
+    deathYear Int?
+
+	roles PersonRole[]
+
+	actorId			Int 		@unique
+	actor			Actor 		@relation(fields: [actorId], references: [id], onDelete: Restrict)
+    
+	createdAt DateTime @default(now())
+	updatedAt DateTime @updatedAt
+}
+
+enum PersonRole {
+	AUTHOR
+	CRITIC
+	EDITOR
+	TRANSLATOR
+	RESEARCHER
+    OTHER
+}

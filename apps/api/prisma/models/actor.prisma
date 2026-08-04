@@ -5,6 +5,7 @@ model Actor {
 
     organization Organization?
     decisionAuthority DecisionAuthority?
+    person Person?
 
     decisionsAsDecisionMaker AwardDecision[] @relation("DecisionMaker")
     decisionsAsRecipient     AwardDecision[] @relation("Recipient")
@@ -13,4 +14,5 @@ model Actor {
 enum ActorType {
     ORGANIZATION
     DECISION_AUTHORITY
+    PERSON
 }
