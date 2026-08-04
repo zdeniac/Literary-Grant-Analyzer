@@ -2,6 +2,7 @@ import { prisma } from "../../../src/db/prisma";
 
 export async function wipeDatabase() {
     await prisma.$transaction([
+        prisma.person.deleteMany(),
         prisma.importJobSourceDocument.deleteMany(),
         prisma.importJob.deleteMany(),
         prisma.journalAffiliation.deleteMany(),
