@@ -1,34 +1,26 @@
 import { ActorType } from "@prisma/client";
 import { OrganizationModel } from "./dto/organization.dto";
-import { ActorRepository } from "../actor/actor.repository";
 import { Id } from "../../common/types/types";
 import { transaction } from "../../db/transaction";
-import { CrudRepository } from "../../db/types";
 import { createRepositories } from "../../db/repositories/factory";
-import { CreateOrganizationInput, CreateOrganizationInputWithActorId, UpdateOrganizationInput } from "./dto/organization.input.dto";
+import { CreateOrganizationInput } from "./dto/organization.input.dto";
 
 export class OrganizationService
 {
-    constructor(
-        private readonly repository: CrudRepository<
-            OrganizationModel, 
-            CreateOrganizationInputWithActorId, 
-            UpdateOrganizationInput
-        >,
-        private readonly actorRepository: ActorRepository,
-    ) {
-    }
-
     async create(dto: CreateOrganizationInput): Promise<OrganizationModel>
     {
-        const actor = await this.actorRepository.create(
-            ActorType.ORGANIZATION
-        );
+        return transaction(async tx => {
+            const repositories = createRepositories(tx);
 
-        return this.repository.create({
-            ...dto,
-            actorId: actor.id,
-        });
+            const actor = await repositories.actor.create(
+                ActorType.ORGANIZATION
+            );
+
+            return repositories.organization.create({
+                ...dto,
+                actorId: actor.id,
+            });
+        });    
     }
 
     async delete(id: Id): Promise<OrganizationModel>

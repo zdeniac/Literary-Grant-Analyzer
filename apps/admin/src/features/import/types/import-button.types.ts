@@ -4,7 +4,9 @@ export type ModelName =
     | 'organization' 
     | 'journal'
     | 'decisionAuthority'
-    | 'awardScheme';
+    | 'awardScheme'
+    | 'person'
+;
 
 export type ImportButtonProps = ButtonProps & {
     model: ModelName;

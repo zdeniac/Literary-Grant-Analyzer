@@ -27,6 +27,10 @@ import { AwardDecisionEdit } from './pages/award-decisions/edit';
 import MilitaryTechIcon from '@mui/icons-material/MilitaryTech';
 import { ImportJobList } from './pages/import-jobs/list';
 import FilePresentIcon from '@mui/icons-material/FilePresent';
+import { PersonList } from './pages/person/list';
+import { PersonEdit } from './pages/person/edit';
+import { PersonCreate } from './pages/person/create';
+import PersonIcon from '@mui/icons-material/Person';
 
 const App = () => (
 	<Admin layout={CustomLayout} dataProvider={dataProvider} >
@@ -36,6 +40,13 @@ const App = () => (
 			edit={OrganizationEdit}
 			create={OrganizationCreate}
 			icon={BusinessIcon}
+		/>
+		<Resource 
+			name="persons" 
+			list={PersonList}
+			edit={PersonEdit}
+			create={PersonCreate}
+			icon={PersonIcon}
 		/>
 		<Resource
 			name="journals"

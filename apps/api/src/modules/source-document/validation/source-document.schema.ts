@@ -8,7 +8,7 @@ export const sourceDocumentSchema = z.object({
     url: z.httpUrl(),
     retrievedAt: z.coerce.date(),
 
-    issuingOrganization: idSchema.nullable().default(null),
+    issuingOrganizationId: idSchema.nullable().default(null),
 
     createdAt: z.coerce.date(),
     updatedAt: z.coerce.date().nullable(),
@@ -19,6 +19,6 @@ export const createSourceDocumentSchema = sourceDocumentSchema
         id: true,
         createdAt: true,
         updatedAt: true,
-    });
+    })
 
 export const updateSourceDocumentSchema = createSourceDocumentSchema.partial();

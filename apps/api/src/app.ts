@@ -7,6 +7,7 @@ import awardSchemeRouter from "./modules/award-scheme/award-scheme.routes";
 import sourceDocumentRouter from "./modules/source-document/source-document.routes";
 import awardDecisionRouter from "./modules/award-decision/award-decision.routes";
 import importJobRouter from "./modules/data-import/import-job.routes";
+import personRouter from "./modules/person/person.routes";
 import { errorHandler } from "./common/middleware/errorHandler";
 
 const app = express();
@@ -31,6 +32,7 @@ app.use('/api/award-schemes', awardSchemeRouter);
 app.use('/api/source-documents', sourceDocumentRouter);
 app.use('/api/award-decisions', awardDecisionRouter);
 app.use('/api/import-jobs', importJobRouter);
+app.use('/api/persons', personRouter);
 
 app.use(errorHandler);
 

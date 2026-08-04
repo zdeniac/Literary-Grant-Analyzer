@@ -3,9 +3,8 @@ import { PrismaCrudRepository } from "./prisma-crud-repository";
 import { AwardDecisionRepository } from "../../modules/award-decision/award-decision.repository";
 import { ActorRepository } from "../../modules/actor/actor.repository";
 import { JournalRepository } from "../../modules/journal/journal.repository";
-import { CreateOrganizationInputWithActorId, UpdateOrganizationInput } from "../../modules/organization/dto/organization.input.dto";
+import { CreateOrganizationWithActorIdInput, UpdateOrganizationInput } from "../../modules/organization/dto/organization.input.dto";
 import { CreateAwardSchemeInput, UpdateAwardSchemeInput } from "../../modules/award-scheme/dto/award-scheme.input.dto";
-import { CreateDecisionBodyData, UpdateDecisionBodyInput } from "../../modules/decision-authority/dto/decision-authority.input.dto";
 import { OrganizationModel } from "../../modules/organization/dto/organization.dto";
 import { AwardSchemeModel } from "../../modules/award-scheme/dto/award-scheme.dto";
 import { DecisionAuthorityModel } from "../../modules/decision-authority/dto/decision-authority.dto";
@@ -14,20 +13,45 @@ import { CreateSourceDocumentInput, UpdateSourceDocumentInput } from "../../modu
 import { JournalAffiliationRepository } from "../../modules/journal-affiliation/journal-affiliation.repository";
 import { ImportJobRepository } from "../../modules/data-import/repository/import-job.repository";
 import { ImportJobSourceDocumentRepository } from "../../modules/import-job-source-document/import-job-source-document.repository";
+import { PersonDto } from "../../modules/person/dto/person.dto";
+import { CreatePersonWithActorIdInput, UpdatePersonInput } from "../../modules/person/dto/person.input";
+import { CreateDecisionAuthorityWithActorIdInput, UpdateDecisionAuthorityInput } from "../../modules/decision-authority/dto/decision-authority.input.dto";
 
 export function createRepositories(db: PrismaDatabase)
 {
     let actor: ActorRepository | undefined;
 
-    let organization: PrismaCrudRepository<OrganizationModel, CreateOrganizationInputWithActorId, UpdateOrganizationInput> | undefined;
+    let organization: PrismaCrudRepository<
+        OrganizationModel, 
+        CreateOrganizationWithActorIdInput, 
+        UpdateOrganizationInput
+    > | undefined;
+
     let journal: JournalRepository | undefined;
     let journalAffiliation: JournalAffiliationRepository | undefined;
 
-    let awardScheme: PrismaCrudRepository<AwardSchemeModel, CreateAwardSchemeInput, UpdateAwardSchemeInput> | undefined;
-    let decisionAuthority: PrismaCrudRepository<DecisionAuthorityModel, CreateDecisionBodyData, UpdateDecisionBodyInput> | undefined;
+    let person: PrismaCrudRepository<PersonDto, CreatePersonWithActorIdInput, UpdatePersonInput> | undefined;
+
+    let awardScheme: PrismaCrudRepository<
+        AwardSchemeModel, 
+        CreateAwardSchemeInput, 
+        UpdateAwardSchemeInput
+    > | undefined;
+    
+    let decisionAuthority: PrismaCrudRepository<
+        DecisionAuthorityModel, 
+        CreateDecisionAuthorityWithActorIdInput, 
+        UpdateDecisionAuthorityInput
+    > | undefined;
+
     let awardDecision: AwardDecisionRepository | undefined;
 
-    let sourceDocument: PrismaCrudRepository<SourceDocumentModel, CreateSourceDocumentInput, UpdateSourceDocumentInput> | undefined;
+    let sourceDocument: PrismaCrudRepository<
+        SourceDocumentModel, 
+        CreateSourceDocumentInput, 
+        UpdateSourceDocumentInput
+    > | undefined;
+    
     let importJob: ImportJobRepository | undefined;
     let importJobSourceDocument: ImportJobSourceDocumentRepository | undefined;
 
@@ -71,5 +95,9 @@ export function createRepositories(db: PrismaDatabase)
         get importJobSourceDocument() {
             return importJobSourceDocument ??= new ImportJobSourceDocumentRepository(db.importJobSourceDocument);
         },
+
+        get person() {
+            return person ??= new PrismaCrudRepository(db.person);
+        }
     };
 }

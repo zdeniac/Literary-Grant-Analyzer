@@ -1,15 +1,15 @@
+import { PersonService } from "./person.service";
+import { PersonDto, PersonModel } from "./dto/person.dto";
 import { DtoMapper } from "../../common/types/types";
-import { Request, Response } from "express";
 import { sendData } from "../../common/http/response";
 import { idSchema } from "../../common/validation/schema";
-import { DecisionAuthorityService } from "./decision-authority.service";
-import { DecisionAuthorityDto, DecisionAuthorityModel } from "./dto/decision-authority.dto";
+import { Request, Response } from "express";
 
-export class DecisionAuthorityController
+export class PersonController
 {
     constructor(
-        private readonly service: DecisionAuthorityService,
-        private readonly mapper: DtoMapper<DecisionAuthorityModel, DecisionAuthorityDto>
+        private readonly service: PersonService,
+        private readonly mapper: DtoMapper<PersonModel, PersonDto>
     ) {
         this.create = this.create.bind(this);
         this.delete = this.delete.bind(this);
@@ -17,10 +17,10 @@ export class DecisionAuthorityController
 
     async create(req: Request, res: Response): Promise<void> 
     {
-        const decisionAuthority = await this.service.create(
+        const person = await this.service.create(
             req.body
         );
-        sendData(res, this.mapper(decisionAuthority));
+        sendData(res, this.mapper(person));
     }
 
     async delete(req: Request, res: Response): Promise<void> 

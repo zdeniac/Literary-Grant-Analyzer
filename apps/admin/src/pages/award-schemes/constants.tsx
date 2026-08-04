@@ -27,7 +27,7 @@ export const fundingAreas = [
     },
     {
         id: FundingArea.PERIODICAL,
-        name: 'Folyóiratok és periodikus kiadványok',
+        name: 'Folyóiratok és periodikák, online és print',
     },
     {
         id: FundingArea.EVENT,
@@ -39,11 +39,11 @@ export const fundingAreas = [
     },
     {
         id: FundingArea.TRANSLATION,
-        name: 'Műfordítás és fordítói tevékenység',
+        name: 'Fordítás',
     },
     {
         id: FundingArea.RESEARCH,
-        name: 'Kutatás, kritika és irodalomtudomány',
+        name: 'Kutatás, irodalomtudomány',
     },
     {
         id: FundingArea.EDUCATION,
@@ -51,7 +51,7 @@ export const fundingAreas = [
     },
     {
         id: FundingArea.RECOGNITION,
-        name: 'Díjak és szakmai elismerések',
+        name: 'Általános szakmai elismerés',
     },
     {
         id: FundingArea.OTHER,
