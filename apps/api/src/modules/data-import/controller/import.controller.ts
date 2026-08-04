@@ -82,7 +82,7 @@ export class ImportController
         });
     }
 
-    private validateSourceDocuments(sourceDocuments: unknown): CreateSourceDocumentInput[]
+    private validateSourceDocuments(sourceDocuments: any[]): CreateSourceDocumentInput[]
     {
         return z.array(createSourceDocumentSchema)
             .parse(sourceDocuments);        

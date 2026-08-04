@@ -13,6 +13,7 @@ model Organization {
 	journalAffiliations		JournalAffiliation[]
 	decisionAuthorities		DecisionAuthority[]
 	awardSchemes			AwardScheme[]
+	sourceDocuments			SourceDocument[]
 
 	createdAt 		DateTime 	@default(now())
 	updatedAt 		DateTime 	@updatedAt
@@ -27,12 +28,14 @@ enum LegalForm {
 }
 
 enum Sector  {
-	// állami vagy önkormányzati fenntartású, illetve állami kontroll alatt álló szervezetek
+	// állami vagy önkormányzati fenntartású, illetve közvetlen állami kontroll alatt álló szervezetek
 	PUBLIC
+
 	// a civil szektor szervezetei (egyesületek, független alapítványok, nonprofit szervezetek)
 	CIVIL
+
 	// a piaci szereplők (jellemzően gazdasági társaságok)
 	MARKET
-	// egyik kategóriába sem illeszthető
+
 	OTHER
 }

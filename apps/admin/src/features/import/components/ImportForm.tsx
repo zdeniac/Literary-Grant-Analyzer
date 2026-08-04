@@ -4,8 +4,10 @@ import {
     DateInput, 
     FileInput, 
     FormDataConsumer, 
+    ReferenceInput, 
     required, 
     SaveButton, 
+    SelectInput, 
     SimpleForm, 
     SimpleFormIterator, 
     TextInput, 
@@ -147,6 +149,7 @@ export const ImportForm = ({
                             {
                                 title: '',
                                 url: '',
+                                organizationId: null,
                                 retrievedAt: undefined,
                             },
                         ]}
@@ -163,6 +166,13 @@ export const ImportForm = ({
                                 validate={urlValidation}
                             />
 
+                            <ReferenceInput
+                                source="issuingOrganizationId"
+                                reference="organizations"
+                            >
+                                <SelectInput optionText="name" />
+                            </ReferenceInput>
+            
                             <DateInput
                                 source="retrievedAt"
                                 validate={retrievedAtValidation}
@@ -179,7 +189,6 @@ export const ImportForm = ({
             {importErrors?.length > 0 && (
                 <ImportErrorList errors={importErrors!} />
             )}
-
 
             </Box>
 

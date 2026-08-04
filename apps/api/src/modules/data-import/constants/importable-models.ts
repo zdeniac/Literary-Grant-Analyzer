@@ -8,5 +8,5 @@ export const importableModelNames = [
     'awardDecision',
 ] as const;
 
-export const importableModelSchema = z.enum(importableModelNames);
-export type ImportableModel = z.infer<typeof importableModelSchema>;
+export const importableModelNameSchema = z.enum(importableModelNames);
+export type ImportableModelName = z.infer<typeof importableModelNameSchema>;

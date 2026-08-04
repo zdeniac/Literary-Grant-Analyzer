@@ -10,6 +10,9 @@ model SourceDocument {
   journalAffiliations   JournalAffiliation[]
   importJobs            ImportJobSourceDocument[]
 
+  issuingOrganizationId       Int?
+  issuingOrganization         Organization? @relation(fields: [issuingOrganizationId], references: [id])
+
   createdAt             DateTime          @default(now())
   updatedAt             DateTime          @updatedAt
 }

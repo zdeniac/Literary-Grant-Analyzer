@@ -49,6 +49,6 @@ export class ImportEmptyFileError extends ImportValidationError
         readonly message = 'Import file contains no rows.'
     ) {
         super([], message);
-        this.name = 'ImportEmptyFileError';
+        this.name = ImportEmptyFileError.name;
     }
 }

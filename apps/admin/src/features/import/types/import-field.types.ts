@@ -10,6 +10,7 @@ export type ImportFormValues =
         sourceDocuments?: {
             title: string;
             url: string;
+            issuingOrganizationId: string;
             retrievedAt: string;
         }[];
         file: {

@@ -416,7 +416,7 @@ describe('CompositeRelationResolver', () => {
                 {
                     sourceField: 'awardSchemeOrganizationName',
                     lookupField: 'name',
-                    model: 'organization',
+                    foreignModel: 'organization',
                     foreignKey: 'organizationId',
                 },
             ],

@@ -45,38 +45,45 @@ export const awardDecisionBlueprint: RelationalModelBlueprint =
         relations: [
             {
                 model: 'organization',
+
+                foreignKey: 'recipientId',
+                targetField: 'actorId',
+
                 lookup: {
                     sourceField: 'recipientName',
                     lookupField: 'name',
                 },
-                foreignKey: 'recipientId',
-                targetField: 'actorId',
             },
             {
                 model: 'awardScheme',
+
+                foreignKey: 'awardSchemeId',
+                targetField: 'id',
+
                 lookup: [
                     {
                         sourceField: 'awardSchemeName',
                         lookupField: 'name',
                     },
                     {
+                        foreignModel: 'organization',
+                        foreignKey: 'organizationId',
+
                         sourceField: 'awardSchemeOrganizationName',
                         lookupField: 'name',
-                        model: 'organization',
-                        foreignKey: 'organizationId',
                     }
                 ],
-                foreignKey: 'awardSchemeId',
-                targetField: 'id',
             },
             {
                 model: ['decisionAuthority', 'organization'],
+
+                foreignKey: 'decisionMakerId',
+                targetField: 'actorId',
+
                 lookup: {
                     sourceField: 'decisionMakerName',
                     lookupField: 'name',
                 },
-                foreignKey: 'decisionMakerId',
-                targetField: 'actorId',
             },
         ],
     };

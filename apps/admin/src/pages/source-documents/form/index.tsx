@@ -1,4 +1,4 @@
-import { DateTimeInput, required, SimpleForm, TextInput } from "react-admin";
+import { DateTimeInput, ReferenceInput, required, SelectInput, SimpleForm, TextInput } from "react-admin";
 import { url } from "../../../shared/validation/validators";
 
 const validateTitle = [required()];
@@ -13,6 +13,13 @@ export const SourceDocumentForm = () => (
         />
 
         <TextInput source="url" validate={validateUrl}/>
+
+        <ReferenceInput 
+            source="issuingOrganizationId" 
+            reference="organizations"
+        >
+            <SelectInput optionText="name" />
+        </ReferenceInput>
 
         <DateTimeInput source="retrievedAt" validate={validateRetrievedAt} />
     

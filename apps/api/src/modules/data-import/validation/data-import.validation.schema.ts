@@ -1,4 +1,4 @@
-import { importableModelSchema, ImportableModel } from "../constants/importable-models";
+import { importableModelNameSchema, ImportableModelName } from "../constants/importable-models";
 import z from "zod";
 
 export const modelNameSchema = z
@@ -8,4 +8,4 @@ export const modelNameSchema = z
         "Model's name must be camelCase"
     );
 
-export { importableModelSchema, type ImportableModel };
+export { importableModelNameSchema, type ImportableModelName };

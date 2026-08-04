@@ -1,4 +1,4 @@
-import { DataTable, List } from "react-admin";
+import { DataTable, List, ReferenceField } from "react-admin";
 import { AuditColumns } from "../../../components/table/AuditColumns";
 import { HungarianDateField } from "../../../components/table/HungarianDateField";
 
@@ -9,6 +9,10 @@ export const SourceDocumentList = () => (
             <DataTable.Col source="title" />
             <DataTable.Col source="url" />
             <DataTable.Col source="retrievedAt" field={HungarianDateField}/>
+
+            <DataTable.Col>
+                <ReferenceField source="issuingOrganizationId" reference="organizations" />
+            </DataTable.Col>
 
             <AuditColumns />
         </DataTable>

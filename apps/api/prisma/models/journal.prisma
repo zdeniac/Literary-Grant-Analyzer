@@ -17,6 +17,7 @@ enum JournalStatus {
 	ACTIVE
 	PAUSE
 	CEASED
+	UNKNOWN
 }
 
 enum JournalFormat {

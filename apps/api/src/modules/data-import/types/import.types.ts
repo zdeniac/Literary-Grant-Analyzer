@@ -1,5 +1,5 @@
 import z, { ZodObject } from "zod";
-import { modelNameSchema } from "../validation/data-import.validation.schema";
+import { ImportableModelName } from "../validation/data-import.validation.schema";
 
 export type LookupConfig = Map<string, LookupFieldConfig>;
 export type LookupFieldConfig = {
@@ -26,7 +26,7 @@ export type ImportIssue = {
 
 export type ImportHeader = string[];
 export type ImportRow = Record<string, unknown>;
-export type ModelName = z.infer<typeof modelNameSchema>;
+export type ModelName = ImportableModelName;
 
 export type ImportFile = {
     fileName: string;
@@ -78,34 +78,8 @@ export type ModelBlueprint = {
  * is matched against the Organization.name column.
  */
 export type RelationBlueprint = SimpleRelationBlueprint | CompositeRelationBlueprint;
-    
-export type SimpleRelationBlueprint = {
-    // The related model. Can be a single model or an array of models, 
-    // e.g. for polymorphic relations.
-    model: ModelName | ModelName[];
 
-    // One or more fields used to uniquely identify the related record.
-    lookup: SimpleLookup;
-
-    // Field written to the imported row after the relation is resolved.
-    foreignKey: string;
-
-    // Field copied from the matched related record.
-    targetField: string;
-
-    // Whether the imported column may contain multiple values
-    // (e.g. 'Org A|Org B' for an N:M relation).
-    multiple?: boolean;
-};
-
-export type CompositeRelationBlueprint = {
-    // The related model. Can be a single model or an array of models, 
-    // e.g. for polymorphic relations.
-    model: ModelName | ModelName[];
-
-    // One or more fields used to uniquely identify the related record.
-    lookup: CompositeLookup;
-
+export type RelationMapping = {
     // Field written to the imported row after the relation is resolved.
     foreignKey: string;
 
@@ -121,16 +95,35 @@ export type SimpleLookup = {
     lookupField: string;
 };
 
-export type CompositeLookup = {
-    sourceField: string;
-    
-    lookupField: string;
-    
+export type SimpleRelationBlueprint = RelationMapping & {
+    // The related model. Can be a single model or an array of models, 
+    // e.g. for polymorphic relations.
+    model: ModelName | ModelName[];
+
+    // One or more fields used to uniquely identify the related record.
+    lookup: SimpleLookup;
+
+    // Whether the imported column may contain multiple values
+    // (e.g. 'Org A|Org B' for an N:M relation).
+    multiple?: boolean;
+};
+
+export type CompositeLookup = Array<SimpleLookup & {    
     // Used when the input sourceField's value is not unique 
     // (e.g., multiple records with the same name).
-    model?: ModelName;
+    foreignModel?: ModelName;
     foreignKey?: string;
-}[];
+}>;
+
+export type CompositeRelationBlueprint = RelationMapping & {
+    // The related model. Can be a single model or an array of models, 
+    // e.g. for polymorphic relations.
+    // model: ModelName;
+    model: ModelName;
+
+    // One or more fields used to uniquely identify the related record.
+    lookup: CompositeLookup;
+};
 
 export type RelationalModelBlueprint = ModelBlueprint & {
     relations: RelationBlueprint[];
