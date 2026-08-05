@@ -1,4 +1,3 @@
-import { Database } from "../../../db/types";
 import { ImportJobSourceDocumentService } from "../../import-job-source-document/import-job-source-document.service";
 import { SourceDocumentDto } from "../../source-document/dto/source-document.dto";
 import { CreateSourceDocumentInput } from "../../source-document/dto/source-document.input.dto";
@@ -10,7 +9,6 @@ import { ImportService } from "./import.service";
 export class ImportWorkflowService
 {
     constructor(
-        private readonly db: Database,
         private readonly importService: ImportService,
         private readonly sourceDocumentService: SourceDocumentService,
         private readonly importJobSourceDocumentService: ImportJobSourceDocumentService,
@@ -22,7 +20,6 @@ export class ImportWorkflowService
         sourceDocumentsInput: CreateSourceDocumentInput[] = []
     ): Promise<ImportJobDto> {
         let sourceDocuments: SourceDocumentDto[] = [];
-
 
         // The source documents are always saved if true
         // even if the import itself fails.
