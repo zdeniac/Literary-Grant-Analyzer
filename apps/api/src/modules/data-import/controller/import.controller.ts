@@ -1,5 +1,4 @@
 import z from "zod";
-import { ImportService } from "../service/import.service";
 import { Request, Response } from "express";
 import { toImportFile } from "../mapper/import.mapper";
 import { ImportSchemaService } from "../service/import-schema.service";
@@ -7,10 +6,7 @@ import { CreateSourceDocumentInput } from "../../source-document/dto/source-docu
 import { createSourceDocumentSchema } from "../../source-document/validation/source-document.schema";
 import { ImportError } from "../error/import.errors";
 import { modelNameSchema } from "../validation/data-import.validation.schema";
-import { SourceDocumentService } from "../../source-document/source-document.service";
 import { ModelName } from "../types/import.types";
-import { ImportJobSourceDocumentService } from "../../import-job-source-document/import-job-source-document.service";
-import { SourceDocumentDto } from "../../source-document/dto/source-document.dto";
 import { ImportWorkflowService } from "../service/import-workflow-service";
 
 export class ImportController
@@ -70,9 +66,7 @@ export class ImportController
                 );
             } catch (e: unknown) {
                 if (e instanceof z.ZodError) {
-                    throw new ImportError(
-                        'IMPORT_SOURCE_DOCUMENTS_ERROR'
-                    );
+                    throw new ImportError('IMPORT_SOURCE_DOCUMENTS_ERROR');
                 }
 
                 throw e;
