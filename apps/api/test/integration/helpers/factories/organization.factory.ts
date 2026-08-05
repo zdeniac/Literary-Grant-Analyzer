@@ -4,11 +4,11 @@ import { OrganizationService } from "../../../../src/modules/organization/organi
 import { Id } from "../../../../src/common/types/types";
 import { CrudService } from "../../../../src/common/services/crud.service";
 import { PrismaCrudRepository } from "../../../../src/db/repositories/prisma-crud-repository";
-import { createRepositories } from "../../../../src/db/repositories/factory";
+import { repositoryContainer } from "../../../../src/db/repositories/container";
 import { UpdateOrganizationInput } from "../../../../src/modules/organization/dto/organization.input.dto";
 import { OrganizationModel } from "../../../../src/modules/organization/dto/organization.dto";
 
-const repositories = createRepositories(prisma);
+const repositories = repositoryContainer(prisma);
 
 const organizationService = new OrganizationService(
     repositories.organization,

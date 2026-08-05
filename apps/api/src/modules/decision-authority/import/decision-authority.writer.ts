@@ -1,7 +1,7 @@
 import { ActorType } from "@prisma/client";
 import { transaction } from "../../../db/transaction";
 import { ImportWriterInterface } from "../../data-import/types/import.types";
-import { createRepositories } from "../../../db/repositories/factory";
+import { repositoryContainer } from "../../../db/repositories/container";
 import { CreateDecisionAuthorityInput } from "../dto/decision-authority.input.dto";
 
 export class DecisionAuthorityImportWriter implements ImportWriterInterface<CreateDecisionAuthorityInput>
@@ -9,7 +9,7 @@ export class DecisionAuthorityImportWriter implements ImportWriterInterface<Crea
     async createMany(data: CreateDecisionAuthorityInput[]): Promise<number>
     {
         return transaction(async (tx) => {
-            const repositories = createRepositories(tx);
+            const repositories = repositoryContainer(tx);
 
             const actorRepository = repositories.actor
             const dAuthRepository = repositories.decisionAuthority;

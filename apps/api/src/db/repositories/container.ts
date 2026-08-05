@@ -17,7 +17,7 @@ import { PersonDto } from "../../modules/person/dto/person.dto";
 import { CreatePersonWithActorIdInput, UpdatePersonInput } from "../../modules/person/dto/person.input";
 import { CreateDecisionAuthorityWithActorIdInput, UpdateDecisionAuthorityInput } from "../../modules/decision-authority/dto/decision-authority.input.dto";
 
-export function createRepositories(db: Database)
+export function repositoryContainer(db: Database)
 {
     let actor: ActorRepository | undefined;
 

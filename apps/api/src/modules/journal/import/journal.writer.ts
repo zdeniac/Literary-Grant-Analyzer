@@ -1,4 +1,4 @@
-import { createRepositories } from "../../../db/repositories/factory";
+import { repositoryContainer } from "../../../db/repositories/container";
 import { transaction } from "../../../db/transaction";
 import { ImportWriterInterface } from "../../data-import/types/import.types";
 import { ImportJournalWithOrganizationIdsInput } from "../dto/journal.input.dto";
@@ -8,7 +8,7 @@ export class JournalImportWriter implements ImportWriterInterface<ImportJournalW
     createMany(data: ImportJournalWithOrganizationIdsInput[]): Promise<number>
     {
         return transaction(async (tx) => {
-            const repositories = createRepositories(tx);
+            const repositories = repositoryContainer(tx);
 
             const journalRepository = repositories.journal;
             const journalAffiliationRepository = repositories.journalAffiliation;

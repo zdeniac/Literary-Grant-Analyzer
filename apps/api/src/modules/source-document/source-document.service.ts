@@ -1,22 +1,20 @@
-import { SourceDocumentDto } from "./dto/source-document.dto";
+import { SourceDocumentEntity } from "./dto/source-document.dto";
 import { CreateSourceDocumentInput } from "./dto/source-document.input.dto";
 import { SourceDocumentRepository } from "./source-document.repository";
 
 export class SourceDocumentService
 {
     constructor(
-        private readonly repository: SourceDocumentRepository,
+        private readonly repository: SourceDocumentRepository<SourceDocumentEntity, CreateSourceDocumentInput>,
     ) {}
 
-    async findOrCreateSourceDocuments(sourceDocuments: CreateSourceDocumentInput[]): Promise<SourceDocumentDto[]> 
+    async findOrCreateSourceDocuments(sourceDocuments: CreateSourceDocumentInput[]): Promise<SourceDocumentEntity[]> 
     { 
-        let repository = this.repository;
-
         const urls = sourceDocuments.map(document => document.url);
 
         this.validateUrls(urls);
 
-        const existing = await repository.findManyByUrls(urls);
+        const existing = await this.repository.findManyByUrls(urls);
 
         const existingUrls = new Set(
             existing.map(document => document.url)
@@ -27,10 +25,10 @@ export class SourceDocumentService
         );
 
         if (missing.length) {
-            await repository.createMany(missing);
+            await this.repository.createMany(missing);
         }
 
-        return repository.findManyByUrls(urls);
+        return this.repository.findManyByUrls(urls);
     }
 
     private validateUrls(urls: string[]): void

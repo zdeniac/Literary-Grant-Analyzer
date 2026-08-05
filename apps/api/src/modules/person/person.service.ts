@@ -2,7 +2,7 @@ import { ActorType } from "@prisma/client";
 import { ActorRepository } from "../actor/actor.repository";
 import { transaction } from "../../db/transaction";
 import { Id } from "../../common/types/types";
-import { createRepositories } from "../../db/repositories/factory";
+import { repositoryContainer } from "../../db/repositories/container";
 import { CreatePersonInput } from "./dto/person.input";
 import { PersonDto } from "./dto/person.dto";
 
@@ -11,7 +11,7 @@ export class PersonService
     async create(dto: CreatePersonInput): Promise<PersonDto>
     {
         return transaction(async tx => {
-            const repositories = createRepositories(tx);
+            const repositories = repositoryContainer(tx);
 
             const actor = await repositories.actor.create(
                 ActorType.PERSON
@@ -27,7 +27,7 @@ export class PersonService
     async delete(id: Id): Promise<PersonDto>
     {
         return transaction(async tx => {
-            const repositories = createRepositories(tx);
+            const repositories = repositoryContainer(tx);
 
             const person = await repositories.person.delete(id);
 

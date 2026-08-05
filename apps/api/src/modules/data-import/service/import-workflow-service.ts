@@ -1,8 +1,8 @@
-import { Database } from "../../../db/types";
+import { transaction } from "../../../db/transaction";
 import { ImportJobSourceDocumentService } from "../../import-job-source-document/import-job-source-document.service";
 import { SourceDocumentDto } from "../../source-document/dto/source-document.dto";
 import { CreateSourceDocumentInput } from "../../source-document/dto/source-document.input.dto";
-import { SourceDocumentService } from "../../source-document/source-document.service";
+import { createSourceDocumentService } from "../../source-document/source-document.factories";
 import { ImportJobDto } from "../dto/import-job.dto";
 import { ImportFile, ModelName } from "../types/import.types";
 import { ImportService } from "./import.service";
@@ -10,9 +10,7 @@ import { ImportService } from "./import.service";
 export class ImportWorkflowService
 {
     constructor(
-        private readonly db: Database,
         private readonly importService: ImportService,
-        private readonly sourceDocumentService: SourceDocumentService,
         private readonly importJobSourceDocumentService: ImportJobSourceDocumentService,
     ) {}
 
@@ -21,28 +19,31 @@ export class ImportWorkflowService
         file: ImportFile,
         sourceDocumentsInput: CreateSourceDocumentInput[] = []
     ): Promise<ImportJobDto> {
-        let sourceDocuments: SourceDocumentDto[] = [];
+        return transaction(async (tx) => {
 
-        // ide kell egy tranzakció, és lepéldányosítani a service-eket
+            let sourceDocuments: SourceDocumentDto[] = [];
 
-        // The source documents are always saved if true
-        // even if the import itself fails.
-        // The source documents are domain level entities.
-        if (sourceDocumentsInput.length) {
-            sourceDocuments = await this.sourceDocumentService.findOrCreateSourceDocuments(
-                sourceDocumentsInput
-            );
-        }
+            // The source documents are always saved if true
+            // even if the import itself fails.
+            // The source documents are domain level entities.
+            if (sourceDocumentsInput.length) {
+                const sourceDocumentService = createSourceDocumentService(tx);
 
-        const importJob = await this.importService.import(model, file);
+                sourceDocuments = await sourceDocumentService.findOrCreateSourceDocuments(
+                    sourceDocumentsInput
+                );
+            }
 
-        if (sourceDocuments.length) {
-            await this.importJobSourceDocumentService.linkImportJobToSourceDocuments(
-                importJob.id,
-                sourceDocuments
-            );
-        }
+            const importJob = await this.importService.import(model, file);
 
-        return importJob;
+            if (sourceDocuments.length) {
+                await this.importJobSourceDocumentService.linkImportJobToSourceDocuments(
+                    importJob.id,
+                    sourceDocuments
+                );
+            }
+
+            return importJob;
+        });
     }
 }
