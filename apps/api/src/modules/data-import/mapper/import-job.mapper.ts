@@ -1,5 +1,5 @@
 import { ImportJobDto, ImportJobEntity } from "../dto/import-job.dto";
-import { ModelName } from "../types/import.types";
+import { EntityName } from "../types/import.types";
 
 export const toImportJobDto = (importJob: ImportJobEntity): ImportJobDto => ({
     id: importJob.id,

@@ -5,17 +5,17 @@ export class PrismaCrudRepository<TEntity, TCreate, TUpdate = Partial<TCreate>>
     implements CrudRepositoryInterface<TEntity, TCreate, TUpdate>
 {
     constructor(
-        private readonly model: DatabaseCrudDelegate<TEntity>,
+        private readonly entity: DatabaseCrudDelegate<TEntity>,
     ) {}
     
     async create(data: TCreate): Promise<TEntity>
     {
-        return this.model.create({ data });
+        return this.entity.create({ data });
     }
 
     async update(id: number, data: TUpdate): Promise<TEntity>
     {
-        return this.model.update({
+        return this.entity.update({
             where: {
                 id,
             },
@@ -24,11 +24,11 @@ export class PrismaCrudRepository<TEntity, TCreate, TUpdate = Partial<TCreate>>
     }
 
     async findAll(): Promise<TEntity[]> {
-        return this.model.findMany();
+        return this.entity.findMany();
     }
 
     async findById(id: number): Promise<TEntity | null> {
-        return this.model.findUnique({
+        return this.entity.findUnique({
             where: { id }
         });
     }
@@ -44,14 +44,14 @@ export class PrismaCrudRepository<TEntity, TCreate, TUpdate = Partial<TCreate>>
     }
 
     async delete(id: number): Promise<TEntity> {
-        return this.model.delete({
+        return this.entity.delete({
             where: { id }
         });
     }
 
     async createMany(data: TCreate[]): Promise<number>
     {
-        const result = await this.model.createMany({
+        const result = await this.entity.createMany({
             data
         });
 

@@ -1,43 +1,18 @@
+import { ImportableEntityName } from "../constants/importable-models";
 import { ImportError } from "../error/import.errors";
-import { Blueprint, ModelName } from "../types/import.types";
+import { Blueprint } from "../types/import.types";
+import { ImportRegistry } from "./import-registry";
 
-export class ImportBlueprintRegistry {
-    private readonly blueprints = new Map<ModelName, Blueprint>();
-
-    constructor(...blueprints: Blueprint[])
+export class ImportBlueprintRegistry extends ImportRegistry<ImportableEntityName, Blueprint>
+{
+    getOrThrow(entity: ImportableEntityName): Blueprint
     {
-        blueprints.forEach(
-            blueprint => {
-                this.blueprints.set(blueprint.model, blueprint);
-            }
-        );
-    }
-
-    get(model: ModelName): Blueprint | undefined
-    {
-        return this.blueprints.get(model);
-    }
-
-    has(model: ModelName): boolean
-    {
-        return this.blueprints.has(model);
-    }
-    
-    getOrThrow(model: ModelName): Blueprint
-    {
-        const blueprint = this.get(model);
+        const blueprint = this.get(entity);
 
         if (!blueprint) {
-            throw new ImportError(
-                `Unknown import model: ${model}`
-            );
+            throw new ImportError(`Unknown import entity: ${entity}`);
         }
 
         return blueprint;
-    }
-
-    getAll(): [ModelName, Blueprint][]
-    {
-        return Object.entries(this.blueprints);
     }
 }

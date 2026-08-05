@@ -1,10 +1,10 @@
 import { AwardSchemeType, FundingArea } from "@prisma/client";
-import { RelationalModelBlueprint } from "../../data-import/types/import.types";
+import { RelationalEntityBlueprint } from "../../data-import/types/import.types";
 import { importAwardSchemeSchema } from "../../award-scheme/validation/award-scheme.schema";
 
-export const awardSchemeBlueprint: RelationalModelBlueprint = 
+export const awardSchemeBlueprint: RelationalEntityBlueprint = 
     {
-        model: 'awardScheme',
+        entity: 'awardScheme',
         fields: [
             {
                 name: 'name',
@@ -32,7 +32,7 @@ export const awardSchemeBlueprint: RelationalModelBlueprint =
         schema: importAwardSchemeSchema,
         relations: [
             {
-                model: 'organization',
+                entity: 'organization',
                 lookup: {
                     sourceField: 'organizationName',
                     lookupField: 'name',

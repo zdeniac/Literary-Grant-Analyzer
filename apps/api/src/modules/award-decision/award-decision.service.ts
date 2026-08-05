@@ -15,12 +15,12 @@ export class AwardDecisionService
 
     async findByIdWithActors(id: number): Promise<AwardDecisionEntityWithActors>
     {
-        const model = await this.repository.findByIdWithActors(id);
+        const entity = await this.repository.findByIdWithActors(id);
 
-        if (!model) {
+        if (!entity) {
             throw new NotFoundError();
         }
         
-        return model;
+        return entity;
     }
 }

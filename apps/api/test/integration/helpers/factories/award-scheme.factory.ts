@@ -3,10 +3,10 @@ import { Id } from "../../../../src/common/types/types";
 import { prisma } from "../../../../src/db/prisma";
 import { PrismaCrudRepository } from "../../../../src/db/repositories/prisma-crud-repository";
 import { CrudService } from "../../../../src/common/services/crud.service";
-import { AwardSchemeDto, AwardSchemeModel } from "../../../../src/modules/award-scheme/dto/award-scheme.dto";
+import { AwardSchemeDto, AwardSchemeEntity } from "../../../../src/modules/award-scheme/dto/award-scheme.dto";
 
 const awardSchemeCrudService = new CrudService(
-    new PrismaCrudRepository<AwardSchemeModel, AwardSchemeDto, AwardSchemeDto>(prisma.awardScheme)
+    new PrismaCrudRepository<AwardSchemeEntity, AwardSchemeDto, AwardSchemeDto>(prisma.awardScheme)
 );
 
 export const createAwardScheme = async (overrides: {

@@ -1,6 +1,6 @@
+import { ImportLookupRegistry } from "../registry/import-lookup.registry";
 import { CompositeRelationResolver } from "../resolver/composite-relation-resolver";
-import { createImportLookups } from "./lookups.factory";
 
-export const createCompositeRelationResolver = (lookups: ReturnType<typeof createImportLookups>) => (
+export const createCompositeRelationResolver = (lookups: ImportLookupRegistry) => (
     new CompositeRelationResolver(lookups)
 );

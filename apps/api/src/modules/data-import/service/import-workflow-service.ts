@@ -2,8 +2,9 @@ import { ImportJobSourceDocumentService } from "../../import-job-source-document
 import { SourceDocumentDto } from "../../source-document/dto/source-document.dto";
 import { CreateSourceDocumentInput } from "../../source-document/dto/source-document.input.dto";
 import { SourceDocumentService } from "../../source-document/source-document.service";
-import { ImportJobDto } from "../dto/import-job.dto";
-import { ImportFile, ModelName } from "../types/import.types";
+import { ImportableEntityName } from "../constants/importable-models";
+import { ImportJobEntity } from "../dto/import-job.dto";
+import { ImportFile } from "../types/import.types";
 import { ImportService } from "./import.service";
 
 export class ImportWorkflowService
@@ -15,10 +16,10 @@ export class ImportWorkflowService
     ) {}
 
     async import(
-        model: ModelName,
+        entity: ImportableEntityName,
         file: ImportFile,
         sourceDocumentsInput: CreateSourceDocumentInput[] = []
-    ): Promise<ImportJobDto> {
+    ): Promise<ImportJobEntity> {
         let sourceDocuments: SourceDocumentDto[] = [];
 
         // The source documents are always saved if true
@@ -30,7 +31,7 @@ export class ImportWorkflowService
             );
         }
 
-        const importJob = await this.importService.import(model, file);
+        const importJob = await this.importService.import(entity, file);
 
         if (sourceDocuments.length) {
             await this.importJobSourceDocumentService.linkImportJobToSourceDocuments(

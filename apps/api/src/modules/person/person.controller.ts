@@ -1,5 +1,5 @@
 import { PersonService } from "./person.service";
-import { PersonDto, PersonModel } from "./dto/person.dto";
+import { PersonDto, PersonEntity } from "./dto/person.dto";
 import { DtoMapper } from "../../common/types/types";
 import { sendData } from "../../common/http/response";
 import { idSchema } from "../../common/validation/schema";
@@ -9,7 +9,7 @@ export class PersonController
 {
     constructor(
         private readonly service: PersonService,
-        private readonly mapper: DtoMapper<PersonModel, PersonDto>
+        private readonly mapper: DtoMapper<PersonEntity, PersonDto>
     ) {
         this.create = this.create.bind(this);
         this.delete = this.delete.bind(this);

@@ -1,10 +1,7 @@
 import { ImportController } from "../controller/import.controller";
 import { ImportService as ImportService } from "../service/import.service";
 import { ImportOptions } from "../types/import.types";
-import { createImportRepositories } from "./repositories.factory";
-import { createImportBlueprintRegistry } from "./blueprint-registry.factory";
-import { createImportLookups } from "./lookups.factory";
-import { createImportWriters } from "./writers.factory";
+import { createImportBlueprintRegistry } from "./import-blueprint-registry.factory";
 import { createSimpleRelationResolver } from "./simple-relation-resolver.factory";
 import { createImportSchemaService } from "./import-schema-service.factory";
 import { createCompositeRelationResolver } from "./composite-relation-resolver.factory";
@@ -13,14 +10,18 @@ import { prisma } from "../../../db/prisma";
 import { ImportWorkflowService } from "../service/import-workflow-service";
 import { createSourceDocumentService } from "../../source-document/source-document.factories";
 import { createImportJobSourceDocumentService } from "../../import-job-source-document/import-job-source-document.factories";
+import { createImportLookupRegistry } from "./import-lookup-registry.factory";
+import { createImportRepositoryRegistry } from "./import-repository-registry.factory";
+import { createImportWriterRegistry } from "./writers.factory";
 
 export const createImportModule = () => {
-    const registry = createImportBlueprintRegistry();
     const repositories = repositoryContainer(prisma);
-    const importRepos = createImportRepositories();
 
-    const lookups = createImportLookups(importRepos);
-    const writers = createImportWriters(importRepos);
+    const blueprintRegistry = createImportBlueprintRegistry();
+
+    const importRepositoryRegistry = createImportRepositoryRegistry();
+    const lookupRegistry = createImportLookupRegistry(importRepositoryRegistry);
+    const writers = createImportWriterRegistry(importRepositoryRegistry);
 
     const options: ImportOptions = {
         validation: {
@@ -29,13 +30,13 @@ export const createImportModule = () => {
     };
 
     const relationResolverRegistry = {
-        simple: createSimpleRelationResolver(lookups),
-        composite: createCompositeRelationResolver(lookups),
+        simple: createSimpleRelationResolver(lookupRegistry),
+        composite: createCompositeRelationResolver(lookupRegistry),
     };
 
     const service = new ImportService(
         repositories.importJob,
-        registry,
+        blueprintRegistry,
         writers,
         relationResolverRegistry,
         options
@@ -49,7 +50,7 @@ export const createImportModule = () => {
 
     const controller = new ImportController(
         importWorkflowService, 
-        createImportSchemaService(registry),
+        createImportSchemaService(blueprintRegistry),
     );
 
     return {

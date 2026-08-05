@@ -9,12 +9,12 @@ import {
 export class JournalAffiliationRepository
 {
     constructor(
-        private readonly model: Database['journalAffiliation']
+        private readonly entity: Database['journalAffiliation']
     ) {}
 
     async findManyByJournalId(journalId: Id): Promise<JournalAffiliation[]>
     {
-        return this.model.findMany({
+        return this.entity.findMany({
             where: {
                 journalId,
             }
@@ -23,7 +23,7 @@ export class JournalAffiliationRepository
 
     async update(id: Id, data: UpdateJournalAffiliationInput): Promise<JournalAffiliation>
     {
-        return this.model.update({
+        return this.entity.update({
             where: {
                 id
             },
@@ -33,12 +33,12 @@ export class JournalAffiliationRepository
 
     async create(data: CreateJournalAffiliationInput): Promise<JournalAffiliation>
     {
-        return this.model.create({ data });
+        return this.entity.create({ data });
     }
 
     async createMany(data: CreateJournalAffiliationInput[]): Promise<number>
     {
-        const result = await this.model.createMany({
+        const result = await this.entity.createMany({
             data,
         });
 
@@ -47,7 +47,7 @@ export class JournalAffiliationRepository
 
     async delete(id: Id): Promise<JournalAffiliation>
     {
-        return this.model.delete({
+        return this.entity.delete({
             where: {
                 id
             },

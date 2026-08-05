@@ -4,7 +4,7 @@ import { AwardSchemeListActions } from "./actions";
 import { CustomEmpty } from "../../../components/table/CustomEmpty";
 
 export const AwardSchemeList = () => (
-    <List actions={<AwardSchemeListActions />} empty={<CustomEmpty hasImport model="awardScheme" />}>
+    <List actions={<AwardSchemeListActions />} empty={<CustomEmpty hasImport entity="awardScheme" />}>
         <DataTable>
             <DataTable.Col source="id" />
             <DataTable.Col source="name" />

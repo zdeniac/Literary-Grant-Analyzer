@@ -6,12 +6,12 @@ import { CreateImportJobInput, ImportJobEntity, UpdateImportJobInput } from "../
 export class ImportJobRepository
 {
     constructor(
-        private readonly model: Database['importJob']
+        private readonly entity: Database['importJob']
     ) {}
 
     async create(data: CreateImportJobInput): Promise<ImportJobEntity>
     {
-        return this.model.create({
+        return this.entity.create({
             data: {
                 model: data.model,
                 fileName: data.fileName,
@@ -24,7 +24,7 @@ export class ImportJobRepository
 
     async findById(id: Id): Promise<ImportJobEntity | null>
     {
-        return this.model.findUnique({
+        return this.entity.findUnique({
             where: {
                 id
             }
@@ -33,12 +33,12 @@ export class ImportJobRepository
     
     async findAll(): Promise<ImportJobEntity[]>
     {
-        return this.model.findMany();
+        return this.entity.findMany();
     }
 
     async update(id: Id,data: UpdateImportJobInput): Promise<ImportJobEntity>
     {
-        return this.model.update({
+        return this.entity.update({
             where: {
                 id
             },
@@ -48,7 +48,7 @@ export class ImportJobRepository
 
     async complete(id: Id, importedRows: number): Promise<ImportJobEntity>
     {
-        return this.model.update({
+        return this.entity.update({
             where: {
                 id
             },
@@ -62,7 +62,7 @@ export class ImportJobRepository
 
     async fail(id: Id, input: { errorMessage: string; failedRows?: number; }): Promise<ImportJobEntity>
     {
-        return this.model.update({
+        return this.entity.update({
             where: {
                 id
             },

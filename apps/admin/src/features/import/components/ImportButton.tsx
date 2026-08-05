@@ -5,7 +5,7 @@ import { useState } from "react";
 import type { ImportButtonProps } from "../types/import-button.types";
 
 export const ImportButton = ({ 
-    model, 
+    entity, 
     ...props 
 }: ImportButtonProps) => {
     const [open, setOpen] = useState(false);
@@ -20,7 +20,7 @@ export const ImportButton = ({
                 <UploadIcon />
                 Import
             </Button>
-            <ImportModal model={model} open={open} onClose={() => setOpen(false)} />
+            <ImportModal entity={entity} open={open} onClose={() => setOpen(false)} />
         </span>
     );
 };

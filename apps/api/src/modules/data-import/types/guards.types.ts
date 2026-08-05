@@ -1,6 +1,6 @@
-import { Blueprint, CompositeRelationBlueprint, RelationalModelBlueprint, RelationBlueprint, SimpleRelationBlueprint } from "./import.types";
+import { Blueprint, CompositeRelationBlueprint, RelationalEntityBlueprint, RelationBlueprint, SimpleRelationBlueprint } from "./import.types";
 
-export function isRelationalModelBlueprint(blueprint: Blueprint): blueprint is RelationalModelBlueprint
+export function isRelationalEntityBlueprint(blueprint: Blueprint): blueprint is RelationalEntityBlueprint
 {
     return 'relations' in blueprint;
 }

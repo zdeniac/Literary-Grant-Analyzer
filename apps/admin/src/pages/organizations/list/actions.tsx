@@ -4,7 +4,7 @@ import { ImportButton } from "../../../features/import/components/ImportButton";
 export const OrganizationListActions = () => (
     <TopToolbar>
         <CreateButton />
-        <ImportButton model="organization" />
+        <ImportButton entity="organization" />
         <ExportButton />
     </TopToolbar>
 );

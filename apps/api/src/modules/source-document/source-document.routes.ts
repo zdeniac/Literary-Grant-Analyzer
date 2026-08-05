@@ -1,10 +1,10 @@
 import { Router } from "express";
-import { createSourceDocumentModule } from "./source-document.factory";
+import { createSourceDocumentCrudModule } from "./source-document.factories";
 import { validate } from "../../common/middleware/validate";
 import { createSourceDocumentSchema, updateSourceDocumentSchema } from "./validation/source-document.schema";
 
 const router = Router();
-const { controller } = createSourceDocumentModule();
+const { controller } = createSourceDocumentCrudModule();
 
 router.get(
     '/:id',

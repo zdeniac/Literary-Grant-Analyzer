@@ -6,11 +6,11 @@ import { organizationBlueprint } from "../../organization/import/organization.bl
 import { ImportBlueprintRegistry } from "../registry/import-blueprint.registry";
 
 export const createImportBlueprintRegistry = () => (
-    new ImportBlueprintRegistry(
-        journalBlueprint, 
-        organizationBlueprint,
-        awardSchemeBlueprint,
-        decisionAuthorityBlueprint,
-        awardDecisionBlueprint,
-    )   
+    new ImportBlueprintRegistry([
+        [journalBlueprint.entity, journalBlueprint],
+        [organizationBlueprint.entity, organizationBlueprint],
+        [awardSchemeBlueprint.entity, awardSchemeBlueprint],
+        [decisionAuthorityBlueprint.entity, decisionAuthorityBlueprint],
+        [awardDecisionBlueprint.entity, awardDecisionBlueprint],
+    ])
 );

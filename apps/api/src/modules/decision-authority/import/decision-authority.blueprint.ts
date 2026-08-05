@@ -1,9 +1,9 @@
-import { RelationalModelBlueprint } from "../../data-import/types/import.types";
+import { RelationalEntityBlueprint } from "../../data-import/types/import.types";
 import { importDecisionAuthoritySchema } from "../validation/decision-authority.schema";
 
-export const decisionAuthorityBlueprint: RelationalModelBlueprint = 
+export const decisionAuthorityBlueprint: RelationalEntityBlueprint = 
     {
-        model: 'decisionAuthority',
+        entity: 'decisionAuthority',
         fields: [
             {
                 name: 'name',
@@ -19,7 +19,7 @@ export const decisionAuthorityBlueprint: RelationalModelBlueprint =
         schema: importDecisionAuthoritySchema,
         relations: [
             {
-                model: 'organization',
+                entity: 'organization',
                 lookup: {
                     sourceField: 'organizationName',
                     lookupField: 'name',

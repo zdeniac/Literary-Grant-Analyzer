@@ -14,7 +14,7 @@ router.get(
 );
 
 router.post(
-    '/:model',
+    '/:entity',
     upload.single('file'),
     controller.import,
 );

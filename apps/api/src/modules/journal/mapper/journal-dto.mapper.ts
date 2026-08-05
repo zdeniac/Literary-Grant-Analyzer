@@ -1,7 +1,7 @@
-import { JournalDto, JournalModel} from "../dto/journal.dto";
+import { JournalDto, JournalEntity} from "../dto/journal.dto";
 import { DtoMapper } from "../../../common/types/types";
 
-export const toJournalDto: DtoMapper<JournalModel, JournalDto> = (
+export const toJournalDto: DtoMapper<JournalEntity, JournalDto> = (
     journal
 ) => ({
     id: journal.id,

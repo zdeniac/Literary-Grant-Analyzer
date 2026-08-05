@@ -4,7 +4,7 @@ import { ImportButton } from "../../../features/import/components/ImportButton";
 export const JournalListActions = () => (
     <TopToolbar>
         <CreateButton />
-        <ImportButton model="journal" />
+        <ImportButton entity="journal" />
         <ExportButton />
     </TopToolbar>
 );

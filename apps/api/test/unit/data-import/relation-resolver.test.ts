@@ -1,7 +1,7 @@
 import { describe, vi, it, expect, beforeEach } from "vitest";
 import { CompositeRelationResolver } from "../../../src/modules/data-import/resolver/composite-relation-resolver";
 import { SimpleRelationResolver } from "../../../src/modules/data-import/resolver/simple-relation-resolver";
-import { ImportLookupInterface, ImportRow, ImportWriterInterface, ModelName } from "../../../src/modules/data-import/types/import.types";
+import { ImportLookupInterface, ImportRow, ImportWriterInterface, EntityName } from "../../../src/modules/data-import/types/import.types";
 import { JournalStatus } from "@prisma/client";
 import { ImportValidationError as ImportRelationError } from "../../../src/modules/data-import/error/import.errors";
 
@@ -17,7 +17,7 @@ describe('RelationResolver', () => {
             findManyBy,
             createMany,
         }
-    } satisfies Record<ModelName, ImportLookupInterface<any> & ImportWriterInterface<any>>;
+    } satisfies Record<EntityName, ImportLookupInterface<any> & ImportWriterInterface<any>>;
     
     let resolver: SimpleRelationResolver;
     
@@ -41,7 +41,7 @@ describe('RelationResolver', () => {
 
         await expect(
             resolver.resolve(importRows, {
-                model: 'organization',
+                entity: 'organization',
                 lookup: {
                     sourceField: 'organizationName',
                     lookupField: 'name',
@@ -76,7 +76,7 @@ describe('RelationResolver', () => {
         ];
 
         const result = await resolver.resolve(importRows, {
-            model: 'organization',
+            entity: 'organization',
             lookup: {
                 sourceField: 'organizationName',
                 lookupField: 'name',
@@ -116,7 +116,7 @@ describe('RelationResolver', () => {
 
         try {
             await resolver.resolve(importRows, {
-                model: 'organization',
+                entity: 'organization',
                 lookup: {
                     sourceField: 'organizationName',
                     lookupField: 'name',
@@ -151,7 +151,7 @@ describe('RelationResolver', () => {
 
         await expect(
             resolver.resolve(importRows, {
-                model: 'organization',
+                entity: 'organization',
                 lookup: {
                     sourceField: 'organizationName',
                     lookupField: 'name',
@@ -191,7 +191,7 @@ describe('RelationResolver', () => {
         ];
 
         const result = await resolver.resolve(importRows, {
-            model: 'organization',
+            entity: 'organization',
             lookup: {
                 sourceField: 'organizationName',
                 lookupField: 'name',
@@ -237,7 +237,7 @@ describe('RelationResolver', () => {
 
         try {
             await resolver.resolve(importRows, {
-                model: 'organization',
+                entity: 'organization',
                 lookup: {
                     sourceField: 'organizationName',
                     lookupField: 'name',
@@ -295,7 +295,7 @@ describe('RelationResolver', () => {
         const originalRows = structuredClone(importRows);
 
         await resolver.resolve(importRows, {
-            model: 'organization',
+            entity: 'organization',
             lookup: {
                 sourceField: 'organizationName',
                 lookupField: 'name',
@@ -311,7 +311,7 @@ describe('RelationResolver', () => {
         repositories.organization.findManyBy.mockResolvedValue([]);
 
         const result = await resolver.resolve([], {
-            model: 'organization',
+            entity: 'organization',
             lookup: {
                 sourceField: 'organizationName',
                 lookupField: 'name',
@@ -349,7 +349,7 @@ describe('RelationResolver', () => {
         ];
 
         const result = await resolver.resolve(importRows, {
-            model: 'organization',
+            entity: 'organization',
             lookup: {
                 sourceField: 'organizationName',
                 lookupField: 'name',
@@ -381,7 +381,7 @@ describe('CompositeRelationResolver', () => {
         awardScheme: {
             findManyBy: awardSchemeFindManyBy,
         },
-    } satisfies Record<ModelName, ImportLookupInterface<any>>;
+    } satisfies Record<EntityName, ImportLookupInterface<any>>;
 
     let compositeResolver: CompositeRelationResolver;
 
@@ -407,7 +407,7 @@ describe('CompositeRelationResolver', () => {
         ];
 
         const result = await compositeResolver.resolve(importRows, {
-            model: 'awardScheme',
+            entity: 'awardScheme',
             lookup: [
                 {
                     sourceField: 'awardSchemeName',
@@ -416,7 +416,7 @@ describe('CompositeRelationResolver', () => {
                 {
                     sourceField: 'awardSchemeOrganizationName',
                     lookupField: 'name',
-                    foreignModel: 'organization',
+                    foreignEntity: 'organization',
                     foreignKey: 'organizationId',
                 },
             ],

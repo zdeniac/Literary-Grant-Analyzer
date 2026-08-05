@@ -4,7 +4,7 @@ import type { ImportButtonProps } from "../types/import-button.types";
 
 export const DownloadImportSchemaButton = ({
     fileHeader,
-    model,
+    entity,
     ...props
 }: { 
     fileHeader: string[],
@@ -12,7 +12,7 @@ export const DownloadImportSchemaButton = ({
     const createFile = (header: string[]) => {
         const file = new File(
             [header.join(",") + "\n"],
-            `${model}_importschema.csv`,
+            `${entity}_importschema.csv`,
             {
                 type: "text/csv;charset=utf-8"
             }
@@ -22,7 +22,7 @@ export const DownloadImportSchemaButton = ({
 
         const link = document.createElement('a');
         link.href = url;
-        link.download = `${model}_importschema.csv`;
+        link.download = `${entity}_importschema.csv`;
 
         link.click();
 

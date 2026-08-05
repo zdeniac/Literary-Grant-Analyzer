@@ -1,6 +1,6 @@
 import { ImportJobStatus } from "@prisma/client";
 import { Id } from "../../../common/types/types";
-import { ModelName } from "../types/import.types";
+import { EntityName } from "../types/import.types";
 
 export type ImportJobEntity = {
     id: number;
@@ -24,7 +24,7 @@ export type ImportJobEntity = {
 export type ImportJobDto = {
     id: Id;
 
-    model: ModelName;
+    model: EntityName;
     fileName: string | null;
     mimeType: string | null;
 
@@ -41,7 +41,7 @@ export type ImportJobDto = {
 };
 
 export type CreateImportJobInput = {
-    model: ModelName;
+    model: EntityName;
 
     totalRows?: number;
     fileName?: string;

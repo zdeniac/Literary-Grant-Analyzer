@@ -5,8 +5,8 @@ import { ActorRepository } from "../../modules/actor/actor.repository";
 import { JournalRepository } from "../../modules/journal/journal.repository";
 import { CreateOrganizationWithActorIdInput, UpdateOrganizationInput } from "../../modules/organization/dto/organization.input.dto";
 import { CreateAwardSchemeInput, UpdateAwardSchemeInput } from "../../modules/award-scheme/dto/award-scheme.input.dto";
-import { OrganizationModel } from "../../modules/organization/dto/organization.dto";
-import { AwardSchemeModel } from "../../modules/award-scheme/dto/award-scheme.dto";
+import { OrganizationEntity } from "../../modules/organization/dto/organization.dto";
+import { AwardSchemeEntity } from "../../modules/award-scheme/dto/award-scheme.dto";
 import { DecisionAuthorityEntity } from "../../modules/decision-authority/dto/decision-authority.dto";
 import { SourceDocumentEntity } from "../../modules/source-document/dto/source-document.dto";
 import { CreateSourceDocumentInput, UpdateSourceDocumentInput } from "../../modules/source-document/dto/source-document.input.dto";
@@ -22,7 +22,7 @@ export function repositoryContainer(db: Database)
     let actor: ActorRepository | undefined;
 
     let organization: PrismaCrudRepository<
-        OrganizationModel, 
+        OrganizationEntity, 
         CreateOrganizationWithActorIdInput, 
         UpdateOrganizationInput
     > | undefined;
@@ -33,7 +33,7 @@ export function repositoryContainer(db: Database)
     let person: PrismaCrudRepository<PersonDto, CreatePersonWithActorIdInput, UpdatePersonInput> | undefined;
 
     let awardScheme: PrismaCrudRepository<
-        AwardSchemeModel, 
+        AwardSchemeEntity, 
         CreateAwardSchemeInput, 
         UpdateAwardSchemeInput
     > | undefined;

@@ -1,11 +1,11 @@
-import { importableModelNameSchema, ImportableModelName } from "../constants/importable-models";
+import { importableEntityNameSchema, ImportableEntityName } from "../constants/importable-models";
 import z from "zod";
 
-export const modelNameSchema = z
+export const entityNameSchema = z
     .string()
     .regex(
         /^[a-z][a-zA-Z0-9]*$/,
-        "Model's name must be camelCase"
+        "The entity's name must be camelCase"
     );
 
-export { importableModelNameSchema, type ImportableModelName };
+export { importableEntityNameSchema, type ImportableEntityName };

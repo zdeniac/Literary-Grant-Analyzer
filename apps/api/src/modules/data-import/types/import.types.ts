@@ -1,5 +1,5 @@
 import z, { ZodObject } from "zod";
-import { ImportableModelName } from "../validation/data-import.validation.schema";
+import { entityNameSchema, ImportableEntityName } from "../validation/data-import.validation.schema";
 
 export type LookupConfig = Map<string, LookupFieldConfig>;
 export type LookupFieldConfig = {
@@ -26,7 +26,7 @@ export type ImportIssue = {
 
 export type ImportHeader = string[];
 export type ImportRow = Record<string, unknown>;
-export type ModelName = ImportableModelName;
+export type EntityName = z.infer<typeof entityNameSchema>;
 
 export type ImportFile = {
     fileName: string;
@@ -61,8 +61,8 @@ export type ImportSchema = {
     acceptedFormats: AcceptedFormat[],
 };
 
-export type ModelBlueprint = {
-    model: ModelName;
+export type EntityBlueprint = {
+    entity: ImportableEntityName;
     fields: ImportField[];
     schema: ZodObject;
 };
@@ -98,7 +98,7 @@ export type SimpleLookup = {
 export type SimpleRelationBlueprint = RelationMapping & {
     // The related model. Can be a single model or an array of models, 
     // e.g. for polymorphic relations.
-    model: ModelName | ModelName[];
+    entity: EntityName | EntityName[];
 
     // One or more fields used to uniquely identify the related record.
     lookup: SimpleLookup;
@@ -111,7 +111,7 @@ export type SimpleRelationBlueprint = RelationMapping & {
 export type CompositeLookup = Array<SimpleLookup & {    
     // Used when the input sourceField's value is not unique 
     // (e.g., multiple records with the same name).
-    foreignModel?: ModelName;
+    foreignEntity?: EntityName;
     foreignKey?: string;
 }>;
 
@@ -119,17 +119,17 @@ export type CompositeRelationBlueprint = RelationMapping & {
     // The related model. Can be a single model or an array of models, 
     // e.g. for polymorphic relations.
     // model: ModelName;
-    model: ModelName;
+    entity: EntityName;
 
     // One or more fields used to uniquely identify the related record.
     lookup: CompositeLookup;
 };
 
-export type RelationalModelBlueprint = ModelBlueprint & {
+export type RelationalEntityBlueprint = EntityBlueprint & {
     relations: RelationBlueprint[];
 };
 
-export type Blueprint = ModelBlueprint | RelationalModelBlueprint;
+export type Blueprint = EntityBlueprint | RelationalEntityBlueprint;
 
 export type ImportOptions = {
     validation?: {
@@ -147,9 +147,9 @@ export interface RelationResolverInterface<T extends RelationBlueprint>
     resolve(rows: ImportRow[], relationBlueprint: T): Promise<ImportRow[]>;
 }
 
-export interface ImportLookupInterface<TModel>
+export interface ImportLookupInterface<TEntity>
 {
-    findManyBy(field: string, values: unknown[], options?: LookupQueryOptions): Promise<TModel[]>;
+    findManyBy(field: string, values: unknown[], options?: LookupQueryOptions): Promise<TEntity[]>;
 }
 
 export interface ImportWriterInterface<TCreate>

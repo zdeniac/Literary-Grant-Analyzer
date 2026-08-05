@@ -6,7 +6,7 @@ import { JournalService } from "../../../../src/modules/journal/journal.service"
 import { JournalRepository } from "../../../../src/modules/journal/journal.repository";
 import { JournalAffiliationRepository } from "../../../../src/modules/journal-affiliation/journal-affiliation.repository";
 import { CrudService } from "../../../../src/common/services/crud.service";
-import { JournalDto, JournalModel } from "../../../../src/modules/journal/dto/journal.dto";
+import { JournalDto, JournalEntity } from "../../../../src/modules/journal/dto/journal.dto";
 import { PrismaCrudRepository } from "../../../../src/db/repositories/prisma-crud-repository";
 import { UpdateJournalWithAffiliationsInput } from "../../../../src/modules/journal/dto/journal.input.dto";
 
@@ -17,7 +17,7 @@ const journalService = new JournalService(
 );
 
 const journalCrudService = new CrudService(
-    new PrismaCrudRepository<JournalModel, JournalDto, JournalDto>(prisma.journal)
+    new PrismaCrudRepository<JournalEntity, JournalDto, JournalDto>(prisma.journal)
 );
 
 export const createJournal = async (overrides: {
@@ -52,8 +52,8 @@ export const updateJournal = async (id: Id, dto: UpdateJournalWithAffiliationsIn
 export const findJournalById = async (id: Id): Promise<JournalWithOrganizationsAndSourceDocument | null> => 
     await journalService.findByIdWithAffiliations(id);
 
-export const findEveryJournal = async (): Promise<JournalModel[]> => 
+export const findEveryJournal = async (): Promise<JournalEntity[]> => 
     await journalCrudService.findAll();
 
-export const deleteJournal = async (id: Id): Promise<JournalModel> => 
+export const deleteJournal = async (id: Id): Promise<JournalEntity> => 
     await journalCrudService.delete(id);

@@ -59,7 +59,7 @@ describe('AwardDecision Import Service', () => {
                 'purpose',
                 'sourceIdentifier',
                 'decisionDate',
-                'sourceDocumentId',
+                'sourceDocumentUrl',
             ],
             rows: [
                 {
@@ -71,7 +71,7 @@ describe('AwardDecision Import Service', () => {
                     purpose: 'Folyóirat támogatás',
                     sourceIdentifier: 'NKA-2024-001',
                     decisionDate: new Date('2024-05-01'),
-                    sourceDocumentId: sourceDocument.id,
+                    sourceDocumentUrl: sourceDocument.url,
                 },
             ],
         };

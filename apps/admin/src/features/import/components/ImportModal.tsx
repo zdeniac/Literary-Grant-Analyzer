@@ -20,20 +20,20 @@ import {
 import { useEffect, useState } from "react";
 import { DownloadImportSchemaButton } from "./DownloadImportSchemaButton";
 import { ImportForm } from "./ImportForm";
-import type { ModelName } from "../types/import-button.types";
+import type { EntityName } from "../types/import-button.types";
 
 export const ImportModal = ({ 
-    model, 
+    entity, 
     open,
     onClose,
 }: { 
-    model: ModelName, 
+    entity: EntityName, 
     open: boolean,
     onClose: () => void,
 }) => {
     const [schema, setSchema] = useState(null);
     const [isPending, setIsPending] = useState(false);
-    const submitRoute = `api/import/${model}`;
+    const submitRoute = `api/import/${entity}`;
 
     useEffect(() => {
         if (!open) {
@@ -45,7 +45,7 @@ export const ImportModal = ({
             setIsPending(true);
 
             try {
-                const res = await fetch(`/api/import/schema?model=${model}`);
+                const res = await fetch(`/api/import/schema?entity=${entity}`);
                 const data = await res.json();
 
                 setSchema(data);
@@ -55,7 +55,7 @@ export const ImportModal = ({
         };
         
         loadSchema();    
-    }, [open, model]);
+    }, [open, entity]);
 
     if (!open) {
         return null;
@@ -79,7 +79,7 @@ export const ImportModal = ({
                     alignItems: 'center',
                 }}
             >
-                Import: {model}
+                Import: {entity}
 
                 <IconButton onClick={onClose} size="small">
                     <CloseIcon />
@@ -100,7 +100,7 @@ export const ImportModal = ({
 
                     <DownloadImportSchemaButton
                         fileHeader={header}
-                        model={model}
+                        entity={entity}
                     />
                 </Box>
 

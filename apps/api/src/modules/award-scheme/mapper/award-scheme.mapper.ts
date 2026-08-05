@@ -1,7 +1,7 @@
-import { AwardSchemeDto, AwardSchemeModel } from "../dto/award-scheme.dto";
+import { AwardSchemeDto, AwardSchemeEntity } from "../dto/award-scheme.dto";
 import { DtoMapper } from "../../../common/types/types";
 
-export const toAwardSchemeDto: DtoMapper<AwardSchemeModel, AwardSchemeDto> = (
+export const toAwardSchemeDto: DtoMapper<AwardSchemeEntity, AwardSchemeDto> = (
     awardScheme
 ) => ({
     id: awardScheme.id,

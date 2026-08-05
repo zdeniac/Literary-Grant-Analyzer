@@ -6,7 +6,7 @@ import { CrudService } from "../../../../src/common/services/crud.service";
 import { PrismaCrudRepository } from "../../../../src/db/repositories/prisma-crud-repository";
 import { repositoryContainer } from "../../../../src/db/repositories/container";
 import { UpdateOrganizationInput } from "../../../../src/modules/organization/dto/organization.input.dto";
-import { OrganizationModel } from "../../../../src/modules/organization/dto/organization.dto";
+import { OrganizationEntity } from "../../../../src/modules/organization/dto/organization.dto";
 
 const repositories = repositoryContainer(prisma);
 
@@ -25,7 +25,7 @@ export const createOrganization = async (overrides: {
     sector?: Sector,
     address?: string, 
     foundingYear?: number
-}): Promise<OrganizationModel> => {
+}): Promise<OrganizationEntity> => {
     return organizationService.create({
         name: overrides.name,
         legalForm: overrides.legalForm ?? LegalForm.LTD,
@@ -35,14 +35,14 @@ export const createOrganization = async (overrides: {
     });
 };
 
-export const findOrganizationById = async (id: Id): Promise<OrganizationModel | undefined> => 
+export const findOrganizationById = async (id: Id): Promise<OrganizationEntity | undefined> => 
     await crudService.findById(id);
 
-export const findEveryOrganization = async (): Promise<OrganizationModel[]> => 
+export const findEveryOrganization = async (): Promise<OrganizationEntity[]> => 
     await crudService.findAll();
 
-export const deleteOrganization = async (id: Id): Promise<OrganizationModel> => 
+export const deleteOrganization = async (id: Id): Promise<OrganizationEntity> => 
     await organizationService.delete(id);
 
-export const updateOrganization = async (id: Id, data: UpdateOrganizationInput): Promise<OrganizationModel> => 
+export const updateOrganization = async (id: Id, data: UpdateOrganizationInput): Promise<OrganizationEntity> => 
     await crudService.update(id, data);

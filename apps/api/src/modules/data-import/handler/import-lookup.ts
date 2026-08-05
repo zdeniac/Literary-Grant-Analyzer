@@ -1,13 +1,13 @@
 import { ImportLookupInterface, LookupFieldConfig } from "../types/import.types";
 
-export class ImportLookup<TModel> implements ImportLookupInterface<TModel>
+export class ImportLookup<TEntity> implements ImportLookupInterface<TEntity>
 {
     constructor(
-        private readonly repository: ImportLookupInterface<TModel>,
+        private readonly repository: ImportLookupInterface<TEntity>,
         private readonly lookupRules?: Map<string, LookupFieldConfig>
     ) {}
     
-    async findManyBy(field: string, values: unknown[]): Promise<TModel[]>
+    async findManyBy(field: string, values: unknown[]): Promise<TEntity[]>
     {
         const config = this.lookupRules?.get(field);
 

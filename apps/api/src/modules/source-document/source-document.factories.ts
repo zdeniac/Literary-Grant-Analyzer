@@ -7,7 +7,7 @@ import { Database } from "../../db/types";
 import { SourceDocumentRepository } from "./source-document.repository";
 import { SourceDocumentService } from "./source-document.service";
 
-export const createSourceDocumentModule = () => {
+export const createSourceDocumentCrudModule = () => {
     const repository = createSourceDocumentRepository(prisma);
 
     const service = new CrudService(repository);

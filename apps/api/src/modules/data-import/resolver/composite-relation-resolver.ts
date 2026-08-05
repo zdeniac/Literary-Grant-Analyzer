@@ -1,10 +1,11 @@
 import { ImportRelationError } from "../error/import.errors";
-import { CompositeLookup, CompositeRelationBlueprint, ImportLookupInterface, ImportRow, ImportRowError, ModelName, RelationResolverInterface } from "../types/import.types";
+import { ImportLookupRegistry } from "../registry/import-lookup.registry";
+import { CompositeLookup, CompositeRelationBlueprint, ImportLookupInterface, ImportRow, ImportRowError, EntityName, RelationResolverInterface } from "../types/import.types";
 
 export class CompositeRelationResolver implements RelationResolverInterface<CompositeRelationBlueprint>
 {
     constructor(
-        private readonly lookups: Record<ModelName, ImportLookupInterface<any>>
+        private readonly lookupRegistry: ImportLookupRegistry
     ) {}
 
     public async resolve(rows: ImportRow[], relationBlueprint: CompositeRelationBlueprint): Promise<ImportRow[]>
@@ -14,7 +15,7 @@ export class CompositeRelationResolver implements RelationResolverInterface<Comp
         }
 
         const nestedLookups = relationBlueprint.lookup.filter(
-            lookup => typeof lookup.foreignModel !== 'undefined' && typeof lookup.foreignKey !== 'undefined'
+            lookup => typeof lookup.foreignEntity !== 'undefined' && typeof lookup.foreignKey !== 'undefined'
         );
 
         let workingRows = rows.map(row => ({ ...row }));
@@ -34,10 +35,11 @@ export class CompositeRelationResolver implements RelationResolverInterface<Comp
             const sourceField = lookup.sourceField;
             const lookupField = lookup.lookupField;
             const foreignKey = lookup.foreignKey!;
-            const model = lookup.foreignModel!;
+            const entity = lookup.foreignEntity!;
 
             const values = workingRows.map(row => row[sourceField]);
-            const foreignData = await this.lookups[model].findManyBy(lookupField, values);
+            const foreignData = 
+                await this.lookupRegistry.getOrThrow(entity).findManyBy(lookupField, values);
 
             const found = new Map<unknown, Record<string, unknown>>();
             const duplicatedKeys = new Set<unknown>();
@@ -63,7 +65,7 @@ export class CompositeRelationResolver implements RelationResolverInterface<Comp
                             issues: [{
                                 field: sourceField,
                                 value,
-                                message: `Multiple ${model} records found for ${sourceField}: ${String(value)}.`,
+                                message: `Multiple ${entity} records found for ${sourceField}: ${String(value)}.`,
                             }],
                         });
                     }
@@ -111,12 +113,14 @@ export class CompositeRelationResolver implements RelationResolverInterface<Comp
         rows: ImportRow[], 
         relationBlueprint: CompositeRelationBlueprint
     ): Promise<ImportRow[]> {
-        const model: ModelName = relationBlueprint.model;
+        const entity: EntityName = relationBlueprint.entity;
 
-        const directLookups = relationBlueprint.lookup.filter(lookup => typeof lookup.foreignModel === 'undefined');
+        const directLookups = relationBlueprint.lookup.filter(lookup => typeof lookup.foreignEntity === 'undefined');
 
         const nestedKeyLookups = relationBlueprint.lookup
-            .filter(lookup => typeof lookup.foreignModel !== 'undefined' && typeof lookup.foreignKey !== 'undefined')
+            .filter(
+                lookup => typeof lookup.foreignEntity !== 'undefined' && typeof lookup.foreignKey !== 'undefined'
+            )
             .map(lookup => ({
                 sourceField: lookup.foreignKey!,
                 lookupField: lookup.foreignKey!,
@@ -141,12 +145,12 @@ export class CompositeRelationResolver implements RelationResolverInterface<Comp
             ]);
         }
 
-        const foreignData = await this.collectForeignData(model, criteria, rows);
+        const foreignData = await this.collectForeignData(entity, criteria, rows);
         return this.applyRelation(rows, relationBlueprint, foreignData, criteria);
     }
 
     private async collectForeignData(
-        model: ModelName, 
+        entity: EntityName, 
         criteria: Array<{ sourceField: string; lookupField: string; }>, 
         rows: ImportRow[]
     ): Promise<Record<string, unknown>[]> {
@@ -154,7 +158,9 @@ export class CompositeRelationResolver implements RelationResolverInterface<Comp
 
         for (const criterion of criteria) {
             const values = rows.map(row => row[criterion.sourceField]);
-            const data = await this.lookups[model].findManyBy(criterion.lookupField, values);
+            const data = 
+                await this.lookupRegistry.getOrThrow(entity)
+                                        .findManyBy(criterion.lookupField, values);
             
             foreignData.push(...data.map(item => ({ ...item })));
         }
@@ -188,12 +194,12 @@ export class CompositeRelationResolver implements RelationResolverInterface<Comp
                         field: relationBlueprint.foreignKey,
                         value: criteria.map(({ sourceField }) => row[sourceField]),
                         message: matches.length === 0
-                            ? `No ${Array.isArray(relationBlueprint.model) 
-                                ? relationBlueprint.model.join(', ') 
-                                : relationBlueprint.model} record found for the composite lookup.`
-                            : `Multiple ${Array.isArray(relationBlueprint.model) 
-                                ? relationBlueprint.model.join(', ') 
-                                : relationBlueprint.model} records match the composite lookup.`,
+                            ? `No ${Array.isArray(relationBlueprint.entity) 
+                                ? relationBlueprint.entity.join(', ') 
+                                : relationBlueprint.entity} record found for the composite lookup.`
+                            : `Multiple ${Array.isArray(relationBlueprint.entity) 
+                                ? relationBlueprint.entity.join(', ') 
+                                : relationBlueprint.entity} records match the composite lookup.`,
                     }],
                 });
 
@@ -208,8 +214,12 @@ export class CompositeRelationResolver implements RelationResolverInterface<Comp
 
             const cleanupFields = new Set<string>(relationBlueprint.lookup.map(lookup => lookup.sourceField));
             relationBlueprint.lookup
-                .filter(lookup => typeof lookup.foreignModel !== 'undefined' && typeof lookup.foreignKey !== 'undefined')
+                .filter(
+                    lookup => typeof lookup.foreignEntity !== 'undefined' 
+                    && typeof lookup.foreignKey !== 'undefined'
+                )
                 .forEach(lookup => cleanupFields.add(lookup.foreignKey!));
+            
             cleanupFields.delete(relationBlueprint.foreignKey);
 
             cleanupFields.forEach(field => {

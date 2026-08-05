@@ -1,9 +1,9 @@
-import { RelationalModelBlueprint } from "../../data-import/types/import.types";
+import { RelationalEntityBlueprint } from "../../data-import/types/import.types";
 import { importAwardDecisionSchema } from "../validation/award-decision.schema";
 
-export const awardDecisionBlueprint: RelationalModelBlueprint = 
+export const awardDecisionBlueprint: RelationalEntityBlueprint = 
     {
-        model: 'awardDecision',
+        entity: 'awardDecision',
         fields: [
             {
                 name: 'recipientName',
@@ -40,11 +40,16 @@ export const awardDecisionBlueprint: RelationalModelBlueprint =
                 type: 'string',
                 required: false,
             },
+            {
+                name: 'sourceDocumentUrl',
+                type: 'string',
+                required: true,
+            }
         ],
         schema: importAwardDecisionSchema,
         relations: [
             {
-                model: 'organization',
+                entity: 'organization',
 
                 foreignKey: 'recipientId',
                 targetField: 'actorId',
@@ -55,7 +60,7 @@ export const awardDecisionBlueprint: RelationalModelBlueprint =
                 },
             },
             {
-                model: 'awardScheme',
+                entity: 'awardScheme',
 
                 foreignKey: 'awardSchemeId',
                 targetField: 'id',
@@ -66,7 +71,7 @@ export const awardDecisionBlueprint: RelationalModelBlueprint =
                         lookupField: 'name',
                     },
                     {
-                        foreignModel: 'organization',
+                        foreignEntity: 'organization',
                         foreignKey: 'organizationId',
 
                         sourceField: 'awardSchemeOrganizationName',
@@ -75,7 +80,7 @@ export const awardDecisionBlueprint: RelationalModelBlueprint =
                 ],
             },
             {
-                model: ['decisionAuthority', 'organization'],
+                entity: ['decisionAuthority', 'organization'],
 
                 foreignKey: 'decisionMakerId',
                 targetField: 'actorId',
@@ -84,6 +89,17 @@ export const awardDecisionBlueprint: RelationalModelBlueprint =
                     sourceField: 'decisionMakerName',
                     lookupField: 'name',
                 },
+            },
+            {
+                entity: 'sourceDocument',
+
+                foreignKey: 'sourceDocumentId',
+                targetField: 'id',
+
+                lookup: {
+                    sourceField: 'sourceDocumentUrl',
+                    lookupField: 'url',
+                }
             },
         ],
     };

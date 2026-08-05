@@ -1,8 +1,8 @@
 import { Organization } from "@prisma/client";
-import { OrganizationDto, OrganizationModel } from "../dto/organization.dto";
+import { OrganizationDto, OrganizationEntity } from "../dto/organization.dto";
 import { DtoMapper } from "../../../common/types/types";
 
-export const toOrganizationDto: DtoMapper<OrganizationModel, OrganizationDto> = (
+export const toOrganizationDto: DtoMapper<OrganizationEntity, OrganizationDto> = (
     org
 ) => ({
 	id: org.id,

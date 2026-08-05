@@ -1,10 +1,11 @@
-import { ImportRelationError } from "../error/import.errors";
-import { ImportLookupInterface, ImportRow, ImportRowError, SimpleLookup, ModelName, RelationResolverInterface, SimpleRelationBlueprint } from "../types/import.types";
+import { ImportError, ImportRelationError } from "../error/import.errors";
+import { ImportLookupRegistry } from "../registry/import-lookup.registry";
+import { ImportLookupInterface, ImportRow, ImportRowError, SimpleLookup, EntityName, RelationResolverInterface, SimpleRelationBlueprint } from "../types/import.types";
 
 export class SimpleRelationResolver implements RelationResolverInterface<SimpleRelationBlueprint>
 {
     constructor(
-        private readonly lookups: Record<ModelName, ImportLookupInterface<any>>,
+        private readonly lookupRegistry: ImportLookupRegistry,
     ) {}
 
     public async resolve(rows: ImportRow[], relationBlueprint: SimpleRelationBlueprint): Promise<ImportRow[]> 
@@ -13,9 +14,9 @@ export class SimpleRelationResolver implements RelationResolverInterface<SimpleR
 
         const sourceField = lookup.sourceField;
         const lookupField = lookup.lookupField;
-        const models = Array.isArray(relationBlueprint.model)
-            ? relationBlueprint.model
-            : [relationBlueprint.model];
+        const entities = Array.isArray(relationBlueprint.entity)
+            ? relationBlueprint.entity
+            : [relationBlueprint.entity];
 
         // Get the foreign data by the given field's values, e.g. 'organizationName'
         const foreignTableValues = relationBlueprint.multiple
@@ -24,12 +25,13 @@ export class SimpleRelationResolver implements RelationResolverInterface<SimpleR
 
         let foreignData: Record<string, unknown>[] = [];
 
-        for (const model of models) {
+        for (const entity of entities) {
             // Check if they are in the db by the lookup field, e.g. 'name' (in organizations)
-            const data = await this.lookups[model].findManyBy(
+            const data = await this.lookupRegistry.getOrThrow(entity).findManyBy(
                 lookupField,
                 foreignTableValues
             );
+            
             foreignData.push(...data);
         }
 

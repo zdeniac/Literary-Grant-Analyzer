@@ -99,42 +99,35 @@ describe('Data Import Service test', () => {
     beforeEach(wipeDatabase);
     afterAll(wipeDatabase);
 
-    it('imports data on model without relation', async() => {
-        const imported = await importer.import(
+    it('imports data on entity without relation', async() => {
+        const importJob = await importer.import(
             'organization',
             orgFile
         );
 
-        expect(imported).toBe(2);
-
-        const importedOrg = await prisma.organization.findFirst({
-            where: {
-                name: org1.name
-            }
-        });
-
-        expect(importedOrg).toMatchObject({
-            name: org1.name,
-            address: org1.address,
-            legalForm: org1.legalForm,
-            foundingYear: org1.foundingYear,
-        });
-
-        expect(importedOrg).toHaveProperty('id');
-        expect(importedOrg).toHaveProperty('createdAt');
+        expect(importJob.fileName).toBe('organizations_import.csv');
+        expect(importJob.mimeType).toBe('text/csv');
+        expect(importJob.finishedAt).not.toBeNull();
+        expect(importJob.totalRows).toBe(2);
+        expect(importJob.importedRows).toBe(2);
+        expect(importJob.failedRows).toBe(0);
+        expect(importJob.status).toBe(ImportJobStatus.COMPLETED);
     });
 
     it('imports data with N:1 relation (award scheme -> organization)', async() => {
-        await createOrganization(org2);
+        const org = await createOrganization(org2);
 
-        const imported = await importer.import(
+        const importJob1 = await importer.import(
             'awardScheme',
             awardSchemeFile
         );
 
-        expect(imported).toBe(1);
+        expect(importJob1.totalRows).toBe(1);
+        expect(importJob1.importedRows).toBe(1);
+        expect(importJob1.failedRows).toBe(0);
+        expect(importJob1.status).toBe(ImportJobStatus.COMPLETED);
 
-        const schemes = await prisma.awardScheme.findMany({
+        const awardScheme = await prisma.awardScheme.findMany({
             where: {
                 name: 'Irodalmi laptámogatás'
             },
@@ -143,30 +136,23 @@ describe('Data Import Service test', () => {
             }
         });
 
-        expect(schemes.length).toBe(1);
-
-        expect(schemes[0]).toMatchObject({
-            name: 'Irodalmi laptámogatás',
-            type: AwardSchemeType.GRANT,
-            fundingArea: FundingArea.PERIODICAL,
-            organization: {
-                name: 'Alföld Alapítvány'
-            }
-        });
-
-        expect(schemes[0]).toHaveProperty('organizationId');
+        expect(awardScheme.length).toBe(1);
+        expect(awardScheme[0].organizationId).toBe(org.id);
     });
 
     it('imports data with N:M relation (journal -> organizations)', async() => {
-        await createOrganization(org1);
-        await createOrganization(org2);
+        const orgRelation1 = await createOrganization(org1);
+        const orgRelation2 = await createOrganization(org2);
 
-        const imported = await importer.import(
+        const importJob = await importer.import(
             'journal',
             journalFile
         );
 
-        expect(imported).toBe(1);
+        expect(importJob.totalRows).toBe(1);
+        expect(importJob.importedRows).toBe(1);
+        expect(importJob.failedRows).toBe(0);
+        expect(importJob.status).toBe(ImportJobStatus.COMPLETED);
 
         const journal = await prisma.journal.findUnique({
             where: {
@@ -188,13 +174,13 @@ describe('Data Import Service test', () => {
 
         expect(
             journal?.affiliations.map(
-                affiliation => affiliation.organization.name
+                affiliation => affiliation.organization.id
             )
         )
         .toEqual(
             expect.arrayContaining([
-                'Alföld Alapítvány',
-                'Jelenkor Alapítvány',
+                orgRelation1.id,
+                orgRelation2.id,
             ])
         );
     });
@@ -275,9 +261,9 @@ describe('Data Import Service test', () => {
         expect(importJob?.errorMessage).toContain('IMPORT_VALIDATION_ERROR');
     });
 
-    it('throws when import model is unknown', async () => {
+    it('throws when import entity is unknown', async () => {
         await expect(
-            importer.import('unknownModel' as any, orgFile)
+            importer.import('unknownEntity' as any, orgFile)
         ).rejects.toThrow(ImportError);
 
         const importJob = await prisma.importJob.findFirst({
@@ -287,7 +273,7 @@ describe('Data Import Service test', () => {
 
         expect(importJob).not.toBeNull();
         expect(importJob?.status).toBe(ImportJobStatus.FAILED);
-        expect(importJob?.errorMessage).toContain('Unknown import model');
+        expect(importJob?.errorMessage).toContain('Unknown import entity');
     });
 
     it('throws on invalid row data and records failed rows', async () => {

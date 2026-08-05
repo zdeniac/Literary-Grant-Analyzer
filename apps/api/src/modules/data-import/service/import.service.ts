@@ -1,36 +1,37 @@
-import { ImportFile, ImportOptions, ImportRow, ImportWriterInterface, ModelName, RelationalModelBlueprint, RelationResolverRegistry } from "../types/import.types";
+import { ImportFile, ImportOptions, ImportRow, ImportWriterInterface, EntityName, RelationalEntityBlueprint, RelationResolverRegistry } from "../types/import.types";
 import { ImportEmptyFileError, ImportError, ImportValidationError } from "../error/import.errors";
 import { validateHeaders, validateRows } from "../validation/data-import.validation";
 import { ImportBlueprintRegistry } from "../registry/import-blueprint.registry";
-import { isCompositeRelationBlueprint, isRelationalModelBlueprint } from "../types/guards.types";
+import { isCompositeRelationBlueprint, isRelationalEntityBlueprint } from "../types/guards.types";
 import { ImportJobRepository } from "../repository/import-job.repository";
-import { ImportJobDto } from "../dto/import-job.dto";
-import { toImportJobDto } from "../mapper/import-job.mapper";
+import { ImportJobEntity } from "../dto/import-job.dto";
+import { ImportableEntityName } from "../constants/importable-models";
+import { ImportWriterRegistry } from "../registry/import-writer.registry";
 
 export class ImportService
 {
     constructor(
         private readonly importJobRepository: ImportJobRepository,
         private readonly registry: ImportBlueprintRegistry,
-        private readonly writers: Record<ModelName, ImportWriterInterface<ImportRow>>,
+        private readonly writers: ImportWriterRegistry,
         private readonly relationResolvers: RelationResolverRegistry,
         private readonly options: ImportOptions = {},
     ) {}
 
-    public async import(model: ModelName, file: ImportFile): Promise<ImportJobDto> 
+    public async import(entity: ImportableEntityName, file: ImportFile): Promise<ImportJobEntity> 
     {
         const job = await this.importJobRepository.create({
-            model,
+            model: entity,
             mimeType: file.mimeType,
             fileName: file.fileName,
             totalRows: file.rows.length,
         })
 
         try {
-            const blueprint = this.registry.getOrThrow(model);
-            const writer = this.writers[model]; 
+            const blueprint = this.registry.getOrThrow(entity);
+            const writer = this.writers.getOrThrow(entity); 
 
-            if (!writer) throw new ImportError(`Missing import writer for ${model}`);
+            if (!writer) throw new ImportError(`Missing import writer for ${entity}`);
             
             validateHeaders(
                 file.header, 
@@ -38,18 +39,18 @@ export class ImportService
                 this.options.validation?.allowUnknownFields ?? false
             );
 
-            if (!file.rows.length) throw new ImportEmptyFileError(`Missing rows for ${model}.`);
+            if (!file.rows.length) throw new ImportEmptyFileError(`Missing rows for ${entity}.`);
 
             let validatedRows = validateRows(file.rows, blueprint.schema);
 
-            if (isRelationalModelBlueprint(blueprint)) {
+            if (isRelationalEntityBlueprint(blueprint)) {
                 validatedRows = await this.resolveRelations(validatedRows, blueprint);
             }
 
             const total = await writer.createMany(validatedRows);
             const importJob = await this.importJobRepository.complete(job.id, total);
 
-            return toImportJobDto(importJob);
+            return importJob;
         } catch(error) {
             if (error instanceof ImportValidationError) {
                 await this.importJobRepository.fail(job.id, {
@@ -68,7 +69,7 @@ export class ImportService
         }
     }
 
-    private async resolveRelations(rows: ImportRow[], blueprint: RelationalModelBlueprint): Promise<ImportRow[]> 
+    private async resolveRelations(rows: ImportRow[], blueprint: RelationalEntityBlueprint): Promise<ImportRow[]> 
     {
         for (const relation of blueprint.relations) {
             if (isCompositeRelationBlueprint(relation)) {

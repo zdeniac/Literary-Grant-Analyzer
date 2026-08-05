@@ -4,7 +4,7 @@ import { AuditColumns } from "../../../components/table/AuditColumns";
 import { CustomEmpty } from "../../../components/table/CustomEmpty";
 
 export const JournalList = () => (
-    <List actions={<JournalListActions />} empty={<CustomEmpty hasImport model="journal" />}>
+    <List actions={<JournalListActions />} empty={<CustomEmpty hasImport entity="journal" />}>
         <DataTable>
             <DataTable.Col source="id" />
             <DataTable.Col source="name" />

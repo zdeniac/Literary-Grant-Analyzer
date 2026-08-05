@@ -3,11 +3,11 @@ import { sendData } from "../http/response";
 import { idSchema } from "../validation/schema";
 import { CrudServiceInterface, DtoMapper } from "../types/types";
 
-export class CrudController<TModel, TDto>
+export class CrudController<TEntity, TDto>
 {
     constructor(
-        protected readonly service: CrudServiceInterface<TModel, TDto>,
-        protected readonly toDto: DtoMapper<TModel, TDto>,
+        protected readonly service: CrudServiceInterface<TEntity, TDto>,
+        protected readonly toDto: DtoMapper<TEntity, TDto>,
     ) {
         this.findById = this.findById.bind(this);
         this.findAll = this.findAll.bind(this);

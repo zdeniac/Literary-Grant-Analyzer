@@ -1,6 +1,6 @@
 import type { ButtonProps } from "react-admin";
 
-export type ModelName = 
+export type EntityName = 
     | 'organization' 
     | 'journal'
     | 'decisionAuthority'
@@ -10,5 +10,5 @@ export type ModelName =
 ;
 
 export type ImportButtonProps = ButtonProps & {
-    model: ModelName;
+    entity: EntityName;
 };

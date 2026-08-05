@@ -1,7 +1,7 @@
 import { DtoMapper } from "../../../common/types/types";
-import { PersonDto, PersonModel } from "../dto/person.dto";
+import { PersonDto, PersonEntity } from "../dto/person.dto";
 
-export const toPersonDto: DtoMapper<PersonModel, PersonDto> = (person) => ({
+export const toPersonDto: DtoMapper<PersonEntity, PersonDto> = (person) => ({
     id: person.id,
 
     name: person.name,

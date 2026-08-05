@@ -4,7 +4,7 @@ import { ImportButton } from "../../../features/import/components/ImportButton";
 export const AwardDecisionListActions = () => (
     <TopToolbar>
         <CreateButton />
-        <ImportButton model="awardDecision" />
+        <ImportButton entity="awardDecision" />
         <ExportButton />
     </TopToolbar>
 );

@@ -1,12 +1,13 @@
 import z from "zod";
 
-export const importableModelNames = [
+export const importableEntityNames = [
     'journal',
     'organization',
     'awardScheme',
     'decisionAuthority',
     'awardDecision',
+    'sourceDocument',
 ] as const;
 
-export const importableModelNameSchema = z.enum(importableModelNames);
-export type ImportableModelName = z.infer<typeof importableModelNameSchema>;
+export const importableEntityNameSchema = z.enum(importableEntityNames);
+export type ImportableEntityName = z.infer<typeof importableEntityNameSchema>;

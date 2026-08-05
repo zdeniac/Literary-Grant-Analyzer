@@ -8,17 +8,17 @@ import { Journal } from "@prisma/client";
 export class JournalRepository
 {
     constructor(
-        private readonly model: Database['journal']
+        private readonly entity: Database['journal']
     ) {}
 
     async create(data: CreateJournalInput): Promise<Journal>
     {
-        return this.model.create({ data });
+        return this.entity.create({ data });
     }
     
     async createWithAffiliations(input: CreateJournalWithAffiliationsInput): Promise<JournalWithOrganizationsAndSourceDocument>
     {
-        return this.model.create({
+        return this.entity.create({
             data: {
                 name: input.name,
                 status: input.status,
@@ -55,7 +55,7 @@ export class JournalRepository
 
     async updateWithOrganizationsAndSourceDocument(id: Id, data: Partial<Pick<JournalWithOrganizationsAndSourceDocument, 'name' | 'status' | 'issn' | 'format' | 'foundingYear'>>): Promise<JournalWithOrganizationsAndSourceDocument>
     {
-        return this.model.update({
+        return this.entity.update({
             where: { id },
             data,
             include: {
@@ -71,7 +71,7 @@ export class JournalRepository
 
     async findByIdWithOrganizationsAndSourceDocument(id: Id): Promise<JournalWithOrganizationsAndSourceDocument>
     {
-        const journal = await this.model.findUnique({
+        const journal = await this.entity.findUnique({
             where: {
                 id
             },
@@ -94,7 +94,7 @@ export class JournalRepository
 
     async findAllWithOrganizations(): Promise<JournalWithOrganizations[]>
     {
-        return this.model.findMany({
+        return this.entity.findMany({
             include: {
                 affiliations: {
                     include: {

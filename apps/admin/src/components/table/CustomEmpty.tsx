@@ -9,14 +9,14 @@ import {
     EmptyClasses,
 } from "react-admin";
 import { ImportButton } from "../../features/import/components/ImportButton";
-import type { ModelName } from "../../features/import/types/import-button.types";
+import type { EntityName } from "../../features/import/types/import-button.types";
 
 export interface CustomEmptyProps {
     resource?: string;
     hasCreate?: boolean;
     hasImport?: boolean;
     className?: string;
-    model?: ModelName;
+    entity?: EntityName;
 }
 
 export const CustomEmpty = (inProps: CustomEmptyProps) => {
@@ -27,7 +27,7 @@ export const CustomEmpty = (inProps: CustomEmptyProps) => {
     const { className } = props;
     const { hasCreate } = useResourceDefinition(props);
     const resource = useResourceContext(props);
-    const { hasImport, model } = inProps;
+    const { hasImport, entity } = inProps;
 
     const translate = useTranslate();
 
@@ -85,8 +85,8 @@ export const CustomEmpty = (inProps: CustomEmptyProps) => {
                 {hasCreate && (
                     <CreateButton variant="contained" />
                 )}
-                {hasImport && model && (
-                    <ImportButton model={model} variant="contained"/>
+                {hasImport && entity && (
+                    <ImportButton entity={entity} variant="contained"/>
                 )}
             </Stack>
         </Root>

@@ -5,9 +5,10 @@ import { ImportSchemaService } from "../service/import-schema.service";
 import { CreateSourceDocumentInput } from "../../source-document/dto/source-document.input.dto";
 import { createSourceDocumentSchema } from "../../source-document/validation/source-document.schema";
 import { ImportError } from "../error/import.errors";
-import { modelNameSchema } from "../validation/data-import.validation.schema";
-import { ModelName } from "../types/import.types";
+import { EntityName } from "../types/import.types";
 import { ImportWorkflowService } from "../service/import-workflow-service";
+import { ImportableEntityName } from "../constants/importable-models";
+import { entityNameSchema } from "../validation/data-import.validation.schema";
 
 export class ImportController
 {
@@ -22,20 +23,20 @@ export class ImportController
 
     public async getSchema(req: Request, res: Response): Promise<void>
     {
-        const model = typeof req.query.model === 'string'
-            ? req.query.model
+        const entity = typeof req.query.entity === 'string'
+            ? req.query.entity
             : undefined;
 
-        const parsedModel = modelNameSchema.safeParse(model);
-        if (!parsedModel.success) {
+        const parsedEntity = entityNameSchema.safeParse(entity);
+        if (!parsedEntity.success) {
             res.status(400).json({
-                error: 'Invalid or missing model parameter'
+                error: 'Invalid or missing entity parameter'
             });
             return;
         }
 
         res.json({ 
-            data: this.schemaService.getSchema(parsedModel.data as ModelName) 
+            data: this.schemaService.getSchema(parsedEntity.data as EntityName) 
         });
     }
 
@@ -48,11 +49,11 @@ export class ImportController
             return;
         }
 
-        const parsedModel = modelNameSchema.safeParse(req.params.model);
+        const parsedEntity = entityNameSchema.safeParse(req.params.entity);
 
-        if (!parsedModel.success) {
+        if (!parsedEntity.success) {
             res.status(400).json({
-                error: 'Invalid model parameter'
+                error: 'Invalid entity parameter'
             });
             return;
         }
@@ -75,7 +76,7 @@ export class ImportController
 
         const importJob = 
             await this.importWorkflowService.import(
-                parsedModel.data as ModelName, 
+                parsedEntity.data as ImportableEntityName, 
                 toImportFile(req.file), 
                 sourceDocuments
             );
