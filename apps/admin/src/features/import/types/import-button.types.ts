@@ -6,6 +6,7 @@ export type ModelName =
     | 'decisionAuthority'
     | 'awardScheme'
     | 'person'
+    | 'awardDecision'
 ;
 
 export type ImportButtonProps = ButtonProps & {

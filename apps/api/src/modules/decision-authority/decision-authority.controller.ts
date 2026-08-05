@@ -3,13 +3,13 @@ import { Request, Response } from "express";
 import { sendData } from "../../common/http/response";
 import { idSchema } from "../../common/validation/schema";
 import { DecisionAuthorityService } from "./decision-authority.service";
-import { DecisionAuthorityDto, DecisionAuthorityModel } from "./dto/decision-authority.dto";
+import { DecisionAuthorityDto, DecisionAuthorityEntity } from "./dto/decision-authority.dto";
 
 export class DecisionAuthorityController
 {
     constructor(
         private readonly service: DecisionAuthorityService,
-        private readonly mapper: DtoMapper<DecisionAuthorityModel, DecisionAuthorityDto>
+        private readonly mapper: DtoMapper<DecisionAuthorityEntity, DecisionAuthorityDto>
     ) {
         this.create = this.create.bind(this);
         this.delete = this.delete.bind(this);

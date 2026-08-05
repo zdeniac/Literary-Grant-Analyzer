@@ -1,9 +1,8 @@
-import { ImportJob } from "@prisma/client";
-import { ImportJobDto } from "../dto/import-job.dto";
+import { ImportJobDto, ImportJobEntity } from "../dto/import-job.dto";
+import { ModelName } from "../types/import.types";
 
-export const toImportJob = (importJob: ImportJob): ImportJobDto => ({
+export const toImportJobDto = (importJob: ImportJobEntity): ImportJobDto => ({
     id: importJob.id,
-    sourceDocumentId: importJob.sourceDocumentId,
 
     model: importJob.model,
     fileName: importJob.fileName,
@@ -19,6 +18,4 @@ export const toImportJob = (importJob: ImportJob): ImportJobDto => ({
 
     startedAt: importJob.startedAt,
     finishedAt: importJob.finishedAt,
-
-    createdAt: importJob.createdAt,
 });

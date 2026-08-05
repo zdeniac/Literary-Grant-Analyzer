@@ -1,13 +1,14 @@
 import { ImportLookupInterface, ImportWriterInterface, LookupQueryOptions } from "../types/import.types";
-import { ModelDelegate } from "../../../db/types";
+import { DatabaseDelegate } from "../../../db/types";
 
-export class ImportTargetRepository<TModel, TCreate> implements ImportLookupInterface<TModel>, ImportWriterInterface<TCreate>
+export class ImportTargetRepository<TEntity, TCreate> 
+    implements ImportLookupInterface<TEntity>, ImportWriterInterface<TCreate>
 {
     constructor(
-        private readonly delegate: ModelDelegate<TModel>
+        private readonly delegate: DatabaseDelegate<TEntity>
     ) {}
 
-    async create(data: TCreate): Promise<TModel>
+    async create(data: TCreate): Promise<TEntity>
     {
         return this.delegate.create({
             data,
@@ -23,7 +24,7 @@ export class ImportTargetRepository<TModel, TCreate> implements ImportLookupInte
         return result.count;
     }
 
-    async findManyBy(field: string, values: unknown[], options?: LookupQueryOptions): Promise<TModel[]>
+    async findManyBy(field: string, values: unknown[], options?: LookupQueryOptions): Promise<TEntity[]>
     {
         const filteredValues = values.filter(value => value !== undefined);
 

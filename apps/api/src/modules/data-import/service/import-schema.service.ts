@@ -1,5 +1,5 @@
 import { ImportBlueprintRegistry } from "../registry/import-blueprint.registry";
-import { ImportSchema } from "../types/import.types";
+import { ImportSchema, ModelName } from "../types/import.types";
 
 export class ImportSchemaService
 {
@@ -7,7 +7,7 @@ export class ImportSchemaService
         private readonly blueprintRegistry: ImportBlueprintRegistry
     ) {}
 
-    public getSchema(model: string): ImportSchema
+    public getSchema(model: ModelName): ImportSchema
     {
         const blueprint = this.blueprintRegistry.getOrThrow(model);
 

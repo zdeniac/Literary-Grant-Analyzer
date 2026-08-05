@@ -1,19 +1,19 @@
 import { NotFoundError } from "../../common/errors/http.error";
-import { CrudRepository, PrismaModel } from "../types";
+import { CrudRepositoryInterface, DatabaseCrudDelegate } from "../types";
 
-export class PrismaCrudRepository<TModel, TCreate, TUpdate = Partial<TCreate>>
-    implements CrudRepository<TModel, TCreate, TUpdate>
+export class PrismaCrudRepository<TEntity, TCreate, TUpdate = Partial<TCreate>>
+    implements CrudRepositoryInterface<TEntity, TCreate, TUpdate>
 {
     constructor(
-        private readonly model: PrismaModel<TModel>,
+        private readonly model: DatabaseCrudDelegate<TEntity>,
     ) {}
     
-    async create(data: TCreate): Promise<TModel>
+    async create(data: TCreate): Promise<TEntity>
     {
         return this.model.create({ data });
     }
 
-    async update(id: number, data: TUpdate): Promise<TModel>
+    async update(id: number, data: TUpdate): Promise<TEntity>
     {
         return this.model.update({
             where: {
@@ -23,17 +23,17 @@ export class PrismaCrudRepository<TModel, TCreate, TUpdate = Partial<TCreate>>
         });
     }
 
-    async findAll(): Promise<TModel[]> {
+    async findAll(): Promise<TEntity[]> {
         return this.model.findMany();
     }
 
-    async findById(id: number): Promise<TModel | null> {
+    async findById(id: number): Promise<TEntity | null> {
         return this.model.findUnique({
             where: { id }
         });
     }
 
-    async findByIdOrThrow(id: number): Promise<TModel> {
+    async findByIdOrThrow(id: number): Promise<TEntity> {
         const entity = await this.findById(id);
 
         if (!entity) {
@@ -43,7 +43,7 @@ export class PrismaCrudRepository<TModel, TCreate, TUpdate = Partial<TCreate>>
         return entity;
     }
 
-    async delete(id: number): Promise<TModel> {
+    async delete(id: number): Promise<TEntity> {
         return this.model.delete({
             where: { id }
         });

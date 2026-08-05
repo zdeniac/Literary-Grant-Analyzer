@@ -1,8 +1,10 @@
 import { DataTable, List } from "react-admin";
 import { AuditColumns } from "../../../components/table/AuditColumns";
+import { CustomEmpty } from "../../../components/table/CustomEmpty";
+import { AwardDecisionListActions } from "./actions";
 
 export const AwardDecisionList = () => (
-    <List>
+    <List actions={<AwardDecisionListActions />} empty={<CustomEmpty hasImport model="awardDecision" />}>
         <DataTable>
 
             <DataTable.Col source="id" />

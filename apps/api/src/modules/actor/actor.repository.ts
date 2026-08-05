@@ -1,10 +1,10 @@
 import { Actor, ActorType } from "@prisma/client";
-import { PrismaModel } from "../../db/types";
+import { DatabaseCrudDelegate } from "../../db/types";
 
 export class ActorRepository
 {
     constructor(
-        private readonly model: PrismaModel<Actor>
+        private readonly model: DatabaseCrudDelegate<Actor>
     ) {}
 
     async create(type: ActorType): Promise<Actor>

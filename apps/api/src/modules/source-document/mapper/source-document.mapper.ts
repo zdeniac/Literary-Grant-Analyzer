@@ -1,7 +1,7 @@
-import { SourceDocumentDto, SourceDocumentModel } from "../dto/source-document.dto";
+import { SourceDocumentDto, SourceDocumentEntity } from "../dto/source-document.dto";
 import { DtoMapper } from "../../../common/types/types";
 
-export const toSourceDocumentDto: DtoMapper<SourceDocumentModel, SourceDocumentDto> = (
+export const toSourceDocumentDto: DtoMapper<SourceDocumentEntity, SourceDocumentDto> = (
     sourceDocument
 ) => ({
     id: sourceDocument.id,

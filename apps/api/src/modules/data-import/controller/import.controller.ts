@@ -7,11 +7,16 @@ import { CreateSourceDocumentInput } from "../../source-document/dto/source-docu
 import { createSourceDocumentSchema } from "../../source-document/validation/source-document.schema";
 import { ImportError } from "../error/import.errors";
 import { modelNameSchema } from "../validation/data-import.validation.schema";
+import { SourceDocumentService } from "../../source-document/source-document.service";
+import { ModelName } from "../types/import.types";
+import { ImportJobSourceDocumentService } from "../../import-job-source-document/import-job-source-document.service";
+import { SourceDocumentDto } from "../../source-document/dto/source-document.dto";
+import { ImportWorkflowService } from "../service/import-workflow-service";
 
 export class ImportController
 {
     constructor(
-        private readonly importService: ImportService,
+        private readonly importWorkflowService: ImportWorkflowService,
         private readonly schemaService: ImportSchemaService,
     ) {
         this.import = this.import.bind(this);
@@ -34,36 +39,21 @@ export class ImportController
         }
 
         res.json({ 
-            data: this.schemaService.getSchema(parsedModel.data) 
+            data: this.schemaService.getSchema(parsedModel.data as ModelName) 
         });
     }
 
     public async import(req: Request, res: Response): Promise<void>
     {
-        const uploadedFile = req.file;
-
-        if (!uploadedFile) {
+        if (!req.file) {
             res.status(400).json({
                 error: 'No file uploaded'
             });
             return;
         }
 
-        const parsedFile = toImportFile(uploadedFile);
-
-        let sourceDocuments: CreateSourceDocumentInput[] | undefined;
-
-        if (req.body.saveSourceDocument === 'true') {
-            try {
-                sourceDocuments = this.validateSourceDocuments(req.body.sourceDocuments);
-            } catch(e: unknown) {
-                if (e instanceof z.ZodError) {
-                    throw new ImportError('IMPORT_SOURCE_DOCUMENTS_ERROR');
-                }
-            }
-        }
-
         const parsedModel = modelNameSchema.safeParse(req.params.model);
+
         if (!parsedModel.success) {
             res.status(400).json({
                 error: 'Invalid model parameter'
@@ -71,15 +61,36 @@ export class ImportController
             return;
         }
 
-        const total = await this.importService.import(
-            parsedModel.data,
-            parsedFile,
-            sourceDocuments,
-        );
+        let sourceDocuments: CreateSourceDocumentInput[] = [];
+
+        if (req.body.saveSourceDocument === 'true') {
+            try {
+                sourceDocuments = this.validateSourceDocuments(
+                    req.body.sourceDocuments
+                );
+            } catch (e: unknown) {
+                if (e instanceof z.ZodError) {
+                    throw new ImportError(
+                        'IMPORT_SOURCE_DOCUMENTS_ERROR'
+                    );
+                }
+
+                throw e;
+            }
+        }
+
+        const importJob = 
+            await this.importWorkflowService.import(
+                parsedModel.data as ModelName, 
+                toImportFile(req.file), 
+                sourceDocuments
+            );
 
         res.json({
-            data: { total }
-        });
+            data: {
+                total: importJob.totalRows
+            }
+        });    
     }
 
     private validateSourceDocuments(sourceDocuments: any[]): CreateSourceDocumentInput[]

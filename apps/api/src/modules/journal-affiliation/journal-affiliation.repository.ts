@@ -1,6 +1,6 @@
 import { JournalAffiliation } from "@prisma/client";
 import { Id } from "../../common/types/types";
-import { PrismaDatabase } from "../../db/types";
+import { Database } from "../../db/types";
 import { 
     CreateJournalAffiliationInput, 
     UpdateJournalAffiliationInput 
@@ -9,7 +9,7 @@ import {
 export class JournalAffiliationRepository
 {
     constructor(
-        private readonly model: PrismaDatabase['journalAffiliation']
+        private readonly model: Database['journalAffiliation']
     ) {}
 
     async findManyByJournalId(journalId: Id): Promise<JournalAffiliation[]>

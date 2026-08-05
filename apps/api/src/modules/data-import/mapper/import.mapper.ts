@@ -7,6 +7,8 @@ export const toImportFile = (file: Express.Multer.File): ImportFile => {
     const rows: ImportRow[] = parse(csvString, {
         columns: true,
         skip_empty_lines: true,
+        delimiter: ';',
+        trim: true,
     });
 
     return {

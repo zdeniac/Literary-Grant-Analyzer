@@ -4,32 +4,27 @@ import { validateHeaders, validateRows } from "../validation/data-import.validat
 import { ImportBlueprintRegistry } from "../registry/import-blueprint.registry";
 import { isCompositeRelationBlueprint, isRelationalModelBlueprint } from "../types/guards.types";
 import { ImportJobRepository } from "../repository/import-job.repository";
-import { CreateSourceDocumentInput } from "../../source-document/dto/source-document.input.dto";
-import { EventDispatcher } from "../../../common/events/event-dispatcher";
-import { ImportCompletedWithSourceDocumentsEvent } from "../event/import-completed-with-documents.event";
+import { ImportJobDto } from "../dto/import-job.dto";
+import { toImportJobDto } from "../mapper/import-job.mapper";
 
 export class ImportService
 {
     constructor(
         private readonly importJobRepository: ImportJobRepository,
-        private readonly eventDispatcher: EventDispatcher,
         private readonly registry: ImportBlueprintRegistry,
         private readonly writers: Record<ModelName, ImportWriterInterface<ImportRow>>,
         private readonly relationResolvers: RelationResolverRegistry,
         private readonly options: ImportOptions = {},
     ) {}
 
-    public async import(
-        model: ModelName, 
-        file: ImportFile, 
-        sourceDocuments?: CreateSourceDocumentInput[]
-    ): Promise<number> {
+    public async import(model: ModelName, file: ImportFile): Promise<ImportJobDto> 
+    {
         const job = await this.importJobRepository.create({
             model,
             mimeType: file.mimeType,
             fileName: file.fileName,
             totalRows: file.rows.length,
-        });
+        })
 
         try {
             const blueprint = this.registry.getOrThrow(model);
@@ -52,20 +47,9 @@ export class ImportService
             }
 
             const total = await writer.createMany(validatedRows);
-
             const importJob = await this.importJobRepository.complete(job.id, total);
 
-            if (sourceDocuments?.length && total > 0) {
-                this.eventDispatcher.dispatch(
-                    new ImportCompletedWithSourceDocumentsEvent(
-                        importJob.id,
-                        total,
-                        sourceDocuments
-                    )
-                );
-            }
-
-            return total;
+            return toImportJobDto(importJob);
         } catch(error) {
             if (error instanceof ImportValidationError) {
                 await this.importJobRepository.fail(job.id, {

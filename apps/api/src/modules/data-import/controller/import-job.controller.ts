@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { ImportJobService } from "../service/import-job.service";
 import { sendData } from "../../../common/http/response";
-import { toImportJob } from "../mapper/import-job.mapper";
+import { toImportJobDto } from "../mapper/import-job.mapper";
 
 export class ImportJobController
 {
@@ -17,7 +17,7 @@ export class ImportJobController
 
         sendData(
             res, 
-            importJobs.map(toImportJob), 
+            importJobs.map(toImportJobDto), 
             { total: importJobs.length }
         );
     }

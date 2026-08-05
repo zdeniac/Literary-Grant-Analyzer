@@ -1,29 +1,28 @@
-import { ImportJob, ImportJobStatus } from "@prisma/client";
+import { ImportJobStatus } from "@prisma/client";
 import { Id } from "../../../common/types/types";
-import { PrismaDatabase } from "../../../db/types";
-import { CreateImportJobInput, UpdateImportJobInput } from "../dto/import-job.dto";
+import { Database } from "../../../db/types";
+import { CreateImportJobInput, ImportJobEntity, UpdateImportJobInput } from "../dto/import-job.dto";
 
 export class ImportJobRepository
 {
     constructor(
-        private readonly model: PrismaDatabase['importJob']
+        private readonly model: Database['importJob']
     ) {}
 
-    async create(data: CreateImportJobInput): Promise<ImportJob>
+    async create(data: CreateImportJobInput): Promise<ImportJobEntity>
     {
         return this.model.create({
             data: {
                 model: data.model,
                 fileName: data.fileName,
                 mimeType: data.mimeType,
-                sourceDocumentId: data.sourceDocumentId,
                 status: ImportJobStatus.RUNNING,
                 totalRows: data.totalRows,
             }
         });
     }
 
-    async findById(id: Id): Promise<ImportJob | null>
+    async findById(id: Id): Promise<ImportJobEntity | null>
     {
         return this.model.findUnique({
             where: {
@@ -32,12 +31,12 @@ export class ImportJobRepository
         });
     }
     
-    async findAll(): Promise<ImportJob[]>
+    async findAll(): Promise<ImportJobEntity[]>
     {
         return this.model.findMany();
     }
 
-    async update(id: Id,data: UpdateImportJobInput): Promise<ImportJob>
+    async update(id: Id,data: UpdateImportJobInput): Promise<ImportJobEntity>
     {
         return this.model.update({
             where: {
@@ -47,7 +46,7 @@ export class ImportJobRepository
         });
     }
 
-    async complete(id: Id, importedRows: number): Promise<ImportJob>
+    async complete(id: Id, importedRows: number): Promise<ImportJobEntity>
     {
         return this.model.update({
             where: {
@@ -61,7 +60,7 @@ export class ImportJobRepository
         });
     }
 
-    async fail(id: Id, input: { errorMessage: string; failedRows?: number; }): Promise<ImportJob>
+    async fail(id: Id, input: { errorMessage: string; failedRows?: number; }): Promise<ImportJobEntity>
     {
         return this.model.update({
             where: {

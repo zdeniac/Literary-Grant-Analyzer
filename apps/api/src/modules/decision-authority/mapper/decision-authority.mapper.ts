@@ -1,7 +1,7 @@
 import { DtoMapper } from "../../../common/types/types";
-import { DecisionAuthorityDto, DecisionAuthorityModel } from "../dto/decision-authority.dto";
+import { DecisionAuthorityDto, DecisionAuthorityEntity } from "../dto/decision-authority.dto";
 
-export const toDecisionAuthorityDto: DtoMapper<DecisionAuthorityModel, DecisionAuthorityDto> = (
+export const toDecisionAuthorityDto: DtoMapper<DecisionAuthorityEntity, DecisionAuthorityDto> = (
     decisionAuthority
 ) => ({
     id: decisionAuthority.id,

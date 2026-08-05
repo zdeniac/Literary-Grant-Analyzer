@@ -19,7 +19,7 @@ export const ImportErrorList = ({
                     {rowError.issues.map((issue, index) => (
                         <li key={index}>
                             <Typography component="span">
-                                { issue.message }
+                                { issue.message } (path: {issue.path.join(', ') })
                             </Typography>
                         </li>
                     ))}

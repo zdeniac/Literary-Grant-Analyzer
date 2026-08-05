@@ -3,6 +3,7 @@ model AwardDecision {
 	
   amount            Decimal?
   purpose           String?
+  
   // The inner identifier of the source
   sourceIdentifier  String?         
   decisionDate      DateTime

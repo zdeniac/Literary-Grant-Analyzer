@@ -1,8 +1,8 @@
 import { AwardDecisionWithActorsDto } from "../dto/award-decision.dto";
 import { DtoMapper } from "../../../common/types/types";
-import { AwardDecisionWithActors } from "../types/award-decision.types";
+import { AwardDecisionEntityWithActors } from "../types/award-decision.types";
 
-export const toAwardDecisionWithActorsDto: DtoMapper<AwardDecisionWithActors, AwardDecisionWithActorsDto> = (
+export const toAwardDecisionWithActorsDto: DtoMapper<AwardDecisionEntityWithActors, AwardDecisionWithActorsDto> = (
     awardDecisionWithActors
 ) => ({
     id: awardDecisionWithActors.id,

@@ -1,4 +1,4 @@
-import { PrismaDatabase } from "../types";
+import { Database } from "../types";
 import { PrismaCrudRepository } from "./prisma-crud-repository";
 import { AwardDecisionRepository } from "../../modules/award-decision/award-decision.repository";
 import { ActorRepository } from "../../modules/actor/actor.repository";
@@ -7,8 +7,8 @@ import { CreateOrganizationWithActorIdInput, UpdateOrganizationInput } from "../
 import { CreateAwardSchemeInput, UpdateAwardSchemeInput } from "../../modules/award-scheme/dto/award-scheme.input.dto";
 import { OrganizationModel } from "../../modules/organization/dto/organization.dto";
 import { AwardSchemeModel } from "../../modules/award-scheme/dto/award-scheme.dto";
-import { DecisionAuthorityModel } from "../../modules/decision-authority/dto/decision-authority.dto";
-import { SourceDocumentModel } from "../../modules/source-document/dto/source-document.dto";
+import { DecisionAuthorityEntity } from "../../modules/decision-authority/dto/decision-authority.dto";
+import { SourceDocumentEntity } from "../../modules/source-document/dto/source-document.dto";
 import { CreateSourceDocumentInput, UpdateSourceDocumentInput } from "../../modules/source-document/dto/source-document.input.dto";
 import { JournalAffiliationRepository } from "../../modules/journal-affiliation/journal-affiliation.repository";
 import { ImportJobRepository } from "../../modules/data-import/repository/import-job.repository";
@@ -17,7 +17,7 @@ import { PersonDto } from "../../modules/person/dto/person.dto";
 import { CreatePersonWithActorIdInput, UpdatePersonInput } from "../../modules/person/dto/person.input";
 import { CreateDecisionAuthorityWithActorIdInput, UpdateDecisionAuthorityInput } from "../../modules/decision-authority/dto/decision-authority.input.dto";
 
-export function createRepositories(db: PrismaDatabase)
+export function createRepositories(db: Database)
 {
     let actor: ActorRepository | undefined;
 
@@ -39,7 +39,7 @@ export function createRepositories(db: PrismaDatabase)
     > | undefined;
     
     let decisionAuthority: PrismaCrudRepository<
-        DecisionAuthorityModel, 
+        DecisionAuthorityEntity, 
         CreateDecisionAuthorityWithActorIdInput, 
         UpdateDecisionAuthorityInput
     > | undefined;
@@ -47,7 +47,7 @@ export function createRepositories(db: PrismaDatabase)
     let awardDecision: AwardDecisionRepository | undefined;
 
     let sourceDocument: PrismaCrudRepository<
-        SourceDocumentModel, 
+        SourceDocumentEntity, 
         CreateSourceDocumentInput, 
         UpdateSourceDocumentInput
     > | undefined;

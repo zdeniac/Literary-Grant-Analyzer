@@ -1,7 +1,7 @@
 import { AwardDecisionDto } from "../dto/award-decision.dto";
-import { AwardDecisionModel } from "../types/award-decision.types";
+import { AwardDecisionEntity } from "../types/award-decision.types";
 
-export const toAwardDecisionDto = (awardDecision: AwardDecisionModel): AwardDecisionDto => ({
+export const toAwardDecisionDto = (awardDecision: AwardDecisionEntity): AwardDecisionDto => ({
     id: awardDecision.id,
 
     amount: awardDecision.amount,

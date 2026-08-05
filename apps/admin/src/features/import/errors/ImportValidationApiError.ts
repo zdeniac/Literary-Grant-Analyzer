@@ -5,6 +5,7 @@ export type ImportRowError = {
 
 type ImportIssue = {
     message: string;
+    path: string[];
     field?: string;
     value?: unknown;
 };

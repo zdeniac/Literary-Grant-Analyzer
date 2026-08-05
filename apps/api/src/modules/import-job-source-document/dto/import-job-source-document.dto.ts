@@ -1,6 +1,6 @@
 import { Id } from "../../../common/types/types";
 
-export type ImportJobSourceDocumentModel = ImportJobSourceDocumentDto;
+export type ImportJobSourceDocumentEntity = ImportJobSourceDocumentDto;
 export type CreateImportJobSourceDocumentDto = Omit<ImportJobSourceDocumentDto, 'id'>;
 
 export type ImportJobSourceDocumentDto = {

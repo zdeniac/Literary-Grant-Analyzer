@@ -10,10 +10,10 @@ model Organization {
 	actorId			Int 		@unique
 	actor			Actor 		@relation(fields: [actorId], references: [id], onDelete: Restrict)
 	
-	journalAffiliations		JournalAffiliation[]
-	decisionAuthorities		DecisionAuthority[]
-	awardSchemes			AwardScheme[]
-	sourceDocuments			SourceDocument[]
+	journalAffiliations				JournalAffiliation[]
+	decisionAuthorities				DecisionAuthority[]
+	awardSchemes					AwardScheme[]
+	issuedSourceDocuments			SourceDocument[]
 
 	createdAt 		DateTime 	@default(now())
 	updatedAt 		DateTime 	@updatedAt
@@ -31,10 +31,10 @@ enum Sector  {
 	// állami vagy önkormányzati fenntartású, illetve közvetlen állami kontroll alatt álló szervezetek
 	PUBLIC
 
-	// a civil szektor szervezetei (egyesületek, független alapítványok, nonprofit szervezetek)
+	// civil szektor szervezetei (egyesületek, önálló alapítványok, nonprofit szervezetek)
 	CIVIL
 
-	// a piaci szereplők (jellemzően gazdasági társaságok)
+	// piaci szereplők (jellemzően gazdasági társaságok)
 	MARKET
 
 	OTHER

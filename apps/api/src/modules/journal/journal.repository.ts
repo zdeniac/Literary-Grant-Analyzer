@@ -1,4 +1,4 @@
-import { PrismaDatabase } from "../../db/types";
+import { Database } from "../../db/types";
 import { JournalWithOrganizations, JournalWithOrganizationsAndSourceDocument } from "./types/journal.types";
 import { Id } from "../../common/types/types";
 import { CreateJournalInput, CreateJournalWithAffiliationsInput } from "./dto/journal.input.dto";
@@ -8,7 +8,7 @@ import { Journal } from "@prisma/client";
 export class JournalRepository
 {
     constructor(
-        private readonly model: PrismaDatabase['journal']
+        private readonly model: Database['journal']
     ) {}
 
     async create(data: CreateJournalInput): Promise<Journal>

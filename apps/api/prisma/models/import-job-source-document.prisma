@@ -5,5 +5,7 @@ model ImportJobSourceDocument {
     importJob        ImportJob      @relation(fields: [importJobId], references: [id], onDelete: Cascade)
     sourceDocument   SourceDocument @relation(fields: [sourceDocumentId], references: [id], onDelete: Restrict)
 
+    createdAt        DateTime @default(now())
+
     @@id([importJobId, sourceDocumentId])
 }
