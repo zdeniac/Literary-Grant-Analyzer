@@ -11,4 +11,5 @@ export type LookupQueryOptions = {
 export interface ImportLookupInterface<TEntity>
 {
     findManyBy(field: string, values: unknown[], options?: LookupQueryOptions): Promise<TEntity[]>;
+    //normalizeValue(field: string, value: unknown): unknown;
 }

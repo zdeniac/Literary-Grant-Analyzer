@@ -1,34 +1,33 @@
-import { ImportLookup } from "../handler/import-lookup";
 import { ImportLookupRegistry } from "../registry/import-lookup.registry";
 import { ImportRepositoryRegistry } from "../registry/import-repository.registry";
-import { orgNameLookupConfig } from "./lookup-configs.factory";
+import { createImportLookup } from "./import-lookup.factory";
+import { awardSchemeLookupConfig, decisionAuthorityLookupConfig, organizationLookupConfig, sourceDocumentLookupConfig } from "./lookup-configs.factory";
 
 export const createImportLookupRegistry = (repos: ImportRepositoryRegistry) => (
     new ImportLookupRegistry([
         [
             'journal', 
-            new ImportLookup(repos.getOrThrow('journal'), 
-            orgNameLookupConfig
-        )],
-        [
-            'organization', 
-            new ImportLookup(repos.getOrThrow('organization'))
+            createImportLookup('journal', repos), 
         ],
         [
-            'awardScheme', 
-            new ImportLookup(repos.getOrThrow('awardScheme'))
+            'organization',
+            createImportLookup('organization', repos, organizationLookupConfig), 
         ],
         [
-            'decisionAuthority', 
-            new ImportLookup(repos.getOrThrow('decisionAuthority'))
+            'awardScheme',
+            createImportLookup('awardScheme', repos, awardSchemeLookupConfig), 
         ],
         [
-            'awardDecision', 
-            new ImportLookup(repos.getOrThrow('awardDecision'))
+            'decisionAuthority',
+            createImportLookup('decisionAuthority', repos, decisionAuthorityLookupConfig), 
         ],
         [
-            'sourceDocument', 
-            new ImportLookup(repos.getOrThrow('sourceDocument'))
+            'awardDecision',
+            createImportLookup('awardDecision', repos), 
+        ],
+        [
+            'sourceDocument',
+            createImportLookup('sourceDocument', repos, sourceDocumentLookupConfig), 
         ]
 
     ])

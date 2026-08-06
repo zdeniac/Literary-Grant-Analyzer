@@ -10,9 +10,9 @@ export const ImportErrorList = ({
         <AlertTitle>Importálási hibák</AlertTitle>
 
         {errors.map((rowError) => (
-            <div key={rowError.row}>
+            <div key={rowError.rowNum}>
                 <Typography fontWeight="bold">
-                    {rowError.row}. sor
+                    {rowError.rowNum}. sor
                 </Typography>
 
                 <ul style={{ marginTop: 4, marginBottom: 12 }}>

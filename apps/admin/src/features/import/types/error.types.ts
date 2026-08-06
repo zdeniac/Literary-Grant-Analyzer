@@ -1,5 +1,5 @@
 export type ImportRowError = {
-    row: number;
+    rowNum: number;
     issues: ImportIssue[];
 };
 

@@ -10,9 +10,7 @@ export class ImportLookupRegistry extends ImportRegistry<EntityName, ImportLooku
         const lookup = this.get(entity);
 
         if (!lookup) {
-            throw new ImportError(
-                `Missing lookup for ${entity}`
-            );
+            throw new ImportError(`Missing lookup for ${entity}.`);
         }
 
         return lookup;

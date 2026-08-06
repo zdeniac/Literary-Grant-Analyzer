@@ -127,14 +127,43 @@ export const ImportForm = ({
                 }}
             >
 
-                <FileInput 
+                <FormDataConsumer>
+                    {({ formData }) => {
+                        const file = formData.file?.rawFile;
+
+                        if (!file) {
+                            return null;
+                        }
+
+                        return (
+                            <Box
+                                sx={{
+                                    mt: 0,
+                                    px: 2,
+                                    py: 1,
+                                    borderRadius: 1,
+                                    backgroundColor: 'success.dark',
+                                    color: 'white',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: 1,
+                                }}
+                            >
+                                ✓ Csatolva: {file.name}
+                            </Box>
+                        );
+                    }}
+                </FormDataConsumer>
+
+                <FileInput
                     source="file" 
                     name="file"
                     validate={required()}
                     multiple={false} 
                     accept={{'text/csv' : ['.csv']}}
+
                 />
-            
+
                 <BooleanInput label="Dokumentumok adatainak mentése" 
                                 source="saveSourceDocument"
                 />

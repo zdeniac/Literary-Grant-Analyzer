@@ -1,11 +1,11 @@
 import { ImportError } from "../error/import.errors";
 import { ImportTargetRepository } from "../repository/import-target.repository";
 import { ImportRegistry } from "./import-registry";
-import { ImportableEntityName } from "../constants/importable-models";
+import { EntityName } from "../../../common/types/types";
 
-export class ImportRepositoryRegistry extends ImportRegistry<ImportableEntityName, ImportTargetRepository<any, any>>
+export class ImportRepositoryRegistry extends ImportRegistry<EntityName, ImportTargetRepository<any, any>>
 {
-    getOrThrow(entity: ImportableEntityName): ImportTargetRepository<any, any>
+    getOrThrow(entity: EntityName): ImportTargetRepository<any, any>
     {
         const repository = this.get(entity);
 

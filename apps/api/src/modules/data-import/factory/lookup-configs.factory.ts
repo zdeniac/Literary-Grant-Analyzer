@@ -1,9 +1,12 @@
-import { toLowerCase, trim } from "zod";
 import { LookupConfig } from "../types/import-lookup.types";
 
-export const orgNameLookupConfig: LookupConfig = new Map([
+export const trim = (value: unknown): string => String(value).trim();
+
+export const toLowerCase = (value: unknown): string => String(value).toLowerCase();
+
+export const organizationLookupConfig: LookupConfig = new Map([
     [
-        'organizationName',
+        'name',
         {
             normalizers: [
                 trim,
@@ -15,3 +18,51 @@ export const orgNameLookupConfig: LookupConfig = new Map([
         }
     ]
 ]);
+
+export const awardSchemeLookupConfig: LookupConfig = new Map([
+    [
+        'name',
+        {
+            normalizers: [
+                trim,
+                toLowerCase
+            ],
+            query: {
+                mode: 'insensitive'
+            }
+        }
+    ]
+]);
+
+export const decisionAuthorityLookupConfig: LookupConfig = new Map([
+    [
+        'name',
+        {
+            normalizers: [
+                trim,
+                toLowerCase
+            ],
+            query: {
+                mode: 'insensitive'
+            }
+        }
+    ]
+]);
+
+
+export const sourceDocumentLookupConfig: LookupConfig = new Map([
+    [
+        'url',
+        {
+            normalizers: [
+                trim,
+                toLowerCase
+            ],
+            query: {
+                mode: 'insensitive'
+            }
+        }
+    ]
+]);
+
+

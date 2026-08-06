@@ -3,10 +3,54 @@ import { ImportRelationError } from "../error/import.errors";
 import { ImportLookupRegistry } from "../registry/import-lookup.registry";
 import { ImportFileRowError } from "../types/error.types";
 import { CompositeImportLookup, CompositeRelationImportBlueprint } from "../types/import-blueprint.types";
-import { 
-    ImportRow, 
-} from "../types/import.types";
+import { ImportLookupInterface } from "../types/import-lookup.types";
+import { ImportRow } from "../types/import.types";
 import { RelationResolverInterface } from "../types/service.types";
+
+/*
+|--------------------------------------------------------------------------
+| TODO - CompositeRelationResolver refactor
+|--------------------------------------------------------------------------
+|
+| A jelenlegi implementáció működik, de több kompromisszumot tartalmaz.
+|
+| 1. Egységesíteni a SimpleRelationResolverrel
+|    - jelenleg a Simple és Composite resolver sok logikát duplikál
+|      (lookup, validáció, transzformáció).
+|    - a közös részeket érdemes egy közös absztrakcióba kiszervezni.
+|
+| 2. A lookup stratégiát külön objektummá/emelő osztállyá alakítani
+|    - a resolveTargetRelation jelenleg egyszerre építi fel a keresési
+|      stratégiát és hajtja végre a feloldást.
+|    - célszerű lenne egy egységes "resolved lookup" modellt használni.
+|
+| 3. Normalizáció egységesítése
+|    - jelenleg minden összehasonlításnál figyelni kell arra,
+|      hogy melyik mezőhöz melyik ImportLookup tartozik.
+|    - ezt a logikát a resolverből el kellene tüntetni.
+|
+| 4. foreignData indexelése
+|    - jelenleg minden import sor végigiterál az összes foreignData elemen.
+|    - nagy adatmennyiségnél ez O(n*m).
+|    - érdemes lenne egy composite kulcs -> rekord Map-et építeni,
+|      így a keresés O(1) lehetne.
+|
+| 5. Nested lookup kezelés egyszerűsítése
+|    - jelenleg két lépcsőben történik:
+|      import value
+|            ↓
+|      foreign entity
+|            ↓
+|      generated foreign key
+|            ↓
+|      composite relation
+|    - hosszabb távon érdemes lenne ezt deklaratívabbá tenni.
+|
+| 6. Relation matching külön komponensbe
+|    - a "criteria.every(...)" logika jelenleg a resolver része.
+|    - ezt külön matcher/strategy objektumba lehetne kiszervezni.
+|--------------------------------------------------------------------------
+*/
 
 export class CompositeRelationResolver implements RelationResolverInterface<CompositeRelationImportBlueprint>
 {
@@ -44,14 +88,18 @@ export class CompositeRelationResolver implements RelationResolverInterface<Comp
             const entity = lookup.foreignEntity!;
 
             const values = workingRows.map(row => row[sourceField]);
-            const foreignData = 
-                await this.lookupRegistry.getOrThrow(entity).findManyBy(lookupField, values);
+
+            const importLookup = this.lookupRegistry.getOrThrow(entity);
+            const normalize = (value: unknown) => importLookup.normalize(lookupField, value);
+
+            const foreignData =  await importLookup.findManyBy(lookupField, values);
 
             const found = new Map<unknown, Record<string, unknown>>();
             const duplicatedKeys = new Set<unknown>();
-
+            
             for (const item of foreignData) {
-                const key = item[lookupField];
+                const key = normalize(item[lookupField]);
+
                 if (found.has(key)) {
                     duplicatedKeys.add(key);
                 } else {
@@ -65,7 +113,7 @@ export class CompositeRelationResolver implements RelationResolverInterface<Comp
                 workingRows.forEach((row, rowIndex) => {
                     const value = row[sourceField];
 
-                    if (duplicatedKeys.has(value)) {
+                    if (duplicatedKeys.has(normalize(value))) {
                         issues.push({
                             rowNum: rowIndex + 2,
                             issues: [{
@@ -87,7 +135,7 @@ export class CompositeRelationResolver implements RelationResolverInterface<Comp
             workingRows.forEach((row, rowIndex) => {
                 const value = row[sourceField];
 
-                if (!found.has(value)) {
+                if (!found.has(normalize(value))) {
                     missing.push({
                         rowNum: rowIndex + 2,
                         issues: [{
@@ -104,7 +152,7 @@ export class CompositeRelationResolver implements RelationResolverInterface<Comp
             }
 
             workingRows = workingRows.map(row => {
-                const relatedRecord = found.get(row[sourceField])!;
+                const relatedRecord = found.get(normalize(row[sourceField]))!;
                 return {
                     ...row,
                     [foreignKey]: relatedRecord.id,
@@ -117,27 +165,33 @@ export class CompositeRelationResolver implements RelationResolverInterface<Comp
 
     private async resolveTargetRelation(
         rows: ImportRow[], 
-        relationBlueprint: CompositeRelationImportBlueprint
+        relationBlueprint: CompositeRelationImportBlueprint,
     ): Promise<ImportRow[]> {
         const entity: EntityName = relationBlueprint.entity;
 
-        const directLookups = relationBlueprint.lookup.filter(lookup => typeof lookup.foreignEntity === 'undefined');
-
-        const nestedKeyLookups = relationBlueprint.lookup
-            .filter(
-                lookup => typeof lookup.foreignEntity !== 'undefined' && typeof lookup.foreignKey !== 'undefined'
-            )
-            .map(lookup => ({
-                sourceField: lookup.foreignKey!,
-                lookupField: lookup.foreignKey!,
-            }));
+        const directLookups = relationBlueprint.lookup.filter(
+            lookup => typeof lookup.foreignEntity === 'undefined'
+        );
 
         const criteria = [
             ...directLookups.map(lookup => ({
                 sourceField: lookup.sourceField,
                 lookupField: lookup.lookupField,
+                importLookup: this.lookupRegistry.getOrThrow(entity),
             })),
-            ...nestedKeyLookups,
+            ...relationBlueprint.lookup
+                .filter(
+                    lookup =>
+                        lookup.foreignEntity !== undefined &&
+                        lookup.foreignKey !== undefined
+                )
+                .map(lookup => ({
+                    sourceField: lookup.foreignKey!,
+                    lookupField: lookup.foreignKey!,
+                    importLookup: this.lookupRegistry.getOrThrow(
+                        lookup.foreignEntity!
+                    ),
+                })),
         ];
 
         if (!criteria.length) {
@@ -157,12 +211,16 @@ export class CompositeRelationResolver implements RelationResolverInterface<Comp
 
     private async collectForeignData(
         entity: EntityName, 
-        criteria: Array<{ sourceField: string; lookupField: string; }>, 
+        lookupStrategy: Array<{
+            sourceField: string;
+            lookupField: string;
+            importLookup: ImportLookupInterface<any>;
+        }>, 
         rows: ImportRow[]
     ): Promise<Record<string, unknown>[]> {
         const foreignData: Record<string, unknown>[] = [];
 
-        for (const criterion of criteria) {
+        for (const criterion of lookupStrategy) {
             const values = rows.map(row => row[criterion.sourceField]);
             const data = 
                 await this.lookupRegistry.getOrThrow(entity)
@@ -184,21 +242,35 @@ export class CompositeRelationResolver implements RelationResolverInterface<Comp
         rows: ImportRow[], 
         relationBlueprint: CompositeRelationImportBlueprint, 
         foreignData: Record<string, unknown>[],
-        criteria: Array<{ sourceField: string; lookupField: string; }>
+        lookupStrategy: Array<{
+            sourceField: string;
+            lookupField: string;
+            importLookup: ImportLookupInterface<any>;
+        }>, 
     ): ImportRow[] {
         const missing: ImportFileRowError[] = [];
 
         const transformedRows = rows.map((row, rowIndex) => {
-            const matches = foreignData.filter(item =>
-                criteria.every(({ sourceField, lookupField }) => item[lookupField] === row[sourceField])
-            );
+            const matches = foreignData.filter(item => {
+                return lookupStrategy.every(({ sourceField, lookupField, importLookup }) => {
+                    const dbValue = lookupField === sourceField
+                        ? item[lookupField]
+                        : importLookup.normalize(lookupField, item[lookupField]);
+
+                    const importValue = lookupField === sourceField
+                        ? row[sourceField]
+                        : importLookup.normalize(lookupField, row[sourceField]);
+
+                    return dbValue === importValue;
+                })
+            });
 
             if (matches.length !== 1) {
                 missing.push({
                     rowNum: rowIndex + 2,
                     issues: [{
                         field: relationBlueprint.foreignKey,
-                        value: criteria.map(({ sourceField }) => row[sourceField]),
+                        value: lookupStrategy.map(({ sourceField }) => row[sourceField]),
                         message: matches.length === 0
                             ? `No ${Array.isArray(relationBlueprint.entity) 
                                 ? relationBlueprint.entity.join(', ') 
