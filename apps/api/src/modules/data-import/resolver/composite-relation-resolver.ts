@@ -1,14 +1,20 @@
+import { EntityName } from "../../../common/types/types";
 import { ImportRelationError } from "../error/import.errors";
 import { ImportLookupRegistry } from "../registry/import-lookup.registry";
-import { CompositeLookup, CompositeRelationBlueprint, ImportLookupInterface, ImportRow, ImportRowError, EntityName, RelationResolverInterface } from "../types/import.types";
+import { ImportRowError } from "../types/error.types";
+import { CompositeImportLookup, CompositeRelationImportBlueprint } from "../types/import-blueprint.types";
+import { 
+    ImportRow, 
+} from "../types/import.types";
+import { RelationResolverInterface } from "../types/service.types";
 
-export class CompositeRelationResolver implements RelationResolverInterface<CompositeRelationBlueprint>
+export class CompositeRelationResolver implements RelationResolverInterface<CompositeRelationImportBlueprint>
 {
     constructor(
         private readonly lookupRegistry: ImportLookupRegistry
     ) {}
 
-    public async resolve(rows: ImportRow[], relationBlueprint: CompositeRelationBlueprint): Promise<ImportRow[]>
+    public async resolve(rows: ImportRow[], relationBlueprint: CompositeRelationImportBlueprint): Promise<ImportRow[]>
     {
         if (!rows.length) {
             return [];
@@ -27,7 +33,7 @@ export class CompositeRelationResolver implements RelationResolverInterface<Comp
         return await this.resolveTargetRelation(workingRows, relationBlueprint);
     }
 
-    private async resolveNestedLookups(rows: ImportRow[], lookups: CompositeLookup): Promise<ImportRow[]>
+    private async resolveNestedLookups(rows: ImportRow[], lookups: CompositeImportLookup): Promise<ImportRow[]>
     {
         let workingRows = rows.map(row => ({ ...row }));
 
@@ -111,7 +117,7 @@ export class CompositeRelationResolver implements RelationResolverInterface<Comp
 
     private async resolveTargetRelation(
         rows: ImportRow[], 
-        relationBlueprint: CompositeRelationBlueprint
+        relationBlueprint: CompositeRelationImportBlueprint
     ): Promise<ImportRow[]> {
         const entity: EntityName = relationBlueprint.entity;
 
@@ -176,7 +182,7 @@ export class CompositeRelationResolver implements RelationResolverInterface<Comp
 
     private applyRelation(
         rows: ImportRow[], 
-        relationBlueprint: CompositeRelationBlueprint, 
+        relationBlueprint: CompositeRelationImportBlueprint, 
         foreignData: Record<string, unknown>[],
         criteria: Array<{ sourceField: string; lookupField: string; }>
     ): ImportRow[] {

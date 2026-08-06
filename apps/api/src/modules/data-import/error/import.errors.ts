@@ -1,5 +1,5 @@
 import { AppError } from "../../../common/errors/app.error";
-import { ImportRowError } from "../types/import.types";
+import { ImportRowError } from "../types/error.types";
 
 export class ImportError extends AppError 
 {

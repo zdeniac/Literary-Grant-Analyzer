@@ -7,8 +7,9 @@ export function errorHandler(
     req: Request,
     res: Response,
     next: NextFunction
-): void
-{
+): void {   
+    console.error(error);
+ 
     if (error instanceof ImportValidationError) {
         res.status(error.statusCode).json({
             error: (error as any).code ?? error.message,
@@ -26,8 +27,6 @@ export function errorHandler(
 
         return;
     }
-
-    console.error(error);
 
     res.status(500).json({
         error: 'Internal server error',

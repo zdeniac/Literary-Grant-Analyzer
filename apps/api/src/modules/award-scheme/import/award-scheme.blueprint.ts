@@ -1,8 +1,8 @@
 import { AwardSchemeType, FundingArea } from "@prisma/client";
-import { RelationalEntityBlueprint } from "../../data-import/types/import.types";
 import { importAwardSchemeSchema } from "../../award-scheme/validation/award-scheme.schema";
+import { RelationalEntityImportBlueprint } from "../../data-import/types/import-blueprint.types";
 
-export const awardSchemeBlueprint: RelationalEntityBlueprint = 
+export const awardSchemeBlueprint: RelationalEntityImportBlueprint = 
     {
         entity: 'awardScheme',
         fields: [

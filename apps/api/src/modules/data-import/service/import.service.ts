@@ -1,4 +1,4 @@
-import { ImportFile, ImportOptions, ImportRow, ImportWriterInterface, EntityName, RelationalEntityBlueprint, RelationResolverRegistry } from "../types/import.types";
+import { ImportFile, ImportOptions, ImportRow } from "../types/import.types";
 import { ImportEmptyFileError, ImportError, ImportValidationError } from "../error/import.errors";
 import { validateHeaders, validateRows } from "../validation/data-import.validation";
 import { ImportBlueprintRegistry } from "../registry/import-blueprint.registry";
@@ -7,6 +7,8 @@ import { ImportJobRepository } from "../repository/import-job.repository";
 import { ImportJobEntity } from "../dto/import-job.dto";
 import { ImportableEntityName } from "../constants/importable-models";
 import { ImportWriterRegistry } from "../registry/import-writer.registry";
+import { RelationalEntityImportBlueprint } from "../types/import-blueprint.types";
+import { RelationResolverRegistry } from "../types/service.types";
 
 export class ImportService
 {
@@ -69,7 +71,7 @@ export class ImportService
         }
     }
 
-    private async resolveRelations(rows: ImportRow[], blueprint: RelationalEntityBlueprint): Promise<ImportRow[]> 
+    private async resolveRelations(rows: ImportRow[], blueprint: RelationalEntityImportBlueprint): Promise<ImportRow[]> 
     {
         for (const relation of blueprint.relations) {
             if (isCompositeRelationBlueprint(relation)) {

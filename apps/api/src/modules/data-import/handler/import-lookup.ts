@@ -1,4 +1,4 @@
-import { ImportLookupInterface, LookupFieldConfig } from "../types/import.types";
+import { ImportLookupInterface, LookupFieldConfig } from "../types/import-lookup.types";
 
 export class ImportLookup<TEntity> implements ImportLookupInterface<TEntity>
 {

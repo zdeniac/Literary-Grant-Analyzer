@@ -1,5 +1,6 @@
-import { ImportLookupInterface, ImportWriterInterface, LookupQueryOptions } from "../types/import.types";
+import { ImportLookupInterface, LookupQueryOptions } from "../types/import-lookup.types";
 import { DatabaseDelegate } from "../../../db/types";
+import { ImportWriterInterface } from "../types/import.types";
 
 export class ImportTargetRepository<TEntity, TCreate> 
     implements ImportLookupInterface<TEntity>, ImportWriterInterface<TCreate>

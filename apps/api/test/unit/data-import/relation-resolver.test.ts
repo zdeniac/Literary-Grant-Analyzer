@@ -1,9 +1,12 @@
 import { describe, vi, it, expect, beforeEach } from "vitest";
 import { CompositeRelationResolver } from "../../../src/modules/data-import/resolver/composite-relation-resolver";
 import { SimpleRelationResolver } from "../../../src/modules/data-import/resolver/simple-relation-resolver";
-import { ImportLookupInterface, ImportRow, ImportWriterInterface, EntityName } from "../../../src/modules/data-import/types/import.types";
+import { ImportRow } from "../../../src/modules/data-import/types/import.types";
 import { JournalStatus } from "@prisma/client";
 import { ImportValidationError as ImportRelationError } from "../../../src/modules/data-import/error/import.errors";
+import { ImportLookupInterface } from "../../../src/modules/data-import/types/import-lookup.types";
+import { ImportWriterInterface } from "../../../src/modules/data-import/types/service.types";
+import { EntityName } from "../../../src/common/types/types";
 
 describe('RelationResolver', () => {
     const findManyBy = vi.fn<ImportLookupInterface<any>['findManyBy']>();

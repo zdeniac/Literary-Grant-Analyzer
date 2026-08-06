@@ -5,10 +5,9 @@ import { ImportSchemaService } from "../service/import-schema.service";
 import { CreateSourceDocumentInput } from "../../source-document/dto/source-document.input.dto";
 import { createSourceDocumentSchema } from "../../source-document/validation/source-document.schema";
 import { ImportError } from "../error/import.errors";
-import { EntityName } from "../types/import.types";
 import { ImportWorkflowService } from "../service/import-workflow-service";
 import { ImportableEntityName } from "../constants/importable-models";
-import { entityNameSchema } from "../validation/data-import.validation.schema";
+import { entityNameSchema } from "../../../common/validation/schema";
 
 export class ImportController
 {
@@ -36,7 +35,7 @@ export class ImportController
         }
 
         res.json({ 
-            data: this.schemaService.getSchema(parsedEntity.data as EntityName) 
+            data: this.schemaService.getSchema(parsedEntity.data as ImportableEntityName) 
         });
     }
 

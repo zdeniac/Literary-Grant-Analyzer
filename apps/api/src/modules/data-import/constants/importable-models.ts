@@ -6,7 +6,6 @@ export const importableEntityNames = [
     'awardScheme',
     'decisionAuthority',
     'awardDecision',
-    'sourceDocument',
 ] as const;
 
 export const importableEntityNameSchema = z.enum(importableEntityNames);

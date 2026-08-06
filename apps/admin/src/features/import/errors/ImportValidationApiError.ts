@@ -1,14 +1,4 @@
-export type ImportRowError = {
-    row: number;
-    issues: ImportIssue[];
-};
-
-type ImportIssue = {
-    message: string;
-    path: string[];
-    field?: string;
-    value?: unknown;
-};
+import type { ImportRowError } from "../types/error.types";
 
 export class ImportValidationApiError extends Error
 {

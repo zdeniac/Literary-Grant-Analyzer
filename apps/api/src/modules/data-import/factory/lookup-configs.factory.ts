@@ -1,5 +1,5 @@
 import { toLowerCase, trim } from "zod";
-import { LookupConfig } from "../types/import.types";
+import { LookupConfig } from "../types/import-lookup.types";
 
 export const orgNameLookupConfig: LookupConfig = new Map([
     [

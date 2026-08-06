@@ -1,16 +1,18 @@
-import { ImportError, ImportRelationError } from "../error/import.errors";
+import { ImportRelationError } from "../error/import.errors";
 import { ImportLookupRegistry } from "../registry/import-lookup.registry";
-import { ImportLookupInterface, ImportRow, ImportRowError, SimpleLookup, EntityName, RelationResolverInterface, SimpleRelationBlueprint } from "../types/import.types";
+import { ImportRowError } from "../types/error.types";
+import { SimpleImportLookup, SimpleRelationImportBlueprint } from "../types/import-blueprint.types";
+import { ImportRow, RelationResolverInterface } from "../types/import.types";
 
-export class SimpleRelationResolver implements RelationResolverInterface<SimpleRelationBlueprint>
+export class SimpleRelationResolver implements RelationResolverInterface<SimpleRelationImportBlueprint>
 {
     constructor(
         private readonly lookupRegistry: ImportLookupRegistry,
     ) {}
 
-    public async resolve(rows: ImportRow[], relationBlueprint: SimpleRelationBlueprint): Promise<ImportRow[]> 
+    public async resolve(rows: ImportRow[], relationBlueprint: SimpleRelationImportBlueprint): Promise<ImportRow[]> 
     {
-        const lookup: SimpleLookup = relationBlueprint.lookup;
+        const lookup: SimpleImportLookup = relationBlueprint.lookup;
 
         const sourceField = lookup.sourceField;
         const lookupField = lookup.lookupField;
@@ -48,7 +50,7 @@ export class SimpleRelationResolver implements RelationResolverInterface<SimpleR
 
     private validateRelations(
         rows: ImportRow[],
-        lookup: SimpleLookup,
+        lookup: SimpleImportLookup,
         found: Map<unknown, Record<string, unknown>>,
         multiple: boolean,
     ): void {
@@ -82,7 +84,7 @@ export class SimpleRelationResolver implements RelationResolverInterface<SimpleR
 
     private transformRows(
         rows: ImportRow[], 
-        relation: SimpleRelationBlueprint, 
+        relation: SimpleRelationImportBlueprint, 
         found: Map<unknown, Record<string, unknown>>,
     ): ImportRow[] {
         const {

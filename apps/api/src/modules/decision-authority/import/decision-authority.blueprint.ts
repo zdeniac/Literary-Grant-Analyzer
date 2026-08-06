@@ -1,7 +1,7 @@
-import { RelationalEntityBlueprint } from "../../data-import/types/import.types";
+import { RelationalEntityImportBlueprint } from "../../data-import/types/import-blueprint.types";
 import { importDecisionAuthoritySchema } from "../validation/decision-authority.schema";
 
-export const decisionAuthorityBlueprint: RelationalEntityBlueprint = 
+export const decisionAuthorityBlueprint: RelationalEntityImportBlueprint = 
     {
         entity: 'decisionAuthority',
         fields: [

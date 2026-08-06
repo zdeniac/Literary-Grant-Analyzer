@@ -1,16 +1,16 @@
-import { Blueprint, CompositeRelationBlueprint, RelationalEntityBlueprint, RelationBlueprint, SimpleRelationBlueprint } from "./import.types";
+import { ImportBlueprint, CompositeRelationImportBlueprint, RelationalEntityImportBlueprint, RelationImportBlueprint, SimpleRelationImportBlueprint } from "./import-blueprint.types";
 
-export function isRelationalEntityBlueprint(blueprint: Blueprint): blueprint is RelationalEntityBlueprint
+export function isRelationalEntityBlueprint(blueprint: ImportBlueprint): blueprint is RelationalEntityImportBlueprint
 {
     return 'relations' in blueprint;
 }
 
-export function isCompositeRelationBlueprint(relation: RelationBlueprint): relation is CompositeRelationBlueprint
+export function isCompositeRelationBlueprint(relation: RelationImportBlueprint): relation is CompositeRelationImportBlueprint
 {
     return Array.isArray(relation.lookup);
 }
 
-export function isSimpleRelationBlueprint(relation: RelationBlueprint): relation is SimpleRelationBlueprint
+export function isSimpleRelationBlueprint(relation: RelationImportBlueprint): relation is SimpleRelationImportBlueprint
 {
     return !Array.isArray(relation.lookup);
 }

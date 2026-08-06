@@ -1,8 +1,8 @@
 import { LegalForm, Sector } from "@prisma/client";
 import { importOrganizationSchema } from "../../organization/validation/organization.schema";
-import { EntityBlueprint } from "../../data-import/types/import.types";
+import { EntityImportBlueprint } from "../../data-import/types/import-blueprint.types";
 
-export const organizationBlueprint: EntityBlueprint = 
+export const organizationBlueprint: EntityImportBlueprint = 
     {
         entity: 'organization',
         fields: [

@@ -1,8 +1,8 @@
 import { JournalFormat, JournalStatus } from "@prisma/client";
 import { importJournalSchema } from "../../journal/validate/journal.schema";
-import { RelationalEntityBlueprint } from "../../data-import/types/import.types";
+import { RelationalEntityImportBlueprint } from "../../data-import/types/import-blueprint.types";
 
-export const journalBlueprint: RelationalEntityBlueprint = 
+export const journalBlueprint: RelationalEntityImportBlueprint = 
     {
         entity: 'journal',
         fields: [

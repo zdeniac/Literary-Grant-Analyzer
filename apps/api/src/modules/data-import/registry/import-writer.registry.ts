@@ -1,7 +1,7 @@
 import { ImportError } from "../error/import.errors";
 import { ImportableEntityName } from "../constants/importable-models";
-import { ImportWriterInterface } from "../types/import.types";
 import { ImportRegistry } from "./import-registry";
+import { ImportWriterInterface } from "../types/service.types";
 
 export class ImportWriterRegistry extends ImportRegistry<ImportableEntityName, ImportWriterInterface<any>>
 {

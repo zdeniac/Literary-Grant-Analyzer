@@ -1,5 +1,5 @@
 import { Alert, AlertTitle, Typography } from "@mui/material";
-import type { ImportRowError } from "../errors/ImportValidationApiError";
+import type { ImportRowError } from "../types/error.types";
 
 export const ImportErrorList = ({
     errors,
@@ -19,7 +19,7 @@ export const ImportErrorList = ({
                     {rowError.issues.map((issue, index) => (
                         <li key={index}>
                             <Typography component="span">
-                                { issue.message } (path: {issue.path.join(', ') })
+                                { issue.message } (path: { issue.path?.join(', ') })
                             </Typography>
                         </li>
                     ))}
