@@ -1,6 +1,6 @@
 import { repositoryContainer } from "../../../db/repositories/container";
 import { transaction } from "../../../db/transaction";
-import { ImportWriterInterface } from "../../data-import/types/import.types";
+import { ImportWriterInterface } from "../../data-import/types/service.types";
 import { ImportJournalWithOrganizationIdsInput } from "../dto/journal.input.dto";
 
 export class JournalImportWriter implements ImportWriterInterface<ImportJournalWithOrganizationIdsInput>

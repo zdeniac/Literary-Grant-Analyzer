@@ -230,8 +230,8 @@ describe('Data import validation', () => {
 
                 expect(e.errors).toHaveLength(2);
 
-                expect(e.errors[0].row).toBe(2);
-                expect(e.errors[1].row).toBe(3);
+                expect(e.errors[0].rowNum).toBe(2);
+                expect(e.errors[1].rowNum).toBe(3);
             }
         });
 
@@ -255,8 +255,8 @@ describe('Data import validation', () => {
                 const e = error as ImportValidationError;
 
                 expect(e.errors).toHaveLength(2);
-                expect(e.errors[0].row).toBe(3);
-                expect(e.errors[1].row).toBe(4);
+                expect(e.errors[0].rowNum).toBe(3);
+                expect(e.errors[1].rowNum).toBe(4);
             }
         });    
     });

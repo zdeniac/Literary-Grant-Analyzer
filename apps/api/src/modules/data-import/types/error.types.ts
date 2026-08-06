@@ -1,7 +1,7 @@
 import z from "zod";
 
-export type ImportRowError = {
-    row: number;
+export type ImportFileRowError = {
+    rowNum: number;
     issues: ImportIssue[] | z.core.$ZodIssue[];
 };
 

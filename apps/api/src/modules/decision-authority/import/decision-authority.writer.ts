@@ -1,8 +1,8 @@
 import { ActorType } from "@prisma/client";
 import { transaction } from "../../../db/transaction";
-import { ImportWriterInterface } from "../../data-import/types/import.types";
 import { repositoryContainer } from "../../../db/repositories/container";
 import { CreateDecisionAuthorityInput } from "../dto/decision-authority.input.dto";
+import { ImportWriterInterface } from "../../data-import/types/service.types";
 
 export class DecisionAuthorityImportWriter implements ImportWriterInterface<CreateDecisionAuthorityInput>
 {
@@ -20,8 +20,9 @@ export class DecisionAuthorityImportWriter implements ImportWriterInterface<Crea
                 );
 
                 await dAuthRepository.create({
-                    ...row,
-                    actorId: actor.id
+                    name: row.name,
+                    organizationId: row.organizationId,
+                    actorId: actor.id,
                 });
             }
 

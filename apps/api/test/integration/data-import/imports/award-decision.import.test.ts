@@ -1,14 +1,14 @@
 import { describe, expect, it, beforeEach, afterAll } from "vitest";
-import { ImportFile } from "../../../src/modules/data-import/types/import.types";
-import { ImportValidationError } from "../../../src/modules/data-import/error/import.errors";
+import { ImportFile } from "../../../../src/modules/data-import/types/import.types";
+import { ImportValidationError } from "../../../../src/modules/data-import/error/import.errors";
 import { LegalForm, Sector, AwardSchemeType, FundingArea } from "@prisma/client";
-import { prisma } from "../../../src/db/prisma";
-import { wipeDatabase } from "../helpers/db.helper";
-import { createOrganization } from "../helpers/factories/organization.factory";
-import { createImportModule } from "../../../src/modules/data-import/factory/import.factory";
-import { createAwardScheme } from "../helpers/factories/award-scheme.factory";
-import { createDecisionAuthority } from "../helpers/factories/decision-authority.factory";
-import { createSourceDocument } from "../helpers/factories/source-document.factory";
+import { prisma } from "../../../../src/db/prisma";
+import { wipeDatabase } from "../../helpers/db.helper";
+import { createOrganization } from "../../helpers/factories/organization.factory";
+import { createImportModule } from "../../../../src/modules/data-import/factory/import.factory";
+import { createAwardScheme } from "../../helpers/factories/award-scheme.factory";
+import { createDecisionAuthority } from "../../helpers/factories/decision-authority.factory";
+import { createSourceDocument } from "../../helpers/factories/source-document.factory";
 
 describe('AwardDecision Import Service', () => {
     const importer = createImportModule().service;

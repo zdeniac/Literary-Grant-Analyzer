@@ -1,4 +1,4 @@
-import { ImportWriterInterface } from "../types/import.types";
+import { ImportWriterInterface } from "../types/service.types";
 
 export class ImportWriter<TCreate> implements ImportWriterInterface<TCreate>
 {

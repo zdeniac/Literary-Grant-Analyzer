@@ -1,6 +1,6 @@
 import { ImportRelationError } from "../error/import.errors";
 import { ImportLookupRegistry } from "../registry/import-lookup.registry";
-import { ImportRowError } from "../types/error.types";
+import { ImportFileRowError } from "../types/error.types";
 import { SimpleImportLookup, SimpleRelationImportBlueprint } from "../types/import-blueprint.types";
 import { ImportRow, RelationResolverInterface } from "../types/import.types";
 
@@ -54,7 +54,7 @@ export class SimpleRelationResolver implements RelationResolverInterface<SimpleR
         found: Map<unknown, Record<string, unknown>>,
         multiple: boolean,
     ): void {
-        const missing: ImportRowError[] = [];
+        const missing: ImportFileRowError[] = [];
 
         rows.forEach((row, rowIndex) => {
             const values = multiple
@@ -71,7 +71,7 @@ export class SimpleRelationResolver implements RelationResolverInterface<SimpleR
 
             if (issues.length) {
                 missing.push({
-                    row: rowIndex + 2,
+                    rowNum: rowIndex + 2,
                     issues,
                 });
             }

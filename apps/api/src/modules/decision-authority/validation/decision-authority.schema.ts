@@ -16,7 +16,7 @@ export const decisionAuthoritySchema = z.object({
     actorId: idSchema,
 
     createdAt: z.coerce.date(),
-    updatedAt: z.coerce.date().nullable().default(null),
+    updatedAt: z.coerce.date(),
 });
 
 export const createDecisionAuthorityInputSchema = decisionAuthoritySchema

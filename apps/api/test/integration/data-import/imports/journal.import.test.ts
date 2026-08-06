@@ -1,11 +1,12 @@
 import { describe, expect, it, beforeEach, afterAll } from "vitest";
 import { JournalStatus, LegalForm, Sector } from "@prisma/client";
-import { ImportFile } from "../../../src/modules/data-import/types/import.types";
-import { ImportValidationError } from "../../../src/modules/data-import/error/import.errors";
-import { prisma } from "../../../src/db/prisma";
-import { wipeDatabase } from "../helpers/db.helper";
-import { createOrganization } from "../helpers/factories/organization.factory";
-import { createImportModule } from "../../../src/modules/data-import/factory/import.factory";
+import { ImportFile } from "../../../../src/modules/data-import/types/import.types";
+import { ImportValidationError } from "../../../../src/modules/data-import/error/import.errors";
+import { prisma } from "../../../../src/db/prisma";
+import { wipeDatabase } from "../../helpers/db.helper";
+import { createOrganization } from "../../helpers/factories/organization.factory";
+import { createImportModule } from "../../../../src/modules/data-import/factory/import.factory";
+import { createImportFile, expectFinishedImportJobWithStatus } from "../helpers/import.helpers";
 
 describe('Journal Import Service', () => {
     const importer = createImportModule().service;
@@ -30,18 +31,9 @@ describe('Journal Import Service', () => {
             foundingYear: 1989,
         });
 
-        const journalFile: ImportFile = {
-            fileName: 'journal_import.csv',
-            mimeType: 'text/csv',
-            header: [
-                'name',
-                'issn',
-                'status',
-                'foundingYear',
-                'format',
-                'organizationNames',
-            ],
-            rows: [
+        const journalFile: ImportFile = createImportFile(
+            'journal_import.csv',
+            [
                 {
                     name: 'Alföld',
                     issn: '2049-3610',
@@ -50,12 +42,17 @@ describe('Journal Import Service', () => {
                     format: 'ONLINE|PRINT',
                     organizationNames: `${org1.name}|${org2.name}`,
                 },
-            ],
-        };
+            ]
+        );
 
-        const imported = await importer.import('journal', journalFile);
+        const importJob = await importer.import('journal', journalFile);
 
-        expect(imported).toBe(1);
+        expectFinishedImportJobWithStatus(importJob, {
+            fileName: journalFile.fileName,
+            mimeType: journalFile.mimeType,
+            totalRows: 1,
+            importedRows: 1,
+        });
 
         const journal = await prisma.journal.findUnique({
             where: { issn: '20493610' },
@@ -74,18 +71,9 @@ describe('Journal Import Service', () => {
     });
 
     it('throws when referenced journal organizations do not exist', async () => {
-        const journalFile: ImportFile = {
-            fileName: 'journal_import.csv',
-            mimeType: 'text/csv',
-            header: [
-                'name',
-                'issn',
-                'status',
-                'foundingYear',
-                'format',
-                'organizationNames',
-            ],
-            rows: [
+        const journalFile: ImportFile = createImportFile(
+            'journal_import.csv',
+            [
                 {
                     name: 'Alföld',
                     issn: '2049-3610',
@@ -94,9 +82,9 @@ describe('Journal Import Service', () => {
                     format: 'ONLINE|PRINT',
                     organizationNames: 'Unknown Org',
                 },
-            ],
-        };
-
+            ]
+        );
+        
         await expect(
             importer.import('journal', journalFile)
         ).rejects.toThrow(ImportValidationError);
@@ -111,18 +99,9 @@ describe('Journal Import Service', () => {
             foundingYear: 1990,
         });
 
-        const invalidJournalFile: ImportFile = {
-            fileName: 'journal_import.csv',
-            mimeType: 'text/csv',
-            header: [
-                'name',
-                'issn',
-                'status',
-                'foundingYear',
-                'format',
-                'organizationNames',
-            ],
-            rows: [
+        const invalidJournalFile: ImportFile = createImportFile(
+            'journal_import.csv',
+            [
                 {
                     name: 'Alföld',
                     issn: '2049-3610',
@@ -132,7 +111,7 @@ describe('Journal Import Service', () => {
                     organizationNames: org.name,
                 },
             ],
-        };
+        );
 
         await expect(
             importer.import('journal', invalidJournalFile)

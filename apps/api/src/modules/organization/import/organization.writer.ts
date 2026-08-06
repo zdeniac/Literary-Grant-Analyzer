@@ -1,8 +1,8 @@
 import { ActorType } from "@prisma/client";
 import { transaction } from "../../../db/transaction";
-import { ImportWriterInterface } from "../../data-import/types/import.types";
 import { repositoryContainer } from "../../../db/repositories/container";
 import { CreateOrganizationInput } from "../dto/organization.input.dto";
+import { ImportWriterInterface } from "../../data-import/types/service.types";
 
 export class OrganizationImportWriter implements ImportWriterInterface<CreateOrganizationInput>
 {

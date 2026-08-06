@@ -1,11 +1,12 @@
 import { describe, expect, it, beforeEach, afterAll } from "vitest";
-import { AwardSchemeType, FundingArea, LegalForm, Sector } from "@prisma/client";
-import { ImportFile } from "../../../src/modules/data-import/types/import.types";
-import { ImportValidationError } from "../../../src/modules/data-import/error/import.errors";
-import { prisma } from "../../../src/db/prisma";
-import { wipeDatabase } from "../helpers/db.helper";
-import { createOrganization } from "../helpers/factories/organization.factory";
-import { createImportModule } from "../../../src/modules/data-import/factory/import.factory";
+import { AwardSchemeType, FundingArea, ImportJobStatus, LegalForm, Sector } from "@prisma/client";
+import { ImportFile } from "../../../../src/modules/data-import/types/import.types";
+import { ImportValidationError } from "../../../../src/modules/data-import/error/import.errors";
+import { prisma } from "../../../../src/db/prisma";
+import { wipeDatabase } from "../../helpers/db.helper";
+import { createOrganization } from "../../helpers/factories/organization.factory";
+import { createImportModule } from "../../../../src/modules/data-import/factory/import.factory";
+import { createImportFile, expectFinishedImportJobWithStatus } from "../helpers/import.helpers";
 
 describe('AwardScheme Import Service', () => {
     const importer = createImportModule().service;
@@ -22,28 +23,26 @@ describe('AwardScheme Import Service', () => {
             foundingYear: 1989,
         });
 
-        const awardSchemeFile: ImportFile = {
-            fileName: 'award_scheme_import.csv',
-            mimeType: 'text/csv',
-            header: [
-                'name',
-                'type',
-                'fundingArea',
-                'organizationName',
-            ],
-            rows: [
+        const awardSchemeFile: ImportFile = createImportFile(
+            'award_scheme_import.csv',
+            [
                 {
                     name: 'Irodalmi támogatás',
                     type: AwardSchemeType.GRANT,
                     fundingArea: FundingArea.CREATIVE_WORK,
                     organizationName: organization.name,
                 },
-            ],
-        };
+            ]
+        );
+        
+        const importJob = await importer.import('awardScheme', awardSchemeFile);
 
-        const imported = await importer.import('awardScheme', awardSchemeFile);
-
-        expect(imported).toBe(1);
+        expectFinishedImportJobWithStatus(importJob, {
+            fileName: awardSchemeFile.fileName,
+            mimeType: awardSchemeFile.mimeType,
+            totalRows: 1,
+            importedRows: 1,
+        });
 
         const awardScheme = await prisma.awardScheme.findFirst({
             where: { name: 'Irodalmi támogatás' },
@@ -64,24 +63,17 @@ describe('AwardScheme Import Service', () => {
     });
 
     it('throws when referenced organization does not exist', async () => {
-        const awardSchemeFile: ImportFile = {
-            fileName: 'award_scheme_import.csv',
-            mimeType: 'text/csv',
-            header: [
-                'name',
-                'type',
-                'fundingArea',
-                'organizationName',
-            ],
-            rows: [
+        const awardSchemeFile: ImportFile = createImportFile(
+            'award_scheme_import.csv',
+            [
                 {
                     name: 'Irodalmi támogatás',
                     type: AwardSchemeType.GRANT,
                     organizationName: 'Unknown Organization',
                     fundingArea: FundingArea.CREATIVE_WORK,
                 },
-            ],
-        };
+            ]
+        );
 
         await expect(
             importer.import('awardScheme', awardSchemeFile)
@@ -97,24 +89,17 @@ describe('AwardScheme Import Service', () => {
             foundingYear: 1989,
         });
 
-        const invalidAwardSchemeFile: ImportFile = {
-            fileName: 'award_scheme_import.csv',
-            mimeType: 'text/csv',
-            header: [
-                'name',
-                'type',
-                'fundingArea',
-                'organizationName',
-            ],
-            rows: [
+        const invalidAwardSchemeFile: ImportFile = createImportFile(
+            'award_scheme_import.csv',
+            [
                 {
                     name: 'Invalid Scheme',
                     type: 'UNKNOWN_TYPE',
                     fundingArea: FundingArea.RECOGNITION,
                     organizationName: organization.name,
                 },
-            ],
-        };
+            ]
+        );
 
         await expect(
             importer.import('awardScheme', invalidAwardSchemeFile)

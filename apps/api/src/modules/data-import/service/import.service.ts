@@ -33,7 +33,9 @@ export class ImportService
             const blueprint = this.registry.getOrThrow(entity);
             const writer = this.writers.getOrThrow(entity); 
 
-            if (!writer) throw new ImportError(`Missing import writer for ${entity}`);
+            if (!writer) throw new ImportError(
+                `Missing import writer for ${entity}.`
+            );
             
             validateHeaders(
                 file.header, 

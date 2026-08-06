@@ -11,7 +11,7 @@ export const sourceDocumentSchema = z.object({
     issuingOrganizationId: idSchema.nullable().default(null),
 
     createdAt: z.coerce.date(),
-    updatedAt: z.coerce.date().nullable(),
+    updatedAt: z.coerce.date(),
 });
 
 export const createSourceDocumentSchema = sourceDocumentSchema

@@ -1,7 +1,7 @@
 import { EntityName } from "../../../common/types/types";
 import { ImportRelationError } from "../error/import.errors";
 import { ImportLookupRegistry } from "../registry/import-lookup.registry";
-import { ImportRowError } from "../types/error.types";
+import { ImportFileRowError } from "../types/error.types";
 import { CompositeImportLookup, CompositeRelationImportBlueprint } from "../types/import-blueprint.types";
 import { 
     ImportRow, 
@@ -60,14 +60,14 @@ export class CompositeRelationResolver implements RelationResolverInterface<Comp
             }
 
             if (duplicatedKeys.size > 0) {
-                const issues: ImportRowError[] = [];
+                const issues: ImportFileRowError[] = [];
 
                 workingRows.forEach((row, rowIndex) => {
                     const value = row[sourceField];
 
                     if (duplicatedKeys.has(value)) {
                         issues.push({
-                            row: rowIndex + 2,
+                            rowNum: rowIndex + 2,
                             issues: [{
                                 field: sourceField,
                                 value,
@@ -82,14 +82,14 @@ export class CompositeRelationResolver implements RelationResolverInterface<Comp
                 }
             }
 
-            const missing: ImportRowError[] = [];
+            const missing: ImportFileRowError[] = [];
 
             workingRows.forEach((row, rowIndex) => {
                 const value = row[sourceField];
 
                 if (!found.has(value)) {
                     missing.push({
-                        row: rowIndex + 2,
+                        rowNum: rowIndex + 2,
                         issues: [{
                             field: sourceField,
                             value,
@@ -143,7 +143,7 @@ export class CompositeRelationResolver implements RelationResolverInterface<Comp
         if (!criteria.length) {
             throw new ImportRelationError([
                 {
-                    row: 0,
+                    rowNum: 0,
                     issues: [{
                         message: 'Composite relation requires at least one lookup criterion.',
                     }],
@@ -186,7 +186,7 @@ export class CompositeRelationResolver implements RelationResolverInterface<Comp
         foreignData: Record<string, unknown>[],
         criteria: Array<{ sourceField: string; lookupField: string; }>
     ): ImportRow[] {
-        const missing: ImportRowError[] = [];
+        const missing: ImportFileRowError[] = [];
 
         const transformedRows = rows.map((row, rowIndex) => {
             const matches = foreignData.filter(item =>
@@ -195,7 +195,7 @@ export class CompositeRelationResolver implements RelationResolverInterface<Comp
 
             if (matches.length !== 1) {
                 missing.push({
-                    row: rowIndex + 2,
+                    rowNum: rowIndex + 2,
                     issues: [{
                         field: relationBlueprint.foreignKey,
                         value: criteria.map(({ sourceField }) => row[sourceField]),

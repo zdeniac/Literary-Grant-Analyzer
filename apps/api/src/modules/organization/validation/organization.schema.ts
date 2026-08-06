@@ -16,7 +16,7 @@ export const organizationSchema = z.object({
     actorId: idSchema,
 
     createdAt: z.coerce.date(),
-    updatedAt: z.coerce.date().nullable(),
+    updatedAt: z.coerce.date(),
 });
 
 export const createOrganizationSchema = organizationSchema

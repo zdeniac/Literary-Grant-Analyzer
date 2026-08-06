@@ -14,7 +14,7 @@ export const personSchema = z.object({
     actorId: idSchema,
 
     createdAt: z.coerce.date(),
-    updatedAt: z.coerce.date().nullable().default(null),
+    updatedAt: z.coerce.date(),
 });
 
 export const createPersonSchema = personSchema

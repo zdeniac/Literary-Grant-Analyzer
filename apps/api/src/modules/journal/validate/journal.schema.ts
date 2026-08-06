@@ -59,7 +59,7 @@ export const journalSchema = z.object({
     format: z.array(z.enum(JournalFormat)).min(1),
 
     createdAt: z.coerce.date(),
-    updatedAt: z.coerce.date(),
+    updatedAt: z.coerce.date().nullable(),
 });
 
 export const journalWithOrganizationsSchema = journalSchema

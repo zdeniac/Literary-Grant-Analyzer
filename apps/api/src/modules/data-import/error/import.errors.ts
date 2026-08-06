@@ -1,13 +1,15 @@
 import { AppError } from "../../../common/errors/app.error";
-import { ImportRowError } from "../types/error.types";
+import { ImportFileRowError } from "../types/error.types";
 
 export class ImportError extends AppError 
 {
     static code = 'IMPORT_ERROR';
     static statusCode = 500;
 
-    constructor(readonly message: string, statusCode = ImportError.statusCode)
-    {
+    constructor(
+        readonly message: string,
+        statusCode = ImportError.statusCode,
+    ) {
         super(message, statusCode);
         this.name = 'ImportError';
     }
@@ -19,7 +21,7 @@ export class ImportValidationError extends ImportError
     static statusCode = 422;
 
     constructor(
-        readonly errors: ImportRowError[] = [],
+        readonly errors: ImportFileRowError[] = [],
         readonly message = ImportValidationError.code
     ) {
         super(message, ImportValidationError.statusCode);
@@ -33,7 +35,7 @@ export class ImportRelationError extends ImportValidationError
     static statusCode = 422;
 
     constructor(
-        readonly errors: ImportRowError[] = [],
+        readonly errors: ImportFileRowError[] = [],
     ) {
         super(errors, ImportRelationError.code);
         this.name = ImportValidationError.name;

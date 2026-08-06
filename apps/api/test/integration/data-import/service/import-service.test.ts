@@ -1,5 +1,5 @@
 import { describe, expect, it, beforeEach, afterAll } from "vitest";
-import { ImportFile } from "../../../src/modules/data-import/types/import.types";
+import { ImportFile } from "../../../../src/modules/data-import/types/import.types";
 import { 
     JournalStatus, 
     LegalForm, 
@@ -8,14 +8,18 @@ import {
     ImportJobStatus,
     FundingArea,
 } from "@prisma/client";
-import { ImportEmptyFileError, ImportError, ImportValidationError } from "../../../src/modules/data-import/error/import.errors";
-import { prisma } from "../../../src/db/prisma";
-import { wipeDatabase } from "../helpers/db.helper";
-import { createOrganization } from "../helpers/factories/organization.factory";
-import { createImportModule } from "../../../src/modules/data-import/factory/import.factory";
-import { CreateOrganizationInput } from "../../../src/modules/organization/dto/organization.input.dto";
+import { ImportEmptyFileError, ImportError, ImportValidationError } from "../../../../src/modules/data-import/error/import.errors";
+import { prisma } from "../../../../src/db/prisma";
+import { wipeDatabase } from "../../helpers/db.helper";
+import { createOrganization } from "../../helpers/factories/organization.factory";
+import { createImportModule } from "../../../../src/modules/data-import/factory/import.factory";
+import { CreateOrganizationInput } from "../../../../src/modules/organization/dto/organization.input.dto";
+import { createImportFile, expectFinishedImportJobWithStatus } from "../helpers/import.helpers";
 
 describe('Data Import Service test', () => {
+    beforeEach(wipeDatabase);
+    afterAll(wipeDatabase);
+
     const importer = createImportModule().service;
 
     const org1: CreateOrganizationInput = {
@@ -37,33 +41,17 @@ describe('Data Import Service test', () => {
         website: 'https://alfoldonline.hu/'
     };
 
-    const orgFile: ImportFile = {
-        fileName: 'organizations_import.csv',
-        mimeType: 'text/csv',
-        header: [
-            'name',
-            'legalForm',
-            'address',
-            'website',
-            'sector',
-            'foundingYear',
+    const orgFile: ImportFile = createImportFile(
+        'organizations_import.csv',
+        [
+            org1, 
+            org2
         ],
-        rows: [
-            org1,
-            org2,
-        ]
-    };
+    );
 
-    const awardSchemeFile: ImportFile = {
-        fileName: 'award_scheme_import.csv',
-        mimeType: 'text/csv',
-        header: [
-            'name',
-            'type',
-            'fundingArea',
-            'organizationName',
-        ],
-        rows: [
+    const awardSchemeFile: ImportFile = createImportFile(
+        'award_scheme_import.csv',
+        [
             {
                 name: 'Irodalmi laptámogatás',
                 type: AwardSchemeType.GRANT,
@@ -71,20 +59,11 @@ describe('Data Import Service test', () => {
                 organizationName: 'Alföld Alapítvány',
             }
         ]
-    };
-
-    const journalFile: ImportFile = {
-        fileName: 'journal_import.csv',
-        mimeType: 'text/csv',
-        header: [
-            'name',
-            'issn',
-            'status',
-            'foundingYear',
-            'format',
-            'organizationNames',
-        ],
-        rows: [
+    );
+    
+    const journalFile: ImportFile = createImportFile(
+        'journal_import.csv',
+        [
             {
                 name: 'Alföld',
                 issn: '2049-3610',
@@ -94,10 +73,7 @@ describe('Data Import Service test', () => {
                 organizationNames: org1.name + '|' + org2.name,
             },
         ]
-    };
-
-    beforeEach(wipeDatabase);
-    afterAll(wipeDatabase);
+    );
 
     it('imports data on entity without relation', async() => {
         const importJob = await importer.import(
@@ -105,13 +81,12 @@ describe('Data Import Service test', () => {
             orgFile
         );
 
-        expect(importJob.fileName).toBe('organizations_import.csv');
-        expect(importJob.mimeType).toBe('text/csv');
-        expect(importJob.finishedAt).not.toBeNull();
-        expect(importJob.totalRows).toBe(2);
-        expect(importJob.importedRows).toBe(2);
-        expect(importJob.failedRows).toBe(0);
-        expect(importJob.status).toBe(ImportJobStatus.COMPLETED);
+        expectFinishedImportJobWithStatus(importJob, {
+            fileName: orgFile.fileName,
+            mimeType: orgFile.mimeType,
+            totalRows: 2,
+            importedRows: 2,
+        });
     });
 
     it('imports data with N:1 relation (award scheme -> organization)', async() => {
