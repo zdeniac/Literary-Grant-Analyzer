@@ -3,7 +3,7 @@ import { JournalWithOrganizations, JournalWithOrganizationsAndSourceDocument } f
 import { Id } from "../../common/types/types";
 import { CreateJournalInput, CreateJournalWithAffiliationsInput } from "./dto/journal.input.dto";
 import { NotFoundError } from "../../common/errors/http.error";
-import { Journal } from "@prisma/client";
+import { JournalEntity } from "./dto/journal.dto";
 
 export class JournalRepository
 {
@@ -11,9 +11,18 @@ export class JournalRepository
         private readonly entity: Database['journal']
     ) {}
 
-    async create(data: CreateJournalInput): Promise<Journal>
+    async create(data: CreateJournalInput): Promise<JournalEntity>
     {
         return this.entity.create({ data });
+    }
+
+    async delete(id: Id): Promise<JournalEntity>
+    {
+        return this.entity.delete({ 
+            where : { 
+                id 
+            } 
+        })
     }
     
     async createWithAffiliations(input: CreateJournalWithAffiliationsInput): Promise<JournalWithOrganizationsAndSourceDocument>

@@ -14,7 +14,6 @@ model ImportJob {
     errorMessage    String?
 
     sourceDocuments ImportJobSourceDocument[]
-    awardDecisions  AwardDecisions[]
 
     startedAt       DateTime        @default(now())
     finishedAt      DateTime?

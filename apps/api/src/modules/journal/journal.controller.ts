@@ -13,6 +13,8 @@ export class JournalController
         this.create = this.create.bind(this);
         this.findById = this.findById.bind(this);
         this.findAll = this.findAll.bind(this);
+        this.update = this.update.bind(this);
+        this.delete = this.delete.bind(this);
     }
 
     async create(req: Request, res: Response): Promise<void>
@@ -52,5 +54,11 @@ export class JournalController
         );
 
         sendData(res, toJournalWithAffiliationsDto(journal))
+    }
+
+    async delete(req: Request, res: Response): Promise<void>
+    {
+        await this.service.delete(idSchema.parse(req.params.id));
+        res.sendStatus(204);
     }
 }

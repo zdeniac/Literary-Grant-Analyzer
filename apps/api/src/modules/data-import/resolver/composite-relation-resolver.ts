@@ -14,7 +14,7 @@ import { RelationResolverInterface } from "../types/service.types";
 |
 | A jelenlegi implementáció működik, de több kompromisszumot tartalmaz.
 |
-| 1. Egységesíteni a SimpleRelationResolverrel
+| 1. Egységesíteni a SimpleRelationResolverrel 
 |    - jelenleg a Simple és Composite resolver sok logikát duplikál
 |      (lookup, validáció, transzformáció).
 |    - a közös részeket érdemes egy közös absztrakcióba kiszervezni.

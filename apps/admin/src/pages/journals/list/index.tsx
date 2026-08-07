@@ -6,16 +6,34 @@ import { CustomEmpty } from "../../../components/table/CustomEmpty";
 export const JournalList = () => (
     <List actions={<JournalListActions />} empty={<CustomEmpty hasImport entity="journal" />}>
         <DataTable>
+
             <DataTable.Col source="id" />
+
             <DataTable.Col source="name" />
-            <DataTable.Col source="issn" />
+
+            <DataTable.Col 
+                source="issn" 
+                render={record => {
+                    const issn = record.issn;
+
+                    if (!issn) {
+                        return '';
+                    }
+
+                    return issn.length === 8
+                        ? `${issn.slice(0, 4)}-${issn.slice(4)}`
+                        : issn;
+                    }
+                }
+            />
+
             <DataTable.Col source="status" />
             <DataTable.Col source="format" />
             <DataTable.Col source="foundingYear" />
 
-            <DataTable.Col label="Organization">
+            <DataTable.Col label="Organization(s)">
                 <FunctionField
-                    render={(record) =>
+                    render={record =>
                         record.organizations
                             ?.map((org: { id: number; name: string }) => (
                                 <Link
@@ -32,6 +50,7 @@ export const JournalList = () => (
             </DataTable.Col>
 
             <AuditColumns />
+
         </DataTable>
     </List>
 );

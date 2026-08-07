@@ -52,10 +52,7 @@ export class CrudController<TEntity, TDto>
 
     async delete(req: Request, res: Response): Promise<void> 
     {
-        await this.service.delete(
-            idSchema.parse(req.params.id)
-        );
-
+        await this.service.delete(idSchema.parse(req.params.id));
         res.sendStatus(204);
     }
 }

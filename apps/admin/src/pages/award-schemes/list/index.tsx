@@ -6,7 +6,9 @@ import { CustomEmpty } from "../../../components/table/CustomEmpty";
 export const AwardSchemeList = () => (
     <List actions={<AwardSchemeListActions />} empty={<CustomEmpty hasImport entity="awardScheme" />}>
         <DataTable>
+
             <DataTable.Col source="id" />
+
             <DataTable.Col source="name" />
             <DataTable.Col source="type" />
             <DataTable.Col source="fundingArea" />
@@ -16,6 +18,7 @@ export const AwardSchemeList = () => (
             </DataTable.Col>
 
             <AuditColumns />
+            
         </DataTable>
     </List>
 );

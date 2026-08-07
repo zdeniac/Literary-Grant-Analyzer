@@ -50,7 +50,6 @@ export const updateAwardDecisionSchema = awardDecisionSchema
     })
     .partial();
 
-
 export const importAwardDecisionSchema = z.object({
     recipientName: organizationSchema.shape.name,
     awardSchemeName: awardSchemeSchema.shape.name,

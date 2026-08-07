@@ -5,9 +5,8 @@ import { idSchema, nameSchema, yearSchema } from "../../../common/validation/sch
 import { 
     createJournalAffiliationForNewJournalSchema,
     createJournalAffiliationSchema, 
-    journalAffiliationSchema, 
     journalAffiliationWithOrganizationAndSourceDocumentSchema,
-    updateJournalAffiliationSchema, 
+    updateJournalAffiliationWithIdSchema, 
 } from "../../journal-affiliation/validate/journal-affiliation.schema";
 
 const ommittedFields = {
@@ -102,7 +101,7 @@ export const updateJournalWithAffiliationsSchema = createJournalSchema
     .extend({
         affiliations: z.array(
             z.union([
-                updateJournalAffiliationSchema,
+                updateJournalAffiliationWithIdSchema,
                 createJournalAffiliationSchema
             ])
         ),

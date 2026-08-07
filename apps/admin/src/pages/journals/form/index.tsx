@@ -1,6 +1,8 @@
-import { ArrayInput, ReferenceInput, required, SelectArrayInput, SelectInput, SimpleForm, SimpleFormIterator, TextInput } from "react-admin";
+import { ArrayInput, required, SelectArrayInput, SelectInput, SimpleForm, SimpleFormIterator, TextInput } from "react-admin";
 import { YearInput } from "../../../components/inputs/YearInput";
 import { journalFormats, journalStatuses } from "../constants";
+import { IssnInput } from "../../../components/inputs/IssnInput";
+import { JournalAffiliationInputs } from "./JournalAffiliationInputs";
 
 const validateName = [required()];
 const validateStatus = [required()];
@@ -8,12 +10,9 @@ const validateFormat = [required()];
 
 export const JournalForm = () => (
     <SimpleForm>
-        <TextInput 
-            source="name"
-            validate={validateName}
-        />
+        <TextInput source="name" validate={validateName} />
 
-        <TextInput source="issn" />
+        <IssnInput source="issn" />
 
         <SelectInput
             source="status"
@@ -30,20 +29,11 @@ export const JournalForm = () => (
         <YearInput source="foundingYear" />
 
         <ArrayInput source="affiliations">
+
             <SimpleFormIterator>
-                <ReferenceInput
-                    source="organizationId"
-                    reference="organizations"
-                >
-                    <SelectInput optionText="name" />
-                </ReferenceInput>
-
-                <YearInput source="fromYear" />
-
-                <YearInput source="toYear" />
-
-                <TextInput source="note" />
+                <JournalAffiliationInputs />
             </SimpleFormIterator>
+
         </ArrayInput>
 
     </SimpleForm>

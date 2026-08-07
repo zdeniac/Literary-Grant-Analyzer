@@ -23,25 +23,7 @@ export const journalAffiliationWithOrganizationAndSourceDocumentSchema = journal
         sourceDocumentTitle: z.string().nullable(),
     });
 
-const journalAffiliationInputSchema = journalAffiliationSchema
-    .omit({
-        id: true,
-        createdAt: true,
-        updatedAt: true,
-    })
-    .extend({
-        fromYear: yearSchema.nullable().optional(),
-        toYear: yearSchema.nullable().optional(),
-        note: z.string().nullable().optional(),
-        isCurrent: z.boolean().default(true).optional(),
-        sourceDocumentId: idSchema.nullable().optional(),
-    });
-
-/**
- * Used when creating a Journal with affiliations.
- * The journalId is assigned by the JournalService.
- */
-export const createJournalAffiliationForNewJournalSchema = z.object({
+const journalAffiliationCreateInputSchema = z.object({
     organizationId: idSchema,
 
     fromYear: yearSchema.nullable().optional(),
@@ -55,15 +37,34 @@ export const createJournalAffiliationForNewJournalSchema = z.object({
 });
 
 /**
+ * Used when creating a Journal with affiliations.
+ * The journalId is assigned by the JournalService.
+ */
+export const createJournalAffiliationForNewJournalSchema = journalAffiliationCreateInputSchema;
+
+/**
  * Used when creating an affiliation for an existing Journal.
  */
-export const createJournalAffiliationSchema = journalAffiliationInputSchema;
+export const createJournalAffiliationSchema = journalAffiliationCreateInputSchema
+    .extend({
+        journalId: idSchema.optional()
+    });
 
 /**
  * Only the affiliation metadata can be updated.
  * The Journal and Organization cannot be changed.
  */
 export const updateJournalAffiliationSchema = journalAffiliationSchema
+    .omit({
+        journalId: true,
+        organizationId: true,
+        createdAt: true,
+        updatedAt: true,
+        id: true,
+    })
+    .partial();
+
+export const updateJournalAffiliationWithIdSchema = journalAffiliationSchema
     .omit({
         journalId: true,
         organizationId: true,

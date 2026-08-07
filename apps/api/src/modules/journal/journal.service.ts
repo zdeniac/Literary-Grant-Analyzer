@@ -5,6 +5,9 @@ import { JournalWithOrganizations, JournalWithOrganizationsAndSourceDocument } f
 import { JournalAffiliationRepository } from "../journal-affiliation/journal-affiliation.repository";
 import { CreateJournalWithAffiliationsInput, UpdateJournalWithAffiliationsInput } from "./dto/journal.input.dto";
 import { createJournalWithAffiliationsSchema } from "./validate/journal.schema";
+import { CreateJournalAffiliationInput, UpdateJournalAffiliationWithIdInput } from "../journal-affiliation/dto/journal-affiliation.input.dto";
+import { JournalAffiliationEntity } from "../journal-affiliation/dto/journal-affiliation.dto";
+import { JournalEntity } from "./dto/journal.dto";
 
 export class JournalService
 {
@@ -25,12 +28,16 @@ export class JournalService
     {
         await this.repository.findByIdWithOrganizationsAndSourceDocument(id);
 
-        const existing = await this.affiliationRepository.findManyByJournalId(id)
-        const existingById = new Map(
-            existing.map(item => [item.id, item])
-        );
+        const existingAffiliations = await this.affiliationRepository.findManyByJournalId(id)
+        const existingAffiliationsMap = new Map(existingAffiliations.map(item => [item.id, item]));
 
-        if (dto.name !== undefined || dto.status !== undefined || dto.issn !== undefined || dto.format !== undefined || dto.foundingYear !== undefined) {
+        if (
+            dto.name !== undefined || 
+            dto.status !== undefined || 
+            dto.issn !== undefined || 
+            dto.format !== undefined || 
+            dto.foundingYear !== undefined
+        ) {
             await this.repository.updateWithOrganizationsAndSourceDocument(id, {
                 name: dto.name,
                 status: dto.status,
@@ -40,50 +47,29 @@ export class JournalService
             });
         }
 
-        const affiliationIds = new Set(
-            dto.affiliations!
-                .filter(affiliation => affiliation?.id !== undefined)
-                .map(affiliation => affiliation.id!)
-        );
+        const incomingAffiliations = dto.affiliations;
+        if (incomingAffiliations) {
+            for (const affiliation of incomingAffiliations) {
+                if ('id' in affiliation) {
+                    if (!existingAffiliationsMap.has(affiliation.id)) {
+                        throw new NotFoundError(`JournalAffiliation ${affiliation.id} not found.`);
+                    }
 
-        // update + create
-        for (const affiliation of dto.affiliations!) {
-            if (affiliation.id) {
-                const current = existingById.get(affiliation.id);
-
-                if (!current) {
-                    throw new NotFoundError(`JournalAffiliation ${affiliation.id} not found.`);
+                    await this.updateJournalAffiliation(affiliation);
+                } else {
+                    await this.createJournalAffiliation(id, affiliation);
                 }
-
-                await this.affiliationRepository.update(affiliation.id, {
-                    organizationId: affiliation.organizationId,
-                    fromYear: affiliation.fromYear,
-                    toYear: affiliation.toYear,
-                    note: affiliation.note,
-                    sourceDocumentId: affiliation.sourceDocumentId,
-                    isCurrent: affiliation.isCurrent,
-                });
-            } else {
-                await this.affiliationRepository.create({
-                    journalId: id,
-                    organizationId: affiliation.organizationId,
-                    fromYear: affiliation.fromYear,
-                    toYear: affiliation.toYear,
-                    note: affiliation.note,
-                    isCurrent: affiliation.isCurrent,
-                    sourceDocumentId: affiliation.sourceDocumentId,
-                });
             }
-        }
 
-        // delete
-        for (const current of existing) {
-            if (!affiliationIds.has(current.id)) {
-                await this.affiliationRepository.delete(current.id);
-            }
+            await this.deleteJournalAffiliation(existingAffiliations, incomingAffiliations);
         }
 
         return this.repository.findByIdWithOrganizationsAndSourceDocument(id);
+    }
+
+    async delete(id: Id): Promise<JournalEntity>
+    {
+        return this.repository.delete(id);
     }
 
     async findByIdWithAffiliations(id: Id): Promise<JournalWithOrganizationsAndSourceDocument | null>
@@ -100,5 +86,44 @@ export class JournalService
     async findAllWithOrganizations(): Promise<JournalWithOrganizations[]>
     {
         return this.repository.findAllWithOrganizations();
+    }
+
+    private async updateJournalAffiliation(affiliation: UpdateJournalAffiliationWithIdInput): Promise<void>
+    {
+        await this.affiliationRepository.update(
+            affiliation.id, 
+            {
+                fromYear: affiliation.fromYear,
+                toYear: affiliation.toYear,
+                note: affiliation.note,
+                sourceDocumentId: affiliation.sourceDocumentId,
+                isCurrent: affiliation.isCurrent,
+            }
+        );
+    }
+
+    private async createJournalAffiliation(journalId: Id, affiliation: CreateJournalAffiliationInput): Promise<void>
+    {
+        await this.affiliationRepository.create({
+            ...affiliation,
+            journalId,
+        });
+    }
+
+    private async deleteJournalAffiliation(
+        existing: JournalAffiliationEntity[], 
+        incoming: Array<UpdateJournalAffiliationWithIdInput | CreateJournalAffiliationInput>
+    ): Promise<void> {
+        const affiliationIds = new Set(
+            incoming
+                .filter(affiliation => 'id' in affiliation)
+                .map(affiliation => affiliation.id)
+        );
+
+        for (const current of existing) {
+            if (!affiliationIds.has(current.id)) {
+                await this.affiliationRepository.delete(current.id);
+            }
+        }
     }
 }

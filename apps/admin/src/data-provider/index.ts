@@ -31,7 +31,7 @@ const dataProvider: DataProvider = {
 	},
 	update: async function <RecordType extends RaRecord = any>(resource: string, params: UpdateParams): Promise<UpdateResult<RecordType>> {		
 		const res = await request(`/api/${resource}/${params.id}`, {
-			method: 'PUT',
+			method: 'PATCH',
 			body: JSON.stringify(params.data),
 			headers: {
 				'Content-Type': 'application/json',

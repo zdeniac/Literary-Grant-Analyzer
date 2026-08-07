@@ -5,7 +5,7 @@ import { createJournalWithAffiliationsSchema, updateJournalWithAffiliationsSchem
 import { createJournalAffiliationModule } from "../journal-affiliation/journal-affiliation.factory";
 
 const router = Router();
-const { controller, crudController } = createJournalModule();
+const { controller } = createJournalModule();
 const pivotController = createJournalAffiliationModule().controller;
 
 router.post(
@@ -22,12 +22,12 @@ router.get(
 router.patch(
     '/:id',
     validate(updateJournalWithAffiliationsSchema),
-    crudController.update,
+    controller.update,
 );
 
 router.delete(
     '/:id',
-    crudController.delete,
+    controller.delete,
 );
 
 router.post(
