@@ -15,8 +15,6 @@ export const ImportJobList = () => (
             <DataTable.Col source="importedRows" />
             <DataTable.Col source="failedRows" />
 
-            {/* <DataTable.Col source="errorMessage" /> */}
-
             <DataTable.Col source="startedAt" />
             <DataTable.Col source="finishedAt" />
 

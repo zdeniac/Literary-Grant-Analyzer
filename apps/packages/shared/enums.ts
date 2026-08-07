@@ -58,3 +58,9 @@ export enum PersonRole {
     RESEARCHER = 'RESEARCHER',
     OTHER = 'OTHER',
 }
+
+export enum ImportJobStatus {
+    RUNNING = 'RUNNING',
+    COMPLETED = 'COMPLETED',
+    FAILED = 'FAILED',
+}
