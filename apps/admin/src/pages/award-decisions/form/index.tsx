@@ -1,4 +1,13 @@
-import { DateInput, minValue, NumberInput, ReferenceInput, required, SelectInput, SimpleForm, TextInput } from "react-admin";
+import { 
+    DateInput, 
+    minValue, 
+    NumberInput, 
+    ReferenceInput, 
+    required, 
+    SelectInput, 
+    SimpleForm, 
+    TextInput 
+} from "react-admin";
 
 const validateAwardScheme = [required()];
 const validateDecisionMaker = [required()];
@@ -22,10 +31,9 @@ export const AwardDecisionForm = () => (
              />
         </ReferenceInput>
 
-        {/* decisionMaker lehet organization is, tehát itt az actor táblából kell szelektálni */}
         <ReferenceInput
             source="decisionMakerId"
-            reference="decision-authorities"
+            reference="decision-makers"
         >
             <SelectInput 
                 optionText="name"
@@ -35,7 +43,7 @@ export const AwardDecisionForm = () => (
 
         <ReferenceInput
             source="recipientId"
-            reference="organizations"
+            reference="recipients"
         >
             <SelectInput 
                 optionText="name"

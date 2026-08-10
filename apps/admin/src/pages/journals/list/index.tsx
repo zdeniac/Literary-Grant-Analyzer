@@ -2,6 +2,7 @@ import { DataTable, FunctionField, Link, List } from "react-admin";
 import { JournalListActions } from "./actions";
 import { AuditColumns } from "../../../components/table/AuditColumns";
 import { CustomEmpty } from "../../../components/table/CustomEmpty";
+import { TableLink } from "../../../components/table/TableLink";
 
 export const JournalList = () => (
     <List actions={<JournalListActions />} empty={<CustomEmpty hasImport entity="journal" />}>
@@ -36,14 +37,9 @@ export const JournalList = () => (
                     render={record =>
                         record.organizations
                             ?.map((org: { id: number; name: string }) => (
-                                <Link
-                                    key={org.id}
-                                    to={`/organizations/${org.id}/edit`}
-                                    style={{ display: 'block' }}
-                                    onClick={event => event.stopPropagation()}
-                                >
+                                <TableLink to={`/organizations/${org.id}`}>
                                     {org.name}
-                                </Link>
+                                </TableLink>
                             ))
                     }
                 />

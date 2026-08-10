@@ -19,19 +19,51 @@ export type AwardDecisionEntity = {
     updatedAt: Date;
 };
 
-export type AwardDecisionEntityWithActors = Prisma.AwardDecisionGetPayload<{
+export type AwardDecisionEntityWithRelatedData = Prisma.AwardDecisionGetPayload<{
     include: {
         decisionMaker: {
             include: {
-                organization: true;
-                decisionAuthority: true;
+                organization: {
+                    select: {
+                        id: true,
+                        name: true,
+                    },
+                };
+                decisionAuthority: {
+                    select: {
+                        id: true,
+                        name: true,
+                    },
+                };
             };
         };
         recipient: {
             include: {
-                organization: true;
-                decisionAuthority: true;
+                organization: {
+                    select: {
+                        id: true,
+                        name: true,
+                    },
+                };
+                decisionAuthority: {
+                    select: {
+                        id: true,
+                        name: true,
+                    },
+                };
             };
+        };
+        awardScheme: {
+            select: {
+                id: true,
+                name: true,
+            },
+        };
+        sourceDocument: {
+            select: {
+                id: true,
+                title: true,
+            },
         };
     };
 }>;

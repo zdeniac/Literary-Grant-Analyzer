@@ -3,14 +3,14 @@ import { sendData } from "../../common/http/response";
 import { DtoMapper } from "../../common/types/types";
 import { idSchema } from "../../common/validation/schema";
 import { AwardDecisionService } from "./award-decision.service";
-import { AwardDecisionWithActorsDto } from "./dto/award-decision.dto";
-import { AwardDecisionEntityWithActors } from "./types/award-decision.types";
+import { AwardDecisionWithRelatedDataDto } from "./dto/award-decision.dto";
+import { AwardDecisionEntityWithRelatedData } from "./types/award-decision.types";
 
 export class AwardDecisionController
 {
     constructor(
         private readonly service: AwardDecisionService,
-        private readonly mapper: DtoMapper<AwardDecisionEntityWithActors, AwardDecisionWithActorsDto>
+        private readonly mapper: DtoMapper<AwardDecisionEntityWithRelatedData, AwardDecisionWithRelatedDataDto>
     ) {
         this.findAll = this.findAll.bind(this);
         this.findById = this.findById.bind(this);
@@ -18,7 +18,7 @@ export class AwardDecisionController
 
     async findAll(req: Request, res: Response): Promise<void>
     {
-        const awardDecisions = await this.service.findAllWithActors();
+        const awardDecisions = await this.service.getList();
 
         sendData(
             res,
@@ -31,7 +31,7 @@ export class AwardDecisionController
 
     async findById(req: Request, res: Response): Promise<void>
     {
-        const awardDecision = await this.service.findByIdWithActors(
+        const awardDecision = await this.service.findByIdWithRelations(
             idSchema.parse(req.params.id)
         );
 

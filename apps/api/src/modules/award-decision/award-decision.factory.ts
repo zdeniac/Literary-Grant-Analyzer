@@ -4,7 +4,7 @@ import { prisma } from "../../db/prisma";
 import { PrismaCrudRepository } from "../../db/repositories/prisma-crud-repository";
 import { AwardDecisionController } from "./award-decision.controller";
 import { AwardDecisionService } from "./award-decision.service";
-import { toAwardDecisionWithActorsDto } from "./mapper/award-decision-with-actors.mapper";
+import { toAwardDecisionWithRelatedDataDto } from "./mapper/award-decision-with-related-data.mapper";
 import { toAwardDecisionDto } from "./mapper/award-decision-mapper";
 import { AwardDecisionRepository } from "./award-decision.repository";
 
@@ -12,7 +12,7 @@ export const createAwardDecisionModule = () => {
     const repository = new AwardDecisionRepository(prisma.awardDecision);
 
     const service = new AwardDecisionService(repository);
-    const controller = new AwardDecisionController(service, toAwardDecisionWithActorsDto);
+    const controller = new AwardDecisionController(service, toAwardDecisionWithRelatedDataDto);
 
     const crudController = new CrudController(
         new CrudService(new PrismaCrudRepository(prisma.awardDecision)),

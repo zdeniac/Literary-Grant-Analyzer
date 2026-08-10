@@ -1,4 +1,3 @@
-import { Organization } from "@prisma/client";
 import { OrganizationDto, OrganizationEntity } from "../dto/organization.dto";
 import { DtoMapper } from "../../../common/types/types";
 

@@ -22,12 +22,18 @@ export const awardDecisionSchema = z.object({
     updatedAt: z.coerce.date(),
 });
 
-export const awardDecisionWithActorsSchema = awardDecisionSchema.extend({
-    decisionMakerName: z.string(),
+export const awardDecisionWithRelatedDataSchema = awardDecisionSchema.extend({
     decisionMakerId: idSchema,
-    
+    decisionMakerName: z.string(),
+
     recipientId: idSchema,
     recipientName: z.string(),
+
+    awardSchemeId: idSchema,
+    awardSchemeName: awardSchemeSchema.shape.name,
+    
+    sourceDocumentId: idSchema,
+    sourceDocumentTitle: sourceDocumentSchema.shape.title,
 });
 
 export const createAwardDecisionSchema = awardDecisionSchema

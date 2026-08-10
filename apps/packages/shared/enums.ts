@@ -64,3 +64,9 @@ export enum ImportJobStatus {
     COMPLETED = 'COMPLETED',
     FAILED = 'FAILED',
 }
+
+export enum ActorType {
+    ORGANIZATION = 'ORGANIZATION',
+    PERSON = 'PERSON',
+    DECISION_AUTHORITY = 'DECISION_AUTHORITY',
+}
