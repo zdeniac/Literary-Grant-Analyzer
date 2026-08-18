@@ -12,13 +12,13 @@ export class AwardDecisionController
         private readonly service: AwardDecisionService,
         private readonly mapper: DtoMapper<AwardDecisionEntityWithRelatedData, AwardDecisionWithRelatedDataDto>
     ) {
-        this.findAll = this.findAll.bind(this);
-        this.findById = this.findById.bind(this);
+        this.list = this.list.bind(this);
+        this.show = this.show.bind(this);
     }
 
-    async findAll(req: Request, res: Response): Promise<void>
+    async list(req: Request, res: Response): Promise<void>
     {
-        const awardDecisions = await this.service.getList();
+        const awardDecisions = await this.service.getList(req.listQueryParams);
 
         sendData(
             res,
@@ -29,7 +29,7 @@ export class AwardDecisionController
         );
     }
 
-    async findById(req: Request, res: Response): Promise<void>
+    async show(req: Request, res: Response): Promise<void>
     {
         const awardDecision = await this.service.findByIdWithRelations(
             idSchema.parse(req.params.id)

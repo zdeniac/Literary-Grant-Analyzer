@@ -5,7 +5,10 @@ import { CustomEmpty } from "../../../components/table/CustomEmpty";
 import { TableLink } from "../../../components/table/TableLink";
 
 export const JournalList = () => (
-    <List actions={<JournalListActions />} empty={<CustomEmpty hasImport entity="journal" />}>
+    <List 
+        actions={<JournalListActions />} empty={<CustomEmpty hasImport entity="journal" />}
+        sort={{ field: 'id', order: 'DESC' }}
+    >
         <DataTable>
 
             <DataTable.Col source="id" />
@@ -32,7 +35,7 @@ export const JournalList = () => (
             <DataTable.Col source="format" />
             <DataTable.Col source="foundingYear" />
 
-            <DataTable.Col label="Organization(s)">
+            <DataTable.Col label="Organization(s)" disableSort>
                 <FunctionField
                     render={record =>
                         record.organizations

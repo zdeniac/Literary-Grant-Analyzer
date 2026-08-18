@@ -1,5 +1,5 @@
 import { CrudRepositoryInterface } from "../../db/types";
-import { CrudServiceInterface, Id } from "../types/types";
+import { CrudServiceInterface, Id, ListQueryParams } from "../types/types";
 
 export class CrudService<TEntity, TCreateDto, TUpdateDto = Partial<TCreateDto>> 
     implements CrudServiceInterface<TEntity, TCreateDto, TUpdateDto>

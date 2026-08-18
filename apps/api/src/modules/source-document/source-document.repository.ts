@@ -1,44 +1,47 @@
-import { Id } from "../../common/types/types";
+import { Id, ListQueryParams } from "../../common/types/types";
+import { ListDbQueryBuilder } from "../../db/list-db-query-builder";
 import { CrudRepositoryInterface, Database } from "../../db/types";
 import { SourceDocumentEntity } from "./dto/source-document.dto";
-import { CreateSourceDocumentInput } from "./dto/source-document.input.dto";
+import { CreateSourceDocumentInput, UpdateSourceDocumentInput } from "./dto/source-document.input.dto";
 
-export class SourceDocumentRepository<
-    Entity extends SourceDocumentEntity, 
-    CreateInput extends CreateSourceDocumentInput
-> implements CrudRepositoryInterface<Entity, CreateInput>
+export class SourceDocumentRepository
 {
     constructor(
-        private readonly crud: CrudRepositoryInterface<Entity, CreateInput>,
-        private readonly entity: Database['sourceDocument']
+        private readonly entity: Database['sourceDocument'],
+        private readonly crud: CrudRepositoryInterface<
+            SourceDocumentEntity, 
+            CreateSourceDocumentInput, 
+            UpdateSourceDocumentInput
+        >,
+        private readonly listQueryBuilder?: ListDbQueryBuilder,
     ) {}
 
-    async create(data: CreateInput): Promise<Entity>
+    async create(data: CreateSourceDocumentInput): Promise<SourceDocumentEntity>
     {
         return this.crud.create(data);
     }
 
-    async update(id: number, data: Partial<CreateInput>): Promise<Entity>
+    async update(id: number, data: UpdateSourceDocumentInput): Promise<SourceDocumentEntity>
     {
         return this.crud.update(id, data);
     }
     
-    async findById(id: number): Promise<Entity | null>
+    async findById(id: number): Promise<SourceDocumentEntity | null>
     {
         return this.crud.findById(id);
     }
     
-    async findByIdOrThrow(id: Id): Promise<Entity>
+    async findByIdOrThrow(id: Id): Promise<SourceDocumentEntity>
     {
-        return this.crud.delete(id);
+        return this.crud.findByIdOrThrow(id);
     }
 
-    async findAll(): Promise<Entity[]>
+    async findAll(query?: ListQueryParams): Promise<SourceDocumentEntity[]>
     {
-        return this.crud.findAll();
+        return this.entity.findMany({ ...this.listQueryBuilder?.build(query) });
     }
 
-    async delete(id: Id): Promise<Entity>
+    async delete(id: Id): Promise<SourceDocumentEntity>
     {
         return this.crud.delete(id);
     }

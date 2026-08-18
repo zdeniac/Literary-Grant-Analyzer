@@ -1,5 +1,10 @@
 import { Prisma, PrismaClient } from "@prisma/client";
-import { GetBatchResult } from "@prisma/client/runtime/client";
+
+export type ListDbQueryOptions = {
+    orderBy?: Record<string, 'asc' | 'desc'>;
+    skip?: number;
+    take?: number;
+};
 
 // This type is needed for using transactions
 export type Database = PrismaClient | Prisma.TransactionClient;

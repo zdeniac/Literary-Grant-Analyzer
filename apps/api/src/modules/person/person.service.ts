@@ -1,14 +1,18 @@
 import { ActorType } from "@prisma/client";
-import { ActorRepository } from "../actor/actor.repository";
 import { transaction } from "../../db/transaction";
-import { Id } from "../../common/types/types";
+import { Id, ListQueryParams } from "../../common/types/types";
 import { repositoryContainer } from "../../db/repositories/container";
-import { CreatePersonInput } from "./dto/person.input";
-import { PersonDto } from "./dto/person.dto";
+import { CreatePersonInput, UpdatePersonInput } from "./dto/person.input";
+import { PersonEntity } from "./dto/person.dto";
+import { PersonRepository } from "./person.repository";
 
 export class PersonService
 {
-    async create(dto: CreatePersonInput): Promise<PersonDto>
+    constructor(
+        private readonly repository: PersonRepository,
+    ) {}
+
+    async create(dto: CreatePersonInput): Promise<PersonEntity>
     {
         return transaction(async tx => {
             const repositories = repositoryContainer(tx);
@@ -24,7 +28,17 @@ export class PersonService
         });
     }
 
-    async delete(id: Id): Promise<PersonDto>
+    async findById(id: Id): Promise<PersonEntity>
+    {
+        return this.repository.findByIdOrThrow(id);
+    }
+
+    async update(id: Id, data: UpdatePersonInput): Promise<PersonEntity>
+    {
+        return this.repository.update(id, data);
+    }
+
+    async delete(id: Id): Promise<PersonEntity>
     {
         return transaction(async tx => {
             const repositories = repositoryContainer(tx);
@@ -35,5 +49,10 @@ export class PersonService
 
             return person;
         });
+    }
+
+    async getList(query?: ListQueryParams): Promise<PersonEntity[]>
+    {
+        return this.repository.findAll(query);
     }
 }

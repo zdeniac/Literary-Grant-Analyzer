@@ -1,6 +1,15 @@
 import * as z from "zod";
 import { idSchema } from "../../../common/validation/schema";
 
+export const sourceDocumentSortableFieldSchema = z.enum([
+    'id',
+    'title',
+    'url',
+    'retrievedAt',
+    'createdAt',
+    'updatedAt',
+]);
+
 export const sourceDocumentSchema = z.object({
     id: idSchema,
 
@@ -8,7 +17,7 @@ export const sourceDocumentSchema = z.object({
     url: z.httpUrl(),
     retrievedAt: z.coerce.date(),
 
-    issuingOrganizationId: idSchema.nullable().default(null),
+    issuingOrganizationId: idSchema.nullable(),
 
     createdAt: z.coerce.date(),
     updatedAt: z.coerce.date(),

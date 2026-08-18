@@ -1,5 +1,5 @@
 import { NotFoundError } from "../../common/errors/http.error";
-import { Id } from "../../common/types/types";
+import { Id, ListQueryParams } from "../../common/types/types";
 import { JournalRepository } from "./journal.repository";
 import { JournalWithOrganizations, JournalWithOrganizationsAndSourceDocument } from "./types/journal.types";
 import { JournalAffiliationRepository } from "../journal-affiliation/journal-affiliation.repository";
@@ -83,9 +83,9 @@ export class JournalService
         return journal;
     }
 
-    async findAllWithOrganizations(): Promise<JournalWithOrganizations[]>
+    async getList(query?: ListQueryParams): Promise<JournalWithOrganizations[]>
     {
-        return this.repository.findAllWithOrganizations();
+        return this.repository.findAllWithOrganizations(query);
     }
 
     private async updateJournalAffiliation(affiliation: UpdateJournalAffiliationWithIdInput): Promise<void>

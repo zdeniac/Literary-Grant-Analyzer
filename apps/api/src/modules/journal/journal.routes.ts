@@ -1,8 +1,11 @@
 import { Router } from "express";
 import { createJournalModule } from "./journal.factory";
-import { validate } from "../../common/middleware/validate";
-import { createJournalWithAffiliationsSchema, updateJournalWithAffiliationsSchema } from "./validate/journal.schema";
+import { validate } from "../../common/middleware/validate.middleware";
+import { createJournalWithAffiliationsSchema, journalSortableFieldSchema, updateJournalWithAffiliationsSchema } from "./validate/journal.schema";
 import { createJournalAffiliationModule } from "../journal-affiliation/journal-affiliation.factory";
+import { parseListQuery } from "../../common/middleware/parse-list-query.middleware";
+import { validateListQuery } from "../../common/middleware/validate-list-query.middleware";
+import { JournalSortableField } from "./types/journal.types";
 
 const router = Router();
 const { controller } = createJournalModule();
@@ -16,7 +19,7 @@ router.post(
 
 router.get(
     '/:id',
-    controller.findById,
+    controller.show,
 );
 
 router.patch(
@@ -38,7 +41,9 @@ router.post(
 
 router.get(
     '/',
-    controller.findAll,
+    parseListQuery,
+    validateListQuery<JournalSortableField>(journalSortableFieldSchema),
+    controller.list,
 );
 
 export default router;

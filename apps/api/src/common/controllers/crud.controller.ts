@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { sendData } from "../http/response";
 import { idSchema } from "../validation/schema";
-import { CrudServiceInterface, DtoMapper } from "../types/types";
+import { CrudServiceInterface, DtoMapper, ListQueryParams } from "../types/types";
 
 export class CrudController<TEntity, TDto>
 {
@@ -28,6 +28,7 @@ export class CrudController<TEntity, TDto>
     {
         const entities = (await this.service.findAll())
             .map(this.toDto);
+
         sendData(res, entities, {
             total: entities.length
         });

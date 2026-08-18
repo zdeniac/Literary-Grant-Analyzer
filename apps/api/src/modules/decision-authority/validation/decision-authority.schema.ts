@@ -8,6 +8,13 @@ const ommittedFields = {
     updatedAt: true,
 } as const;
 
+export const decisionAuthoritySortableFieldSchema = z.enum([
+    'id',
+    'name',
+    'createdAt',
+    'updatedAt',
+]);
+
 export const decisionAuthoritySchema = z.object({
     id: idSchema,
 

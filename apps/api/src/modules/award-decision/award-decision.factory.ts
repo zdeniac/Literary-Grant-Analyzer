@@ -7,9 +7,14 @@ import { AwardDecisionService } from "./award-decision.service";
 import { toAwardDecisionWithRelatedDataDto } from "./mapper/award-decision-with-related-data.mapper";
 import { toAwardDecisionDto } from "./mapper/award-decision-mapper";
 import { AwardDecisionRepository } from "./award-decision.repository";
+import { ListDbQueryBuilder } from "../../db/list-db-query-builder";
+import { AwardDecisionSortableField } from "./types/award-decision.types";
 
 export const createAwardDecisionModule = () => {
-    const repository = new AwardDecisionRepository(prisma.awardDecision);
+    const repository = new AwardDecisionRepository(
+        prisma.awardDecision,
+        new ListDbQueryBuilder<AwardDecisionSortableField>(),
+    );
 
     const service = new AwardDecisionService(repository);
     const controller = new AwardDecisionController(service, toAwardDecisionWithRelatedDataDto);

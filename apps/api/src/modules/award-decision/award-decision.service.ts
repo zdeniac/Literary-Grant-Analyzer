@@ -1,6 +1,7 @@
 import { NotFoundError } from "../../common/errors/http.error";
+import { ListQueryParams } from "../../common/types/types";
 import { AwardDecisionRepository } from "./award-decision.repository";
-import { AwardDecisionEntityWithRelatedData } from "./types/award-decision.types";
+import { AwardDecisionSortableField, AwardDecisionEntityWithRelatedData } from "./types/award-decision.types";
 
 export class AwardDecisionService
 {
@@ -8,9 +9,9 @@ export class AwardDecisionService
         private readonly repository: AwardDecisionRepository
     ) {}
 
-    async getList(): Promise<AwardDecisionEntityWithRelatedData[]>
+    async getList(query?: ListQueryParams<AwardDecisionSortableField>): Promise<AwardDecisionEntityWithRelatedData[]>
     {
-        return this.repository.findAllWithRelatedData();
+        return this.repository.findAllWithRelatedData(query);
     }
 
     async findByIdWithRelations(id: number): Promise<AwardDecisionEntityWithRelatedData>

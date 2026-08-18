@@ -2,6 +2,13 @@ import z from "zod";
 import { idSchema, nameSchema, yearSchema } from "../../../common/validation/schema";
 import { PersonRole } from "@prisma/client";
 
+export const personSortableFieldSchema = z.enum([
+    'id',
+    'name',
+    'birthYear',
+    'deathYear',
+]);
+
 export const personSchema = z.object({
     id: idSchema,
 

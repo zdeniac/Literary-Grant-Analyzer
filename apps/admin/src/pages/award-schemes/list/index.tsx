@@ -5,7 +5,10 @@ import { CustomEmpty } from "../../../components/table/CustomEmpty";
 import { TruncateField } from "../../../components/table/TruncateField";
 
 export const AwardSchemeList = () => (
-    <List actions={<AwardSchemeListActions />} empty={<CustomEmpty hasImport entity="awardScheme" />}>
+    <List 
+        actions={<AwardSchemeListActions />} empty={<CustomEmpty hasImport entity="awardScheme" />}
+         sort={{ field: 'id', order: 'DESC' }}
+    >
         <DataTable>
 
             <DataTable.Col source="id" />
@@ -19,7 +22,7 @@ export const AwardSchemeList = () => (
             <DataTable.Col source="type" />
             <DataTable.Col source="fundingArea" />
 
-            <DataTable.Col>
+            <DataTable.Col label="Organization">
                 <ReferenceField source="organizationId" reference="organizations" />
             </DataTable.Col>
 

@@ -2,17 +2,20 @@ import { Request, Response } from "express";
 import { sendData } from "../../common/http/response";
 import { JournalService } from "./journal.service";
 import { idSchema } from "../../common/validation/schema";
-import { toJournalWithAffiliationsDto } from "./mapper/journal-with-affiliations.mapper";
-import { toJournalListDto } from "./mapper/journal-list-mapper";
+import { DtoMapper } from "../../common/types/types";
+import { JournalListDto, JournalWithAffiliationsDto } from "./dto/journal.dto";
+import { JournalWithOrganizations, JournalWithOrganizationsAndSourceDocument } from "./types/journal.types";
 
 export class JournalController
 {
     constructor(
         private readonly service: JournalService,
+        private readonly mapper: DtoMapper<JournalWithOrganizationsAndSourceDocument, JournalWithAffiliationsDto>,
+        private readonly listMapper: DtoMapper<JournalWithOrganizations, JournalListDto>
     ) {
         this.create = this.create.bind(this);
-        this.findById = this.findById.bind(this);
-        this.findAll = this.findAll.bind(this);
+        this.show = this.show.bind(this);
+        this.list = this.list.bind(this);
         this.update = this.update.bind(this);
         this.delete = this.delete.bind(this);
     }
@@ -23,27 +26,16 @@ export class JournalController
             req.body
         );
 
-        sendData(res, toJournalWithAffiliationsDto(journal));
+        sendData(res, this.mapper(journal));
     }
 
-    async findAll(req: Request, res: Response): Promise<void>
-    {
-        const journals = await this.service.findAllWithOrganizations();
-
-        sendData(
-            res, 
-            journals.map(toJournalListDto),
-            { total: journals.length }
-        )
-    }
-
-    async findById(req: Request, res: Response): Promise<void>
+    async show(req: Request, res: Response): Promise<void>
     {
         const journal = await this.service.findByIdWithAffiliations(
             idSchema.parse(req.params.id)
         );
 
-        sendData(res, toJournalWithAffiliationsDto(journal!));
+        sendData(res, this.mapper(journal!));
     }
 
     async update(req: Request, res: Response): Promise<void>
@@ -53,12 +45,23 @@ export class JournalController
             req.body
         );
 
-        sendData(res, toJournalWithAffiliationsDto(journal))
+        sendData(res, this.mapper(journal))
     }
 
     async delete(req: Request, res: Response): Promise<void>
     {
         await this.service.delete(idSchema.parse(req.params.id));
         res.sendStatus(204);
+    }
+
+    async list(req: Request, res: Response): Promise<void>
+    {
+        const journals = await this.service.getList(req.listQueryParams);
+
+        sendData(
+            res, 
+            journals.map(this.listMapper),
+            { total: journals.length }
+        )
     }
 }

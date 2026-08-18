@@ -1,20 +1,23 @@
 import { Router } from "express";
 import { createDecisionAuthorityModule } from "./decision-authority.factory";
-import { createDecisionAuthorityInputSchema, updateDecisionAuthoritySchema } from "./validation/decision-authority.schema";
-import { validate } from "../../common/middleware/validate";
+import { createDecisionAuthorityInputSchema, decisionAuthoritySortableFieldSchema, updateDecisionAuthoritySchema } from "./validation/decision-authority.schema";
+import { validate } from "../../common/middleware/validate.middleware";
+import { parseListQuery } from "../../common/middleware/parse-list-query.middleware";
+import { validateListQuery } from "../../common/middleware/validate-list-query.middleware";
+import { DecisionAuthoritySortableField } from "./types/decision-authority.types";
 
 const router = Router();
-const { controller, crudController } = createDecisionAuthorityModule();
+const { controller } = createDecisionAuthorityModule();
 
 router.get(
     '/:id',
-    crudController.findById,
+    controller.show,
 );
 
 router.patch(
     '/:id',
     validate(updateDecisionAuthoritySchema),
-    crudController.update,
+    controller.update,
 );
 
 router.delete(
@@ -30,7 +33,9 @@ router.post(
 
 router.get(
     '/',
-    crudController.findAll,
+    parseListQuery,
+    validateListQuery<DecisionAuthoritySortableField>(decisionAuthoritySortableFieldSchema),
+    controller.list,
 );
 
 export default router;

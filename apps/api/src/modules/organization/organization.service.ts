@@ -1,13 +1,18 @@
 import { ActorType } from "@prisma/client";
 import { OrganizationEntity } from "./dto/organization.dto";
-import { Id } from "../../common/types/types";
+import { Id, ListQueryParams } from "../../common/types/types";
 import { transaction } from "../../db/transaction";
 import { repositoryContainer } from "../../db/repositories/container";
-import { CreateOrganizationInput } from "./dto/organization.input.dto";
+import { CreateOrganizationInput, UpdateOrganizationInput } from "./dto/organization.input.dto";
+import { OrganizationRepository } from "./organization.repository";
 
 export class OrganizationService
 {
-    async create(dto: CreateOrganizationInput): Promise<OrganizationEntity>
+    constructor(
+        private readonly repository: OrganizationRepository
+    ) {}
+
+    async create(data: CreateOrganizationInput): Promise<OrganizationEntity>
     {
         return transaction(async tx => {
             const repositories = repositoryContainer(tx);
@@ -17,10 +22,20 @@ export class OrganizationService
             );
 
             return repositories.organization.create({
-                ...dto,
+                ...data,
                 actorId: actor.id,
             });
         });    
+    }
+
+    async update(id: Id, data: UpdateOrganizationInput): Promise<OrganizationEntity>
+    {
+        return this.repository.update(id, data);
+    }
+
+    async findById(id: Id): Promise<OrganizationEntity>
+    {
+        return this.repository.findByIdOrThrow(id);
     }
 
     async delete(id: Id): Promise<OrganizationEntity>
@@ -32,5 +47,10 @@ export class OrganizationService
 
             return organization;
         });
+    }
+
+    async getList(query?: ListQueryParams): Promise<OrganizationEntity[]>
+    {
+        return this.repository.findAll(query);
     }
 }

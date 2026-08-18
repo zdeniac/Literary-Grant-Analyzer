@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { validateHeaders, validateRows } from "../../../src/modules/data-import/validation/data-import.validation";
+import { validateHeaders, validateRows } from "../../../src/modules/data-import/validation/import.validation";
 import { ImportValidationError } from "../../../src/modules/data-import/error/import.errors";
 import z from "zod";
 

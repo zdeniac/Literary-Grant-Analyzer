@@ -4,14 +4,17 @@ import { CustomEmpty } from "../../../components/table/CustomEmpty";
 import { PersonListActions } from "./actions";
 
 export const PersonList = () => (
-    <List actions={<PersonListActions />} empty={<CustomEmpty hasImport entity="person" />}>
+    <List 
+        actions={<PersonListActions />} empty={<CustomEmpty hasImport entity="person" />}
+        sort={{ field: 'id', order: 'DESC' }}
+    >
         <DataTable>
 
             <DataTable.Col source="id" />
             <DataTable.Col source="name" />
             <DataTable.Col source="birthYear" />
             <DataTable.Col source="deathYear" />
-            <DataTable.Col source="roles" />
+            <DataTable.Col source="roles" disableSort/>
 
             <AuditColumns />
         </DataTable>

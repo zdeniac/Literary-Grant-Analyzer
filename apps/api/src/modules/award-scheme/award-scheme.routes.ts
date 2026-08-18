@@ -1,36 +1,41 @@
 import { Router } from "express";
 import { createAwardSchemeModule } from "./award-scheme.factory";
-import { validate } from "../../common/middleware/validate";
-import { createAwardSchemeSchema, updateAwardSchemeSchema } from "./validation/award-scheme.schema";
+import { validate } from "../../common/middleware/validate.middleware";
+import { awardSchemeSortableFieldSchema, createAwardSchemeSchema, updateAwardSchemeSchema } from "./validation/award-scheme.schema";
+import { parseListQuery } from "../../common/middleware/parse-list-query.middleware";
+import { validateListQuery } from "../../common/middleware/validate-list-query.middleware";
+import { AwardSchemeSortableField } from "./types/award-scheme.types";
 
 const router = Router();
-const { controller } = createAwardSchemeModule();
+const { crudController, controller } = createAwardSchemeModule();
 
 router.get(
     '/:id',
-    controller.findById,
+    crudController.findById,
 );
 
 router.patch(
     '/:id',
     validate(updateAwardSchemeSchema),
-    controller.update,
+    crudController.update,
 );
 
 router.delete(
     '/:id',
-    controller.delete,
+    crudController.delete,
 );
 
 router.post(
     '/',
     validate(createAwardSchemeSchema),
-    controller.create,
+    crudController.create,
 );
 
 router.get(
     '/',
-    controller.findAll,
+    parseListQuery,
+    validateListQuery<AwardSchemeSortableField>(awardSchemeSortableFieldSchema),
+    controller.list,
 );
 
 export default router;

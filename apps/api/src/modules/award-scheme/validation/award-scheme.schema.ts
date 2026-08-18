@@ -3,6 +3,15 @@ import { idSchema, nameSchema } from "../../../common/validation/schema";
 import { AwardSchemeType, FundingArea } from "@prisma/client";
 import { organizationSchema } from "../../organization/validation/organization.schema";
 
+export const awardSchemeSortableFieldSchema = z.enum([
+    'id',
+    'name',
+    'type',
+    'fundingArea',
+    'createdAt',
+    'updatedAt',
+]);
+
 export const awardSchemeSchema = z.object({
     id: idSchema,
 

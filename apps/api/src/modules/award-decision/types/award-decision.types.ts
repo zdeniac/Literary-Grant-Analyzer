@@ -1,5 +1,7 @@
 import { Prisma } from "@prisma/client";
 import { Decimal } from "@prisma/client/runtime/client";
+import z from "zod";
+import { awardDecisionSortableFieldSchema } from "../validation/award-decision.schema";
 
 export type AwardDecisionEntity = {
     id: number;
@@ -67,3 +69,5 @@ export type AwardDecisionEntityWithRelatedData = Prisma.AwardDecisionGetPayload<
         };
     };
 }>;
+
+export type AwardDecisionSortableField = z.infer<typeof awardDecisionSortableFieldSchema>

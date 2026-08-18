@@ -6,7 +6,10 @@ import { TruncateField } from "../../../components/table/TruncateField";
 
 export const OrganizationList = () => {
     return (
-        <List actions={<OrganizationListActions />} empty={<CustomEmpty hasImport entity="organization" />}>
+        <List 
+            actions={<OrganizationListActions />} empty={<CustomEmpty hasImport entity="organization" />}
+            sort={{ field: 'id', order: 'DESC' }}
+        >
             <DataTable>
 
                 <DataTable.Col source="id" />

@@ -1,8 +1,10 @@
 import z from "zod";
-import { issnSchema } from "../validate/journal.schema";
+import { issnSchema, journalSortableFieldSchema } from "../validate/journal.schema";
 import { Prisma } from "@prisma/client";
 
 export type Issn = z.infer<typeof issnSchema>;
+
+export type JournalSortableField = z.infer<typeof journalSortableFieldSchema>
 
 export type JournalWithOrganizationsAndSourceDocument = Prisma.JournalGetPayload<{
     include: {

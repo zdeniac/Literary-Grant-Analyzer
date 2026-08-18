@@ -1,20 +1,23 @@
 import { Router } from "express";
 import { createOrganizationModule } from "./organization.factory";
-import { validate } from "../../common/middleware/validate";
-import { createOrganizationSchema, updateOrganizationSchema } from "./validation/organization.schema";
+import { validate } from "../../common/middleware/validate.middleware";
+import { createOrganizationSchema, organizationSortableFieldSchema, updateOrganizationSchema } from "./validation/organization.schema";
+import { parseListQuery } from "../../common/middleware/parse-list-query.middleware";
+import { validateListQuery } from "../../common/middleware/validate-list-query.middleware";
+import { OrganizationSortableField } from "./types/organization.types";
 
 const router = Router();
-const { controller, crudController } = createOrganizationModule();
+const { controller } = createOrganizationModule();
 
 router.get(
     '/:id',
-    crudController.findById,
+    controller.show,
 );
 
 router.patch(
     '/:id',
     validate(updateOrganizationSchema),
-    crudController.update,
+    controller.update,
 );
 
 router.delete(
@@ -30,7 +33,9 @@ router.post(
 
 router.get(
     '/',
-    crudController.findAll,
+    parseListQuery,
+    validateListQuery<OrganizationSortableField>(organizationSortableFieldSchema),
+    controller.list,
 );
 
 export default router;

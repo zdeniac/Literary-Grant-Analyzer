@@ -5,6 +5,16 @@ import { organizationSchema } from "../../organization/validation/organization.s
 import { decisionAuthoritySchema } from "../../decision-authority/validation/decision-authority.schema";
 import { sourceDocumentSchema } from "../../source-document/validation/source-document.schema";
 
+export const awardDecisionSortableFieldSchema = z.enum([
+    'id',
+    'amount',
+    'purpose',
+    'sourceIdentifier',
+    'decisionDate',
+    'createdAt',
+    'updatedAt',
+]);
+
 export const awardDecisionSchema = z.object({
     id: idSchema,
 

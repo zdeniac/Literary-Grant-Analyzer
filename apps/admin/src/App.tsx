@@ -31,6 +31,7 @@ import { PersonList } from './pages/person/list';
 import { PersonEdit } from './pages/person/edit';
 import { PersonCreate } from './pages/person/create';
 import PersonIcon from '@mui/icons-material/Person';
+import { ImportJobShow } from './pages/import-jobs/show';
 
 const App = () => (
 	<Admin layout={CustomLayout} dataProvider={dataProvider} >
@@ -87,6 +88,7 @@ const App = () => (
 		<Resource
 			name="import-jobs"
 			list={ImportJobList}
+			show={ImportJobShow}
 			icon={FilePresentIcon}
 		/>
 	</Admin>

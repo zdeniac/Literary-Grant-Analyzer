@@ -47,6 +47,17 @@ export const issnSchema = z
     .string()
     .transform(v => v.trim() === '' ? null : v.replace('-', ''))
     .refine(v => v === null || /^\d{8}$/.test(v) || /^\d{7}X$/.test(v));
+
+export const journalSortableFieldSchema = z.enum([
+    'id',
+    'name',
+    'issn',
+    'status',
+    'format',
+    'foundingYear',
+    'createdAt',
+    'updatedAt',
+]);
     
 export const journalSchema = z.object({
     id: idSchema,

@@ -1,7 +1,7 @@
 import { DataTable, List } from "react-admin";
 
 export const ImportJobList = () => (
-    <List>
+    <List sort={{ field: 'id', order: 'DESC' }} >
         <DataTable>
 
             <DataTable.Col source="id" />

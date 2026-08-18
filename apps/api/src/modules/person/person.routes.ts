@@ -1,20 +1,23 @@
 import { Router } from "express";
 import { createPersonModule } from "./person.factory";
-import { createPersonSchema, updatePersonSchema } from "./validation/person.schema";
-import { validate } from "../../common/middleware/validate";
+import { createPersonSchema, personSortableFieldSchema, updatePersonSchema } from "./validation/person.schema";
+import { validate } from "../../common/middleware/validate.middleware";
+import { parseListQuery } from "../../common/middleware/parse-list-query.middleware";
+import { validateListQuery } from "../../common/middleware/validate-list-query.middleware";
+import { PersonSortableField } from "./types/person.types";
 
 const router = Router();
-const { controller, crudController } = createPersonModule();
+const { controller } = createPersonModule();
 
 router.get(
     '/:id',
-    crudController.findById,
+    controller.show,
 );
 
 router.patch(
     '/:id',
     validate(updatePersonSchema),
-    crudController.update,
+    controller.update,
 );
 
 router.delete(
@@ -30,7 +33,9 @@ router.post(
 
 router.get(
     '/',
-    crudController.findAll,
+    parseListQuery,
+    validateListQuery<PersonSortableField>(personSortableFieldSchema),
+    controller.list,
 );
 
 export default router;

@@ -1,12 +1,38 @@
+import { Id, ListQueryParams } from "../../common/types/types";
 import { SourceDocumentEntity } from "./dto/source-document.dto";
-import { CreateSourceDocumentInput } from "./dto/source-document.input.dto";
+import { CreateSourceDocumentInput, UpdateSourceDocumentInput } from "./dto/source-document.input.dto";
 import { SourceDocumentRepository } from "./source-document.repository";
 
 export class SourceDocumentService
 {
     constructor(
-        private readonly repository: SourceDocumentRepository<SourceDocumentEntity, CreateSourceDocumentInput>,
+        private readonly repository: SourceDocumentRepository,
     ) {}
+
+    async create(data: CreateSourceDocumentInput): Promise<SourceDocumentEntity>
+    {
+        return this.repository.create(data);
+    }
+
+    async update(id: Id, data: UpdateSourceDocumentInput): Promise<SourceDocumentEntity>
+    {
+        return this.repository.update(id, data);
+    }
+
+    async findById(id: Id): Promise<SourceDocumentEntity>
+    {
+        return this.repository.findByIdOrThrow(id);
+    }
+
+    async delete(id: Id): Promise<SourceDocumentEntity>
+    {
+        return this.repository.delete(id);
+    }
+
+    async getList(query?: ListQueryParams): Promise<SourceDocumentEntity[]>
+    {
+        return this.repository.findAll(query);
+    }
 
     async findOrCreateSourceDocuments(sourceDocuments: CreateSourceDocumentInput[]): Promise<SourceDocumentEntity[]> 
     { 

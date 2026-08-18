@@ -9,7 +9,7 @@ export const DecisionAuthorityList = () => (
             <DataTable.Col source="id" />
             <DataTable.Col source="name" />
 
-            <DataTable.Col>
+            <DataTable.Col label="Organization">
                 <ReferenceField source="organizationId" reference="organizations" />
             </DataTable.Col>
 

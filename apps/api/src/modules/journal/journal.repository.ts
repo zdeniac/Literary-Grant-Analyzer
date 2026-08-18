@@ -1,14 +1,16 @@
 import { Database } from "../../db/types";
 import { JournalWithOrganizations, JournalWithOrganizationsAndSourceDocument } from "./types/journal.types";
-import { Id } from "../../common/types/types";
+import { Id, ListQueryParams } from "../../common/types/types";
 import { CreateJournalInput, CreateJournalWithAffiliationsInput } from "./dto/journal.input.dto";
 import { NotFoundError } from "../../common/errors/http.error";
 import { JournalEntity } from "./dto/journal.dto";
+import { ListDbQueryBuilder } from "../../db/list-db-query-builder";
 
 export class JournalRepository
 {
     constructor(
-        private readonly entity: Database['journal']
+        private readonly entity: Database['journal'],
+        private readonly listQueryBuilder: ListDbQueryBuilder,
     ) {}
 
     async create(data: CreateJournalInput): Promise<JournalEntity>
@@ -101,7 +103,7 @@ export class JournalRepository
         return journal;
     }
 
-    async findAllWithOrganizations(): Promise<JournalWithOrganizations[]>
+    async findAllWithOrganizations(query?: ListQueryParams): Promise<JournalWithOrganizations[]>
     {
         return this.entity.findMany({
             include: {
@@ -111,6 +113,7 @@ export class JournalRepository
                     }
                 }
             },
+            ...this.listQueryBuilder.build(query),
         });
     }
 }

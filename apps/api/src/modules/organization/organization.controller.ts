@@ -12,12 +12,32 @@ export class OrganizationController
         private readonly mapper: DtoMapper<OrganizationEntity, OrganizationDto>
     ) {
         this.create = this.create.bind(this);
+        this.update = this.update.bind(this);
         this.delete = this.delete.bind(this);
+        this.show = this.show.bind(this);
+        this.list = this.list.bind(this);
     }
 
     async create(req: Request, res: Response): Promise<void> 
     {
         const organization = await this.service.create(
+            req.body
+        );
+        sendData(res, this.mapper(organization));
+    }
+
+    async show(req: Request, res: Response): Promise<void> 
+    {
+        const organization = await this.service.findById(
+            idSchema.parse(req.params.id)
+        );
+        sendData(res, this.mapper(organization));
+    }
+
+    async update(req: Request, res: Response): Promise<void> 
+    {
+        const organization = await this.service.update(
+            idSchema.parse(req.params.id),
             req.body
         );
         sendData(res, this.mapper(organization));
@@ -29,5 +49,17 @@ export class OrganizationController
             idSchema.parse(req.params.id)
         );
         res.sendStatus(204);
+    }
+
+    async list(req: Request, res: Response): Promise<void>
+    {
+        const organizations = await this.service.getList(req.listQueryParams);
+        sendData(
+            res, 
+            organizations.map(this.mapper), 
+            { 
+                total: organizations.length 
+            }
+        );
     }
 }

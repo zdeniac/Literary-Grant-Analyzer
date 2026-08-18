@@ -1,4 +1,5 @@
 import { NotFoundError } from "../../common/errors/http.error";
+import { ListQueryParams } from "../../common/types/types";
 import { CrudRepositoryInterface, DatabaseCrudDelegate } from "../types";
 
 export class PrismaCrudRepository<TEntity, TCreate, TUpdate = Partial<TCreate>>
@@ -23,17 +24,20 @@ export class PrismaCrudRepository<TEntity, TCreate, TUpdate = Partial<TCreate>>
         });
     }
 
-    async findAll(): Promise<TEntity[]> {
+    async findAll(): Promise<TEntity[]>
+    {
         return this.entity.findMany();
     }
 
-    async findById(id: number): Promise<TEntity | null> {
+    async findById(id: number): Promise<TEntity | null> 
+    {
         return this.entity.findUnique({
             where: { id }
         });
     }
 
-    async findByIdOrThrow(id: number): Promise<TEntity> {
+    async findByIdOrThrow(id: number): Promise<TEntity> 
+    {
         const entity = await this.findById(id);
 
         if (!entity) {
@@ -43,7 +47,8 @@ export class PrismaCrudRepository<TEntity, TCreate, TUpdate = Partial<TCreate>>
         return entity;
     }
 
-    async delete(id: number): Promise<TEntity> {
+    async delete(id: number): Promise<TEntity> 
+    {
         return this.entity.delete({
             where: { id }
         });

@@ -8,7 +8,7 @@ import sourceDocumentRouter from "./modules/source-document/source-document.rout
 import awardDecisionRouter from "./modules/award-decision/award-decision.routes";
 import importJobRouter from "./modules/data-import/import-job.routes";
 import personRouter from "./modules/person/person.routes";
-import { errorHandler } from "./common/middleware/errorHandler";
+import { errorHandler } from "./common/middleware/error-handler.middleware";
 import { findAllDecisionMakers, findAllRecipients } from "./modules/actor/actor.routes";
 
 const app = express();

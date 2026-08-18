@@ -1,6 +1,6 @@
 import { ImportFile, ImportOptions, ImportRow } from "../types/import.types";
 import { ImportEmptyFileError, ImportError, ImportValidationError } from "../error/import.errors";
-import { validateHeaders, validateRows } from "../validation/data-import.validation";
+import { validateHeaders, validateRows } from "../validation/import.validation";
 import { ImportBlueprintRegistry } from "../registry/import-blueprint.registry";
 import { isCompositeRelationBlueprint, isRelationalEntityBlueprint } from "../types/guards.types";
 import { ImportJobRepository } from "../repository/import-job.repository";

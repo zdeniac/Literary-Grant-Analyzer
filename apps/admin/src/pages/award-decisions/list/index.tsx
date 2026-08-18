@@ -7,15 +7,18 @@ import { TableLink } from "../../../components/table/TableLink";
 import { HungarianNumberField } from "../../../components/table/HungarianNumberField";
 
 export const AwardDecisionList = () => (
-    <List actions={<AwardDecisionListActions />} empty={<CustomEmpty hasImport entity="awardDecision" />}>
+    <List 
+        actions={<AwardDecisionListActions />} empty={<CustomEmpty hasImport entity="awardDecision" />}
+        sort={{ field: 'id', order: 'DESC' }}
+    >
         <DataTable>
 
             <DataTable.Col source="id" />
 
-            <DataTable.Col source="recipientName" />
-            <DataTable.Col source="awardSchemeName" />
-            <DataTable.Col source="decisionMakerName" />
-            
+            <DataTable.Col source="recipientName" disableSort />
+            <DataTable.Col source="awardSchemeName" disableSort />
+            <DataTable.Col source="decisionMakerName" disableSort />
+             
             <DataTable.Col source="amount" field={HungarianNumberField}/>
             <DataTable.Col source="purpose" />
 
@@ -23,7 +26,7 @@ export const AwardDecisionList = () => (
             
             <DataTable.Col source="sourceIdentifier" />
 
-            <DataTable.Col source="sourceDocumentTitle">
+            <DataTable.Col source="sourceDocumentTitle" disableSort >
                 <FunctionField render={(record) => (
                     <TableLink to={`/source-documents/${record.sourceDocumentId}`}>
                         { record.sourceDocumentTitle }

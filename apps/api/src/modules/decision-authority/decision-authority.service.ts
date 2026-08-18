@@ -1,13 +1,18 @@
 import { ActorType } from "@prisma/client";
-import { DecisionAuthorityDto } from "./dto/decision-authority.dto";
+import { DecisionAuthorityEntity } from "./dto/decision-authority.dto";
 import { transaction } from "../../db/transaction";
-import { Id } from "../../common/types/types";
+import { Id, ListQueryParams, SortableField } from "../../common/types/types";
 import { repositoryContainer } from "../../db/repositories/container";
-import { CreateDecisionAuthorityInput } from "./dto/decision-authority.input.dto";
+import { CreateDecisionAuthorityInput, UpdateDecisionAuthorityInput } from "./dto/decision-authority.input.dto";
+import { DecisionAuthorityRepository } from "./decision-authority.repository";
 
 export class DecisionAuthorityService
 {
-    async create(dto: CreateDecisionAuthorityInput): Promise<DecisionAuthorityDto>
+    constructor(
+        private readonly repository: DecisionAuthorityRepository
+    ) {}
+
+    async create(dto: CreateDecisionAuthorityInput): Promise<DecisionAuthorityEntity>
     {
         return transaction(async tx => {
             const repositories = repositoryContainer(tx);
@@ -23,7 +28,12 @@ export class DecisionAuthorityService
         });    
     }
 
-    async delete(id: Id): Promise<DecisionAuthorityDto>
+    async update(id: number, data: UpdateDecisionAuthorityInput): Promise<DecisionAuthorityEntity>
+    {
+        return this.repository.update(id, data);
+    }
+
+    async delete(id: Id): Promise<DecisionAuthorityEntity>
     {
         return transaction(async tx => {
             const repositories = repositoryContainer(tx);
@@ -34,5 +44,15 @@ export class DecisionAuthorityService
 
             return decisionAuthority;
         });
+    }
+
+    async getList(query?: ListQueryParams): Promise<DecisionAuthorityEntity[]>
+    {
+        return this.repository.findAll(query);
+    }
+
+    async findById(id: number): Promise<DecisionAuthorityEntity>
+    {
+        return this.repository.findByIdOrThrow(id);
     }
 }
