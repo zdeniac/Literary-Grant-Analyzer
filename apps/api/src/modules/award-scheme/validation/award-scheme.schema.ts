@@ -2,15 +2,9 @@ import * as z from "zod";
 import { idSchema, nameSchema } from "../../../common/validation/schema";
 import { AwardSchemeType, FundingArea } from "@prisma/client";
 import { organizationSchema } from "../../organization/validation/organization.schema";
+import { validSortableFields } from "../../../../../packages/shared/constants";
 
-export const awardSchemeSortableFieldSchema = z.enum([
-    'id',
-    'name',
-    'type',
-    'fundingArea',
-    'createdAt',
-    'updatedAt',
-]);
+export const awardSchemeSortableFieldSchema = z.enum(validSortableFields.awardScheme);
 
 export const awardSchemeSchema = z.object({
     id: idSchema,

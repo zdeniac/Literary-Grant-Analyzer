@@ -1,10 +1,19 @@
-import { TopToolbar, CreateButton, ExportButton } from "react-admin";
+import { TopToolbar, CreateButton, ExportButton, Form } from "react-admin";
 import { ImportButton } from "../../../features/import/components/ImportButton";
+import { Box } from "@mui/material";
+import { validSortableFields } from "../../../../../packages/shared/constants";
+import { MultiFieldSearchBox } from "../../../components/form/MultiFieldSearchBox";
 
 export const AwardDecisionListActions = () => (
-    <TopToolbar>
-        <CreateButton />
-        <ImportButton entity="awardDecision" />
-        <ExportButton />
-    </TopToolbar>
+    <Box sx={{ width: "100%" }}>
+        <TopToolbar>
+            <CreateButton />
+            <ImportButton entity="awardDecision" />
+            <ExportButton />
+        </TopToolbar>
+        
+        <Form>
+            <MultiFieldSearchBox fields={validSortableFields.awardDecision} />
+        </Form>
+    </Box>
 );

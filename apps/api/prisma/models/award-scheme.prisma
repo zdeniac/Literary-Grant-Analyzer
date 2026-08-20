@@ -32,8 +32,14 @@ enum FundingArea {
     // Alkotói tevékenység, szépirodalmi művek és egyéb művészeti alkotások létrehozása
     CREATIVE_WORK
 
-    // Folyóiratok, lapok és egyéb periodikus kiadványok megjelentetése
-    PERIODICAL
+    // Nyomtatott folyóiratok, lapok és egyéb periodikus kiadványok támogatása
+    PRINT_PERIODICAL
+
+    // Online folyóiratok és egyéb periodikus kiadványok támogatása
+    ONLINE_PERIODICAL
+
+    // Online felületek, platformok támogatása
+    ONLINE_PRESENCE
 
     // Irodalmi és kulturális rendezvények, rendezvénysorozatok megvalósítása
     EVENT

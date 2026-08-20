@@ -1,9 +1,13 @@
 import { DataTable, List, ReferenceField } from "react-admin";
 import { AuditColumns } from "../../../components/table/AuditColumns";
 import { HungarianDateField } from "../../../components/table/HungarianDateField";
+import { SourceDocumentActions } from "./actions";
 
 export const SourceDocumentList = () => (
-    <List sort={{ field: 'id', order: 'DESC' }} >
+    <List
+        actions={<SourceDocumentActions />}
+        sort={{ field: 'id', order: 'DESC' }} 
+    >
         <DataTable>
             <DataTable.Col source="id" />
             <DataTable.Col source="title" />

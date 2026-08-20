@@ -1,6 +1,7 @@
 import z from "zod";
 import { idSchema, nameSchema } from "../../../common/validation/schema";
 import { organizationSchema } from "../../organization/validation/organization.schema";
+import { validSortableFields } from "../../../../../packages/shared/constants";
 
 const ommittedFields = {
     id: true,
@@ -8,12 +9,7 @@ const ommittedFields = {
     updatedAt: true,
 } as const;
 
-export const decisionAuthoritySortableFieldSchema = z.enum([
-    'id',
-    'name',
-    'createdAt',
-    'updatedAt',
-]);
+export const decisionAuthoritySortableFieldSchema = z.enum(validSortableFields.decisionAuthority);
 
 export const decisionAuthoritySchema = z.object({
     id: idSchema,

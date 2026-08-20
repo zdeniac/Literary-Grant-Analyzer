@@ -1,14 +1,8 @@
 import * as z from "zod";
 import { idSchema } from "../../../common/validation/schema";
+import { validSortableFields } from "../../../../../packages/shared/constants";
 
-export const sourceDocumentSortableFieldSchema = z.enum([
-    'id',
-    'title',
-    'url',
-    'retrievedAt',
-    'createdAt',
-    'updatedAt',
-]);
+export const sourceDocumentSortableFieldSchema = z.enum(validSortableFields.sourceDocument);
 
 export const sourceDocumentSchema = z.object({
     id: idSchema,

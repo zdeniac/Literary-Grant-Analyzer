@@ -26,8 +26,16 @@ export const fundingAreas = [
         name: 'Alkotói tevékenység',
     },
     {
-        id: FundingArea.PERIODICAL,
-        name: 'Folyóiratok és periodikák, online és print',
+        id: FundingArea.ONLINE_PERIODICAL,
+        name: 'Online folyóiratok',
+    },
+    {
+        id: FundingArea.PRINT_PERIODICAL,
+        name: 'Print folyóiratok',
+    },
+    {
+        id: FundingArea.ONLINE_PRESENCE,
+        name: 'Online tevékenység (pl. honlapfejlesztés)',
     },
     {
         id: FundingArea.EVENT,

@@ -1,19 +1,17 @@
 import { CreateButton, ExportButton, Form, TopToolbar } from "react-admin";
-import { ImportButton } from "../../../features/import/components/ImportButton";
 import { Box } from "@mui/material";
 import { MultiFieldSearchBox } from "../../../components/form/MultiFieldSearchBox";
 import { validSortableFields } from "../../../../../packages/shared/constants";
 
-export const PersonListActions = () => (
+export const SourceDocumentActions = () => (
     <Box sx={{ width: "100%" }}>
         <TopToolbar>
             <CreateButton />
-            <ImportButton entity="person" />
             <ExportButton />
         </TopToolbar>
 
         <Form>
-            <MultiFieldSearchBox fields={validSortableFields.person} />
+            <MultiFieldSearchBox fields={validSortableFields.sourceDocument} />
         </Form>
     </Box>
 );

@@ -1,5 +1,7 @@
 import type { CreateParams, CreateResult, DataProvider, DeleteManyParams, DeleteManyResult, DeleteParams, DeleteResult, GetListParams, GetListResult, GetManyParams, GetManyReferenceParams, GetManyReferenceResult, GetManyResult, GetOneParams, GetOneResult, Identifier, QueryFunctionContext, RaRecord, UpdateManyParams, UpdateManyResult, UpdateParams, UpdateResult } from "react-admin";
 import { request } from "./request";
+import { resourceToSortableEntity, validSortableFields } from "../../../packages/shared/constants";
+import { type ResourceName, type SortableEntityName } from "../../../packages/shared/types";
 
 const dataProvider: DataProvider = {
 	getList: async <RecordType extends RaRecord = RaRecord>(
@@ -8,21 +10,34 @@ const dataProvider: DataProvider = {
 	): Promise<GetListResult<RecordType>> => {
 		const query = new URLSearchParams();
 
-		// pagination
+		// Pagination
 		query.set('page', String(params?.pagination?.page));
 		query.set('perPage', String(params?.pagination?.perPage));
 
-		// sort
+		// Sort
 		if (params.sort?.field) {
-			query.set('sort', String(params.sort.field));
-			query.set('order', String(params.sort.order));
+			const field = params.sort.field;
+			// Prepare the entity's name from the resource to validate the sortable fields
+			let entityName: SortableEntityName | undefined = resourceToSortableEntity[resource as ResourceName];
+
+			if (entityName && validSortableFields[entityName].includes(field)) {
+				query.set('sort', String(field));
+				query.set('order', String(params.sort.order));
+			}
 		}
 
-		// filters
+		// Filters
 		Object.entries(params.filter).forEach(([key, value]) => {
-			if (value !== undefined && value !== null && value !== '') {
-				query.set(key, String(value));
+			if (value === undefined || value === null || value === '') {
+        		return;
+    		}
+
+			if (Array.isArray(value)) {
+				query.set(key, value.join(','));
+				return;
 			}
+
+			query.set(key, String(value));
 		});
 
 		const res = await request(`/api/${resource}?${query.toString()}`);
@@ -36,18 +51,16 @@ const dataProvider: DataProvider = {
 		resource: string,
 		params: GetOneParams<RecordType>
 	): Promise<GetOneResult<RecordType>> => {
-		const res = await request(`/api/${resource}/${params.id}`);
 		return {
-			data: res.data,
+			data: (await request(`/api/${resource}/${params.id}`)).data,
 		};
 	},
 	getMany: async function <RecordType extends RaRecord = any>(
 		resource: string, 
 		params: GetManyParams<RecordType> & QueryFunctionContext
 	): Promise<GetManyResult<RecordType>> {
-		const res = await request(`/api/${resource}`);
 		return {
-			data: res.data,
+			data: (await request(`/api/${resource}`)).data,
 		};
 	},
 	getManyReference: function <RecordType extends RaRecord = any>(resource: string, params: GetManyReferenceParams & QueryFunctionContext): Promise<GetManyReferenceResult<RecordType>> {

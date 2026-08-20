@@ -1,13 +1,9 @@
 import z from "zod";
 import { idSchema, nameSchema, yearSchema } from "../../../common/validation/schema";
 import { PersonRole } from "@prisma/client";
+import { validSortableFields } from "../../../../../packages/shared/constants";
 
-export const personSortableFieldSchema = z.enum([
-    'id',
-    'name',
-    'birthYear',
-    'deathYear',
-]);
+export const personSortableFieldSchema = z.enum(validSortableFields.person);
 
 export const personSchema = z.object({
     id: idSchema,

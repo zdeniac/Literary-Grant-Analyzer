@@ -4,7 +4,10 @@ import { AuditColumns } from "../../../components/table/AuditColumns";
 import { CustomEmpty } from "../../../components/table/CustomEmpty";
 
 export const DecisionAuthorityList = () => (
-    <List actions={<DecisionAuthorityListActions />} empty={<CustomEmpty hasImport entity="decisionAuthority" />}>
+    <List 
+        actions={<DecisionAuthorityListActions />} empty={<CustomEmpty hasImport entity="decisionAuthority" />}
+        sort={{ field: 'id', order: 'DESC' }}
+    >
         <DataTable>
             <DataTable.Col source="id" />
             <DataTable.Col source="name" />

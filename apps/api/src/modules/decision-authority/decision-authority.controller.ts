@@ -55,6 +55,10 @@ export class DecisionAuthorityController
     {
         const decisionAuths = await this.service.getList(req.listQueryParams);
         
-        sendData(res, decisionAuths.map(this.mapper));
+        sendData(
+            res, 
+            decisionAuths.map(this.mapper),
+            { total: decisionAuths.length }
+        );
     }
 }

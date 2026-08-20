@@ -1,14 +1,4 @@
 import z from "zod";
+import { validSortableFields } from "../../../../../packages/shared/constants";
 
-export const importJobSortableFieldSchema = z.enum([
-    'id',
-    'model',
-    'fileName',
-    'mimeType',
-    'status',
-    'totalRows',
-    'importedRows',
-    'failedRows',
-    'startedAt',
-    'finishedAt'
-]);
+export const importJobSortableFieldSchema = z.enum(validSortableFields.importJob);
