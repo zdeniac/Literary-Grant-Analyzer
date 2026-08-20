@@ -1,4 +1,5 @@
 import z from "zod";
-import { awardSchemeSortableFieldSchema } from "../validation/award-scheme.schema";
+import { awardSchemeSearchableFieldSchema, awardSchemeSortableFieldSchema } from "../validation/award-scheme.schema";
 
-export type AwardSchemeSortableField = z.infer<typeof awardSchemeSortableFieldSchema>
+export type AwardSchemeSortableField = z.infer<typeof awardSchemeSortableFieldSchema>;
+export type AwardSchemeSearchableField = z.infer<typeof awardSchemeSearchableFieldSchema>;

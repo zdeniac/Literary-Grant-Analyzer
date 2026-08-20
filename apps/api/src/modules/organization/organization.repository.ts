@@ -13,7 +13,7 @@ export class OrganizationRepository
             CreateOrganizationInput,
             UpdateOrganizationInput
         >,
-        private readonly listQueryBuilder: ListDbQueryBuilder,
+        private readonly listQueryBuilder?: ListDbQueryBuilder,
     ) {}
 
     async create(data: CreateOrganizationInput): Promise<OrganizationEntity>
@@ -38,6 +38,6 @@ export class OrganizationRepository
 
     async findAll(query?: ListQueryParams): Promise<OrganizationEntity[]>
     {
-        return this.entity.findMany({ ...this.listQueryBuilder.build(query) });
+        return this.entity.findMany(this.listQueryBuilder?.build(query));
     }
 }

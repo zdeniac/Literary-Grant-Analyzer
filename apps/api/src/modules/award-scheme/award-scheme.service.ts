@@ -9,7 +9,7 @@ export class AwardSchemeService
         private readonly repository: AwardSchemeRepository,
     ) {}
 
-    async getList(query?: ListQueryParams<AwardSchemeSortableField>): Promise<AwardSchemeEntity[]>
+    async getList(query?: ListQueryParams): Promise<AwardSchemeEntity[]>
     {
         return this.repository.findAll(query);
     }

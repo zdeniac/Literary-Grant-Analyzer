@@ -25,7 +25,6 @@ export class JournalController
         const journal = await this.service.create(
             req.body
         );
-
         sendData(res, this.mapper(journal));
     }
 

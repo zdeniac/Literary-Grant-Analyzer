@@ -1,11 +1,12 @@
 import { Router } from "express";
 import { createJournalModule } from "./journal.factory";
 import { validate } from "../../common/middleware/validate.middleware";
-import { createJournalWithAffiliationsSchema, journalSortableFieldSchema, updateJournalWithAffiliationsSchema } from "./validate/journal.schema";
+import { createJournalWithAffiliationsSchema, journalSearchableFieldSchema, journalSortableFieldSchema, updateJournalWithAffiliationsSchema } from "./validate/journal.schema";
 import { createJournalAffiliationModule } from "../journal-affiliation/journal-affiliation.factory";
 import { parseListQuery } from "../../common/middleware/parse-list-query.middleware";
-import { validateListQuery } from "../../common/middleware/validate-list-query.middleware";
-import { JournalSortableField } from "./types/journal.types";
+import { validateSort } from "../../common/middleware/validate-sort.middleware";
+import { JournalSearchableField, JournalSortableField } from "./types/journal.types";
+import { validateSearch } from "../../common/middleware/validate-search.middleware";
 
 const router = Router();
 const { controller } = createJournalModule();
@@ -42,7 +43,8 @@ router.post(
 router.get(
     '/',
     parseListQuery,
-    validateListQuery<JournalSortableField>(journalSortableFieldSchema),
+    validateSort<JournalSortableField>(journalSortableFieldSchema),
+    validateSearch<JournalSearchableField>(journalSearchableFieldSchema),
     controller.list,
 );
 

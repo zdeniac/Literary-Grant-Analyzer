@@ -12,6 +12,6 @@ export class AwardSchemeRepository
 
     async findAll(query?: ListQueryParams): Promise<AwardSchemeEntity[]>
     {
-        return this.entity.findMany({ ...this.listQueryBuilder?.build(query) })
+        return this.entity.findMany(this.listQueryBuilder?.build(query))
     }
 }

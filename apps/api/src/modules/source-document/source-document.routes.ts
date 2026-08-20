@@ -3,7 +3,7 @@ import { createSourceDocumentCrudModule } from "./source-document.factories";
 import { validate } from "../../common/middleware/validate.middleware";
 import { createSourceDocumentSchema, sourceDocumentSortableFieldSchema, updateSourceDocumentSchema } from "./validation/source-document.schema";
 import { parseListQuery } from "../../common/middleware/parse-list-query.middleware";
-import { validateListQuery } from "../../common/middleware/validate-list-query.middleware";
+import { validateSort } from "../../common/middleware/validate-sort.middleware";
 import { SourceDocumentSortableField } from "./types/source-document.types";
 
 const router = Router();
@@ -34,7 +34,7 @@ router.post(
 router.get(
     '/',
     parseListQuery,
-    validateListQuery<SourceDocumentSortableField>(sourceDocumentSortableFieldSchema),
+    validateSort<SourceDocumentSortableField>(sourceDocumentSortableFieldSchema),
     controller.list,
 );
 

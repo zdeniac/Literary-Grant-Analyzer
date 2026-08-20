@@ -83,3 +83,50 @@ export const resourceToSortableEntity = {
     persons: 'person',
     'source-documents': 'sourceDocument',
 } as const;
+
+export const validSearchableFields = {
+    awardDecision: [
+        'purpose',
+        'sourceIdentifier',
+        'decisionDate',
+    ],
+    awardScheme: [
+        'name',
+        'fundingArea',
+    ],
+    decisionAuthority: [
+        'name',
+    ],
+    importJob: [
+        'model',
+        'fileName',
+        'mimeType',
+        'status',
+        'errorMessage',
+        'startedAt',
+        'finishedAt',
+    ],
+    journal: [
+        'name',
+        'issn',
+        'status',
+        'format',
+    ],
+    organization: [
+        'name',
+        'website',
+        'address',
+        'legalForm',
+        'sector',
+    ],
+    person: [
+        'name',
+    ],
+    sourceDocument: [
+        'title',
+        'url',
+        'retrievedAt',
+        'createdAt',
+        'updatedAt',
+    ],
+} as const;

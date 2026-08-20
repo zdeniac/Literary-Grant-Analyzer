@@ -8,7 +8,7 @@ import {
     journalAffiliationWithOrganizationAndSourceDocumentSchema,
     updateJournalAffiliationWithIdSchema, 
 } from "../../journal-affiliation/validate/journal-affiliation.schema";
-import { validSortableFields } from "../../../../../packages/shared/constants";
+import { validSearchableFields, validSortableFields } from "../../../../../packages/shared/constants";
 
 const ommittedFields = {
     id: true,
@@ -50,6 +50,7 @@ export const issnSchema = z
     .refine(v => v === null || /^\d{8}$/.test(v) || /^\d{7}X$/.test(v));
 
 export const journalSortableFieldSchema = z.enum(validSortableFields.journal);
+export const journalSearchableFieldSchema = z.enum(validSearchableFields.journal);
 
 export const journalSchema = z.object({
     id: idSchema,

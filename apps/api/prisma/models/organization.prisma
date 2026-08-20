@@ -1,4 +1,4 @@
-model Organization {
+ model Organization {
 	id 				Int 		@id @default(autoincrement())
 	name 			String		@unique
 	address 		String?

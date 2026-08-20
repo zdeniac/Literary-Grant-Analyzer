@@ -3,7 +3,7 @@ import { SortableField } from "../types/types";
 import { validateSortField } from "../validation/sort-field";
 import z from "zod";
 
-export const validateListQuery = <TField extends SortableField>(validator: z.ZodType<TField>) => (
+export const validateSort = <TField extends SortableField>(validator: z.ZodType<TField>) => (
     req: Request,
     _res: Response,
     next: NextFunction

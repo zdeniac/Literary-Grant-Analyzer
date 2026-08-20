@@ -3,7 +3,7 @@ import { createPersonModule } from "./person.factory";
 import { createPersonSchema, personSortableFieldSchema, updatePersonSchema } from "./validation/person.schema";
 import { validate } from "../../common/middleware/validate.middleware";
 import { parseListQuery } from "../../common/middleware/parse-list-query.middleware";
-import { validateListQuery } from "../../common/middleware/validate-list-query.middleware";
+import { validateSort } from "../../common/middleware/validate-sort.middleware";
 import { PersonSortableField } from "./types/person.types";
 
 const router = Router();
@@ -34,7 +34,7 @@ router.post(
 router.get(
     '/',
     parseListQuery,
-    validateListQuery<PersonSortableField>(personSortableFieldSchema),
+    validateSort<PersonSortableField>(personSortableFieldSchema),
     controller.list,
 );
 

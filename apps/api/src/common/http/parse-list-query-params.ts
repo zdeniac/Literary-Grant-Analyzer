@@ -10,8 +10,11 @@ export const parseListQueryParams = (query: Request['query']): ListQueryParams =
         ? Number(query.perPage)
         : undefined,
 
-    filter: query.filter
-        ? JSON.parse(String(query.filter))
+    searchParams: query.q && query.fields
+        ? {
+            q: String(query.q),
+            fields: String(query.fields).split(',')
+        }
         : undefined,
 
     order: query.order

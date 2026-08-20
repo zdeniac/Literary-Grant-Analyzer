@@ -1,9 +1,10 @@
 import { LegalForm, Sector } from "@prisma/client";
 import * as z from "zod";
 import { idSchema, nameSchema, yearSchema } from "../../../common/validation/schema";
-import { validSortableFields } from "../../../../../packages/shared/constants";
+import { validSearchableFields, validSortableFields } from "../../../../../packages/shared/constants";
 
 export const organizationSortableFieldSchema = z.enum(validSortableFields.organization);
+export const organizationSearchableFieldSchema = z.enum(validSearchableFields.organization);
 
 export const organizationSchema = z.object({
     id: idSchema,

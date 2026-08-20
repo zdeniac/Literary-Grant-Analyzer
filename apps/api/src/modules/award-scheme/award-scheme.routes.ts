@@ -1,10 +1,11 @@
 import { Router } from "express";
 import { createAwardSchemeModule } from "./award-scheme.factory";
 import { validate } from "../../common/middleware/validate.middleware";
-import { awardSchemeSortableFieldSchema, createAwardSchemeSchema, updateAwardSchemeSchema } from "./validation/award-scheme.schema";
+import { awardSchemeSearchableFieldSchema, awardSchemeSortableFieldSchema, createAwardSchemeSchema, updateAwardSchemeSchema } from "./validation/award-scheme.schema";
 import { parseListQuery } from "../../common/middleware/parse-list-query.middleware";
-import { validateListQuery } from "../../common/middleware/validate-list-query.middleware";
-import { AwardSchemeSortableField } from "./types/award-scheme.types";
+import { validateSort } from "../../common/middleware/validate-sort.middleware";
+import { AwardSchemeSearchableField, AwardSchemeSortableField } from "./types/award-scheme.types";
+import { validateSearch } from "../../common/middleware/validate-search.middleware";
 
 const router = Router();
 const { crudController, controller } = createAwardSchemeModule();
@@ -34,7 +35,8 @@ router.post(
 router.get(
     '/',
     parseListQuery,
-    validateListQuery<AwardSchemeSortableField>(awardSchemeSortableFieldSchema),
+    validateSort<AwardSchemeSortableField>(awardSchemeSortableFieldSchema),
+    validateSearch<AwardSchemeSearchableField>(awardSchemeSearchableFieldSchema),
     controller.list,
 );
 

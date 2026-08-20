@@ -16,7 +16,7 @@ export class AwardSchemeController
 
     async list(req: Request, res: Response): Promise<void>
     {
-        const query: ListQueryParams<AwardSchemeSortableField> | undefined = req.listQueryParams;
+        const query: ListQueryParams| undefined = req.listQueryParams;
         awardSchemeSortableFieldSchema.parse(query?.sort)
 
         const awardSchemes = await this.service.getList(query);

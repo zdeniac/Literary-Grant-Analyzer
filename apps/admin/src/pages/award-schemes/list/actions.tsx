@@ -2,7 +2,7 @@ import { CreateButton, ExportButton, Form, TopToolbar } from "react-admin";
 import { ImportButton } from "../../../features/import/components/ImportButton";
 import { Box } from "@mui/material";
 import { MultiFieldSearchBox } from "../../../components/form/MultiFieldSearchBox";
-import { validSortableFields } from "../../../../../packages/shared/constants";
+import { validSearchableFields } from "../../../../../packages/shared/constants";
 
 export const AwardSchemeListActions = () => (
     <Box sx={{ width: "100%" }}>
@@ -13,7 +13,7 @@ export const AwardSchemeListActions = () => (
         </TopToolbar>
 
         <Form>
-            <MultiFieldSearchBox fields={validSortableFields.awardScheme} />
+            <MultiFieldSearchBox fields={validSearchableFields.awardScheme} />
         </Form>
     </Box>
 );

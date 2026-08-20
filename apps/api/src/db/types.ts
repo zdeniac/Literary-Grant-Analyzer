@@ -4,6 +4,7 @@ export type ListDbQueryOptions = {
     orderBy?: Record<string, 'asc' | 'desc'>;
     skip?: number;
     take?: number;
+    where?: object;
 };
 
 // This type is needed for using transactions

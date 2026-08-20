@@ -1,28 +1,38 @@
 import { ListQueryParams } from "../common/types/types";
+import { SearchQueryBuilder } from "./query-builders/search.query-builder";
+import { SortQueryBuilder } from "./query-builders/sort.query-builder";
 import { ListDbQueryOptions } from "./types";
 
-export class ListDbQueryBuilder<TSortableField extends string = string>
+export class ListDbQueryBuilder
 {
     constructor(
-        //private readonly buildWhere: (filter: TFilter) => object,
+        private readonly sortBuilder: SortQueryBuilder,
+        private readonly searchBuilder: SearchQueryBuilder,
     ) {}
 
-    build(query?: ListQueryParams<TSortableField>): ListDbQueryOptions
-    {
-        if (!query) {
-            return {};
-        }
-
+    build(query?: ListQueryParams): ListDbQueryOptions
+    {   
         const result: ListDbQueryOptions = {};
 
-        // if (query.filter) {
-        //     result.where = this.buildWhere(query.filter);
-        // }
+        if (!query) {
+            return result;
+        }
 
         if (query.sort && query.order) {
-            result.orderBy = {
-                [query.sort]: query.order === 'ASC' ? 'asc' : 'desc',
-            };
+            Object.assign(
+                result,
+                this.sortBuilder.build(
+                    query.sort, 
+                    query.order
+                ),
+            );
+        }
+
+        if (query.q && query.fields?.length) {
+            Object.assign(
+                result,
+                this.searchBuilder.build(query.q, query.fields),
+            );
         }
 
         if (query.perPage) {

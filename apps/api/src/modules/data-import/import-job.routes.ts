@@ -1,9 +1,10 @@
 import { Router } from "express";
 import { createImportJobModule } from "./factory/import-job.factory";
 import { parseListQuery } from "../../common/middleware/parse-list-query.middleware";
-import { validateListQuery } from "../../common/middleware/validate-list-query.middleware";
-import { ImportJobSortableField } from "./types/http.types";
-import { importJobSortableFieldSchema } from "./validation/import-job.validation";
+import { validateSort } from "../../common/middleware/validate-sort.middleware";
+import { ImportJobSearchableField, ImportJobSortableField } from "./types/http.types";
+import { importJobSearchableFieldSchema, importJobSortableFieldSchema } from "./validation/import-job.validation";
+import { validateSearch } from "../../common/middleware/validate-search.middleware";
 
 const router = Router();
 const { controller } = createImportJobModule();
@@ -16,7 +17,8 @@ router.get(
 router.get(
     '/',
     parseListQuery,
-    validateListQuery<ImportJobSortableField>(importJobSortableFieldSchema),
+    validateSort<ImportJobSortableField>(importJobSortableFieldSchema),
+    validateSearch<ImportJobSearchableField>(importJobSearchableFieldSchema),
     controller.list,
 );
 

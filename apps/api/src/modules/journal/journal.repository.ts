@@ -10,7 +10,7 @@ export class JournalRepository
 {
     constructor(
         private readonly entity: Database['journal'],
-        private readonly listQueryBuilder: ListDbQueryBuilder,
+        private readonly listQueryBuilder?: ListDbQueryBuilder,
     ) {}
 
     async create(data: CreateJournalInput): Promise<JournalEntity>
@@ -113,7 +113,7 @@ export class JournalRepository
                     }
                 }
             },
-            ...this.listQueryBuilder.build(query),
+            ...this.listQueryBuilder?.build(query),
         });
     }
 }

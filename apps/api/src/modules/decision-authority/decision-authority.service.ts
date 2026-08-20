@@ -1,7 +1,7 @@
 import { ActorType } from "@prisma/client";
 import { DecisionAuthorityEntity } from "./dto/decision-authority.dto";
 import { transaction } from "../../db/transaction";
-import { Id, ListQueryParams, SortableField } from "../../common/types/types";
+import { Id, ListQueryParams } from "../../common/types/types";
 import { repositoryContainer } from "../../db/repositories/container";
 import { CreateDecisionAuthorityInput, UpdateDecisionAuthorityInput } from "./dto/decision-authority.input.dto";
 import { DecisionAuthorityRepository } from "./decision-authority.repository";

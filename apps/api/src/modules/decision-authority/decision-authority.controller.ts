@@ -1,4 +1,4 @@
-import { DtoMapper, ListQueryParams } from "../../common/types/types";
+import { DtoMapper } from "../../common/types/types";
 import { Request, Response } from "express";
 import { sendData } from "../../common/http/response";
 import { idSchema } from "../../common/validation/schema";

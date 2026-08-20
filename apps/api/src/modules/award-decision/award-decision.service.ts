@@ -9,7 +9,7 @@ export class AwardDecisionService
         private readonly repository: AwardDecisionRepository
     ) {}
 
-    async getList(query?: ListQueryParams<AwardDecisionSortableField>): Promise<AwardDecisionEntityWithRelatedData[]>
+    async getList(query?: ListQueryParams): Promise<AwardDecisionEntityWithRelatedData[]>
     {
         return this.repository.findAllWithRelatedData(query);
     }

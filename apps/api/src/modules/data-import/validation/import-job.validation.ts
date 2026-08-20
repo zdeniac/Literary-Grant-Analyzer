@@ -1,4 +1,5 @@
 import z from "zod";
-import { validSortableFields } from "../../../../../packages/shared/constants";
+import { validSearchableFields, validSortableFields } from "../../../../../packages/shared/constants";
 
 export const importJobSortableFieldSchema = z.enum(validSortableFields.importJob);
+export const importJobSearchableFieldSchema = z.enum(validSearchableFields.importJob);

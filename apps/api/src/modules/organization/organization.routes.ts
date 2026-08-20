@@ -3,7 +3,7 @@ import { createOrganizationModule } from "./organization.factory";
 import { validate } from "../../common/middleware/validate.middleware";
 import { createOrganizationSchema, organizationSortableFieldSchema, updateOrganizationSchema } from "./validation/organization.schema";
 import { parseListQuery } from "../../common/middleware/parse-list-query.middleware";
-import { validateListQuery } from "../../common/middleware/validate-list-query.middleware";
+import { validateSort } from "../../common/middleware/validate-sort.middleware";
 import { OrganizationSortableField } from "./types/organization.types";
 
 const router = Router();
@@ -34,7 +34,7 @@ router.post(
 router.get(
     '/',
     parseListQuery,
-    validateListQuery<OrganizationSortableField>(organizationSortableFieldSchema),
+    validateSort<OrganizationSortableField>(organizationSortableFieldSchema),
     controller.list,
 );
 

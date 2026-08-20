@@ -1,7 +1,7 @@
 import { Id, ListQueryParams } from "../../common/types/types";
 import { ListDbQueryBuilder } from "../../db/list-db-query-builder";
 import { Database } from "../../db/types";
-import { AwardDecisionEntityWithRelatedData, AwardDecisionSortableField } from "./types/award-decision.types";
+import { AwardDecisionEntityWithRelatedData } from "./types/award-decision.types";
 
 export class AwardDecisionRepository
 {
@@ -10,7 +10,7 @@ export class AwardDecisionRepository
         private readonly listQueryBuilder?: ListDbQueryBuilder
     ) {}
 
-    async findAllWithRelatedData(query?: ListQueryParams<AwardDecisionSortableField>): Promise<AwardDecisionEntityWithRelatedData[]>
+    async findAllWithRelatedData(query?: ListQueryParams): Promise<AwardDecisionEntityWithRelatedData[]>
     {
         return this.entity.findMany({
             include: {

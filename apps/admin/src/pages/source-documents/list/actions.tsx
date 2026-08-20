@@ -1,7 +1,7 @@
 import { CreateButton, ExportButton, Form, TopToolbar } from "react-admin";
 import { Box } from "@mui/material";
 import { MultiFieldSearchBox } from "../../../components/form/MultiFieldSearchBox";
-import { validSortableFields } from "../../../../../packages/shared/constants";
+import { validSearchableFields } from "../../../../../packages/shared/constants";
 
 export const SourceDocumentActions = () => (
     <Box sx={{ width: "100%" }}>
@@ -11,7 +11,7 @@ export const SourceDocumentActions = () => (
         </TopToolbar>
 
         <Form>
-            <MultiFieldSearchBox fields={validSortableFields.sourceDocument} />
+            <MultiFieldSearchBox fields={validSearchableFields.sourceDocument} />
         </Form>
     </Box>
 );

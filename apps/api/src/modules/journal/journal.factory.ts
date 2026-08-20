@@ -1,5 +1,7 @@
 import { ListDbQueryBuilder } from "../../db/list-db-query-builder";
 import { prisma } from "../../db/prisma";
+import { SearchQueryBuilder } from "../../db/query-builders/search.query-builder";
+import { SortQueryBuilder } from "../../db/query-builders/sort.query-builder";
 import { JournalAffiliationRepository } from "../journal-affiliation/journal-affiliation.repository";
 import { JournalController } from "./journal.controller";
 import { JournalRepository } from "./journal.repository";
@@ -8,7 +10,12 @@ import { toJournalListDto } from "./mapper/journal-list-mapper";
 import { toJournalWithAffiliationsDto } from "./mapper/journal-with-affiliations.mapper";
 
 export const createJournalModule = () => {
-    const journoRepo = new JournalRepository(prisma.journal, new ListDbQueryBuilder());
+    const listQb = new ListDbQueryBuilder(
+        new SortQueryBuilder(),
+        new SearchQueryBuilder(),
+    );
+
+    const journoRepo = new JournalRepository(prisma.journal, listQb);
     const affiliationRepo = new JournalAffiliationRepository(prisma.journalAffiliation);
     
     const service = new JournalService(

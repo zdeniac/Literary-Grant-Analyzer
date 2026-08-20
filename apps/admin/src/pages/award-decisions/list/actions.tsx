@@ -1,7 +1,7 @@
 import { TopToolbar, CreateButton, ExportButton, Form } from "react-admin";
 import { ImportButton } from "../../../features/import/components/ImportButton";
 import { Box } from "@mui/material";
-import { validSortableFields } from "../../../../../packages/shared/constants";
+import { validSearchableFields } from "../../../../../packages/shared/constants";
 import { MultiFieldSearchBox } from "../../../components/form/MultiFieldSearchBox";
 
 export const AwardDecisionListActions = () => (
@@ -13,7 +13,7 @@ export const AwardDecisionListActions = () => (
         </TopToolbar>
         
         <Form>
-            <MultiFieldSearchBox fields={validSortableFields.awardDecision} />
+            <MultiFieldSearchBox fields={validSearchableFields.awardDecision} />
         </Form>
     </Box>
 );

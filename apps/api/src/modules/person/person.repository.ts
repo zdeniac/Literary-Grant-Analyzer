@@ -38,8 +38,6 @@ export class PersonRepository
 
     async findAll(query?: ListQueryParams): Promise<PersonEntity[]>
     {
-        return this.entity.findMany(
-            this.listQueryBuilder?.build(query)
-        );
+        return this.entity.findMany(this.listQueryBuilder?.build(query));
     }
 }

@@ -38,7 +38,7 @@ export class SourceDocumentRepository
 
     async findAll(query?: ListQueryParams): Promise<SourceDocumentEntity[]>
     {
-        return this.entity.findMany({ ...this.listQueryBuilder?.build(query) });
+        return this.entity.findMany(this.listQueryBuilder?.build(query));
     }
 
     async delete(id: Id): Promise<SourceDocumentEntity>

@@ -13,7 +13,7 @@ export class DecisionAuthorityRepository
             CreateDecisionAuthorityInput, 
             UpdateDecisionAuthorityInput
         >,
-        private readonly listQueryBuilder: ListDbQueryBuilder,
+        private readonly listQueryBuilder?: ListDbQueryBuilder,
     ) {}
 
     async create(data: CreateDecisionAuthorityInput): Promise<DecisionAuthorityEntity>
@@ -38,7 +38,7 @@ export class DecisionAuthorityRepository
 
     async findAll(query?: ListQueryParams): Promise<DecisionAuthorityEntity[]>
     {
-        return this.entity.findMany({ ...this.listQueryBuilder.build(query) });
+        return this.entity.findMany(this.listQueryBuilder?.build(query));
     }
 
     async delete(id: Id): Promise<DecisionAuthorityEntity>
