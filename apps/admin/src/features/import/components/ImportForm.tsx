@@ -19,10 +19,11 @@ import {
 import type { AcceptedFormat, ImportFormValues } from "../types/import-field.types";
 import { url } from "../../../shared/validation/validators";
 import { Box } from "@mui/material";
-import { ImportValidationApiError, type ImportRowError } from "../errors/ImportValidationApiError";
+import { ImportValidationApiError } from "../errors/ImportValidationApiError";
 import { ImportSourceDocumentApiError } from "../errors/ImportSourceDocumentApiError";
 import { useState } from "react";
 import { ImportErrorList } from "./ImportErrorList";
+import type { ImportRowError } from "../types/error.types";
 
 const titleValidation = [required()];
 const urlValidation = [url(), required()];
@@ -59,6 +60,10 @@ export const ImportForm = ({
                     formData.append(
                         `sourceDocuments[${index}][url]`,
                         document.url
+                    );
+                    formData.append(
+                        `sourceDocuments[${index}][issuingOrganizationId]`,
+                        document.issuingOrganizationId
                     );
                     formData.append(
                         `sourceDocuments[${index}][retrievedAt]`,
@@ -178,7 +183,7 @@ export const ImportForm = ({
                             {
                                 title: '',
                                 url: '',
-                                organizationId: null,
+                                issuingOrganizationId: null,
                                 retrievedAt: undefined,
                             },
                         ]}

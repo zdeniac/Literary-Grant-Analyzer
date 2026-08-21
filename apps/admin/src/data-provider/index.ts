@@ -96,7 +96,15 @@ const dataProvider: DataProvider = {
 	delete: async function <RecordType extends RaRecord = any>(resource: string, params: DeleteParams<RecordType>): Promise<DeleteResult<RecordType>> {
 		const res = await request(`/api/${resource}/${params.id}`, {
 			method: 'DELETE',
+			headers: {
+				'Content-Type': 'application/json',
+			},
 		});
+
+		if (res.status === 204) {
+    		return;
+		}
+
 		return {
 			data: res.data,
 		};		

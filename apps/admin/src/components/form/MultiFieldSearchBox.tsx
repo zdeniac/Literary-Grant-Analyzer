@@ -2,6 +2,7 @@ import { Box } from "@mui/material";
 import { useEffect } from "react";
 import { SelectArrayInput, TextInput, useListContext } from "react-admin";
 import { useWatch } from "react-hook-form";
+import { ClearFiltersButton } from "../inputs/ClearFiltersInput";
 
 type MultiFieldSearchProps<T extends string = string> = {
     fields: readonly T[];
@@ -19,6 +20,7 @@ export const MultiFieldSearchBox = <T extends string>(
         const value = search?.trim();
 
         if (!value || !selectedFields?.length) {
+            setFilters({});
             return;
         }
 
@@ -50,6 +52,7 @@ export const MultiFieldSearchBox = <T extends string>(
                     }))}
                 />
             </Box>
+            <ClearFiltersButton />
         </Box>
     );
 };

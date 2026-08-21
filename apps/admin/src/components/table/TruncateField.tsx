@@ -6,7 +6,7 @@ type TruncateFieldProps = {
     maxWidth?: number;
 };
 
-export const TruncateField = ({source, maxWidth = 30}: TruncateFieldProps) => (
+export const TruncateField = ({source, maxWidth = 15}: TruncateFieldProps) => (
     <TextField
         source={source}
         sx={{
