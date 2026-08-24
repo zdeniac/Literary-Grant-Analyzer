@@ -1,4 +1,4 @@
-import { required, SelectInput, SimpleForm, TextInput } from "react-admin";
+import { required, SelectInput, SimpleForm, TextArrayInput, TextInput } from "react-admin";
 import { YearInput } from "../../../components/inputs/YearInput";
 import { legalForms, sectors, } from "../constants";
 import { url } from "../../../shared/validation/validators";
@@ -12,6 +12,8 @@ export const OrganizationForm = () => (
     <SimpleForm>
 
         <TextInput source="name" validate={validateName} />
+        <TextArrayInput source="nameVariants" />
+
         <TextInput source="address" />
 
         <TextInput source="website" validate={validateWebsite} />

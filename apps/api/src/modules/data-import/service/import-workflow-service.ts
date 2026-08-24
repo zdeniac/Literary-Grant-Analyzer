@@ -23,7 +23,6 @@ export class ImportWorkflowService
         let sourceDocuments: SourceDocumentDto[] = [];
 
         // The source documents are always saved if true, even if the import itself fails.
-        // The source documents are domain level entities.
         if (sourceDocumentsInput.length) {
             sourceDocuments = await this.sourceDocumentService.findOrCreateSourceDocuments(
                 sourceDocumentsInput

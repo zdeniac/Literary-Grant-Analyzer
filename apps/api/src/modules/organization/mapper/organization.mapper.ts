@@ -7,8 +7,11 @@ export const toOrganizationDto: DtoMapper<OrganizationEntity, OrganizationDto> =
 	id: org.id,
     
     name: org.name,
+    nameVariants: org.nameVariants,
+
     legalForm: org.legalForm,
     sector: org.sector,
+    
     website: org.website,
     address: org.address,
     foundingYear: org.foundingYear,

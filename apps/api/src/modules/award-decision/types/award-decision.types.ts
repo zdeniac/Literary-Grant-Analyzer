@@ -24,7 +24,8 @@ export type AwardDecisionEntity = {
 export type AwardDecisionEntityWithRelatedData = Prisma.AwardDecisionGetPayload<{
     include: {
         decisionMaker: {
-            include: {
+            select: {
+                type: true,
                 organization: {
                     select: {
                         id: true,
@@ -40,7 +41,8 @@ export type AwardDecisionEntityWithRelatedData = Prisma.AwardDecisionGetPayload<
             };
         };
         recipient: {
-            include: {
+            select: {
+                type: true,
                 organization: {
                     select: {
                         id: true,

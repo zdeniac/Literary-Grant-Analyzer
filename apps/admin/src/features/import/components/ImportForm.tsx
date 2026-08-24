@@ -16,7 +16,7 @@ import {
     useRefresh, 
     type ButtonProps 
 } from "react-admin";
-import type { AcceptedFormat, ImportFormValues } from "../types/import-field.types";
+import type { AcceptedFormat, ImportFormProps, ImportFormValues } from "../types/import-form.types";
 import { url } from "../../../shared/validation/validators";
 import { Box } from "@mui/material";
 import { ImportValidationApiError } from "../errors/ImportValidationApiError";
@@ -24,19 +24,22 @@ import { ImportSourceDocumentApiError } from "../errors/ImportSourceDocumentApiE
 import { useState } from "react";
 import { ImportErrorList } from "./ImportErrorList";
 import type { ImportRowError } from "../types/error.types";
+import { validFileDelimiters } from "../constants";
+import type { FileDelimiter } from "../../../../../packages/shared/enums";
 
 const titleValidation = [required()];
 const urlValidation = [url(), required()];
 const retrievedAtValidation = [required()];
+const fileInputValidation = [required()];
+const delimiterValidation = [required()];
 
 export const ImportForm = ({ 
     submitRoute,
     acceptedFormats,
+    defaultFileDelimiter,
+    onDelimiterChange,
     ...props 
-}: { 
-    submitRoute: string,
-    acceptedFormats: AcceptedFormat[],
-} & ButtonProps) => {
+}: ImportFormProps) => {
     const refresh = useRefresh();
     const notify = useNotify();
     const [importErrors, setImportErrors] = useState<ImportRowError[]>([]);
@@ -50,6 +53,7 @@ export const ImportForm = ({
 
             formData.append('file', params.file?.rawFile);
             formData.append('saveSourceDocument', params.saveSourceDocument ? 'true' : 'false');
+            formData.append('delimiter', params.delimiter);
 
             if (params.saveSourceDocument && params.sourceDocuments) {
                 params.sourceDocuments.forEach((document, index) => {
@@ -160,10 +164,18 @@ export const ImportForm = ({
                     }}
                 </FormDataConsumer>
 
+                <SelectInput
+                    source="delimiter"
+                    choices={validFileDelimiters}
+                    defaultValue={defaultFileDelimiter}
+                    validate={delimiterValidation}
+                    onChange={event => onDelimiterChange(event.target.value as FileDelimiter)}
+                />
+
                 <FileInput
                     source="file" 
                     name="file"
-                    validate={required()}
+                    validate={fileInputValidation}
                     multiple={false} 
                     accept={{'text/csv' : ['.csv']}}
 

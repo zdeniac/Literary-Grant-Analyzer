@@ -1,6 +1,6 @@
 import { describe, expect, it, beforeEach, afterAll } from "vitest";
 import { ImportFile } from "../../../../src/modules/data-import/types/import.types";
-import { ImportValidationError } from "../../../../src/modules/data-import/error/import.errors";
+import { ImportDataValidationError } from "../../../../src/modules/data-import/error/import.errors";
 import { ImportJobStatus, LegalForm, Sector } from "@prisma/client";
 import { prisma } from "../../../../src/db/prisma";
 import { wipeDatabase } from "../../helpers/db.helper";
@@ -78,6 +78,6 @@ describe('Organization Import Service', () => {
 
         await expect(
             importer.import('organization', invalidOrgFile)
-        ).rejects.toThrow(ImportValidationError);
+        ).rejects.toThrow(ImportDataValidationError);
     });
 });

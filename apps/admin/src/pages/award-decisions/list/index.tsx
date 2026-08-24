@@ -5,6 +5,7 @@ import { AwardDecisionListActions } from "./actions";
 import { HungarianDateField } from "../../../components/table/HungarianDateField";
 import { TableLink } from "../../../components/table/TableLink";
 import { HungarianNumberField } from "../../../components/table/HungarianNumberField";
+import { DecisionMaker, Recipient } from "../../../../../packages/shared/enums";
 
 export const AwardDecisionList = () => (
     <List 
@@ -15,9 +16,43 @@ export const AwardDecisionList = () => (
 
             <DataTable.Col source="id" />
 
-            <DataTable.Col source="recipientName" disableSort />
-            <DataTable.Col source="awardSchemeName" disableSort />
-            <DataTable.Col source="decisionMakerName" disableSort />
+            <DataTable.Col source="recipientName" disableSort>
+                <FunctionField render={(record) => {
+                    const id = record.recipientId;
+                    const link = record.recipientType == Recipient.ORGANIZATION 
+                        ? `/organizations/${id}`
+                        : `/persons/${id}`;
+
+                    return (
+                        <TableLink to={link}>
+                        { record.recipientName }
+                        </TableLink>
+                    );
+                }} />
+            </DataTable.Col>
+
+            <DataTable.Col source="awardSchemeName" disableSort>
+                <FunctionField render={(record) => (
+                    <TableLink to={`/award-schemes/${record.awardSchemeId}`}>
+                        { record.awardSchemeName }
+                    </TableLink>
+                )} />
+            </DataTable.Col>
+
+            <DataTable.Col source="decisionMakerName" disableSort >
+                <FunctionField render={(record) => {
+                    const id = record.decisionMakerId;
+                    const link = record.decisionMakerType == DecisionMaker.ORGANIZATION 
+                        ? `/organizations/${id}`
+                        : `/decision-authorities/${id}`;
+
+                    return (
+                        <TableLink to={link}>
+                            { record.decisionMakerName }
+                        </TableLink>
+                    );
+                }} />
+            </DataTable.Col>
              
             <DataTable.Col source="amount" field={HungarianNumberField}/>
             <DataTable.Col source="purpose" />

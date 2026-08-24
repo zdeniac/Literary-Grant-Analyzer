@@ -21,6 +21,7 @@ import { useEffect, useState } from "react";
 import { DownloadImportSchemaButton } from "./DownloadImportSchemaButton";
 import { ImportForm } from "./ImportForm";
 import type { EntityName } from "../types/import-button.types";
+import { FileDelimiter } from "../../../../../packages/shared/enums";
 
 export const ImportModal = ({ 
     entity, 
@@ -34,6 +35,9 @@ export const ImportModal = ({
     const [schema, setSchema] = useState(null);
     const [isPending, setIsPending] = useState(false);
     const submitRoute = `api/import/${entity}`;
+    const [delimiter, setDelimiter] = useState<FileDelimiter>(
+        FileDelimiter.SEMICOLON
+    );
 
     useEffect(() => {
         if (!open) {
@@ -100,6 +104,7 @@ export const ImportModal = ({
 
                     <DownloadImportSchemaButton
                         fileHeader={header}
+                        fileDelimiter={delimiter}
                         entity={entity}
                     />
                 </Box>
@@ -185,7 +190,12 @@ export const ImportModal = ({
                     justifyContent: "center"
                 }}
             >
-                <ImportForm submitRoute={submitRoute} acceptedFormats={acceptedFormats} />
+                <ImportForm 
+                    submitRoute={submitRoute} 
+                    acceptedFormats={acceptedFormats}
+                    defaultFileDelimiter={delimiter}
+                    onDelimiterChange={setDelimiter}
+                />
             </DialogActions>
         </Dialog>
     );

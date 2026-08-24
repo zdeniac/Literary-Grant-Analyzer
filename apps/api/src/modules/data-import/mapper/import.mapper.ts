@@ -1,16 +1,24 @@
+import { FileDelimiter } from "../../../../../packages/shared/enums";
+import { ImportError } from "../error/import.errors";
 import { ImportFile, ImportRow } from "../types/import.types";
-import { parse } from "csv-parse/sync";
+import { CsvError, parse } from "csv-parse/sync";
 
-export const toImportFile = (file: Express.Multer.File): ImportFile => {
-    const csvString = file.buffer.toString('utf-8');
+export const toImportFile = (file: Express.Multer.File, delimiter: FileDelimiter): ImportFile => {
+    let rows: ImportRow[] = [];
+
+    try {
+        rows = parse(file.buffer.toString('utf-8'), {
+            columns: true,
+            skip_empty_lines: true,
+            delimiter,
+            trim: true,
+        });
+    } catch (e: unknown) {
+        if (e instanceof CsvError) {
+            throw new ImportError(e.message);
+        }
+    }
     
-    const rows: ImportRow[] = parse(csvString, {
-        columns: true,
-        skip_empty_lines: true,
-        delimiter: ';',
-        trim: true,
-    });
-
     return {
         fileName: file.originalname,
         mimeType: file.mimetype,

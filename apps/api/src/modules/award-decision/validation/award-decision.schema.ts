@@ -5,6 +5,7 @@ import { organizationSchema } from "../../organization/validation/organization.s
 import { decisionAuthoritySchema } from "../../decision-authority/validation/decision-authority.schema";
 import { sourceDocumentSchema } from "../../source-document/validation/source-document.schema";
 import { validSearchableFields, validSortableFields } from "../../../../../packages/shared/constants";
+import { DecisionMaker, Recipient } from "../../../../../packages/shared/enums";
 
 export const awardDecisionSortableFieldSchema = z.enum(validSortableFields.awardDecision);
 export const awardDecisionSearchableFieldSchema = z.enum(validSearchableFields.awardDecision);
@@ -28,9 +29,11 @@ export const awardDecisionSchema = z.object({
 
 export const awardDecisionWithRelatedDataSchema = awardDecisionSchema.extend({
     decisionMakerId: idSchema,
+    decisionMakerType: z.enum(DecisionMaker),
     decisionMakerName: z.string(),
 
     recipientId: idSchema,
+    recipientType: z.enum(Recipient),
     recipientName: z.string(),
 
     awardSchemeId: idSchema,

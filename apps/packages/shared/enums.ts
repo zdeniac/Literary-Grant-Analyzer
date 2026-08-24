@@ -72,3 +72,21 @@ export enum ActorType {
     PERSON = 'PERSON',
     DECISION_AUTHORITY = 'DECISION_AUTHORITY',
 }
+
+export enum Recipient {
+    PERSON = ActorType.PERSON,
+    ORGANIZATION = ActorType.ORGANIZATION,
+}
+
+export enum DecisionMaker {
+    ORGANIZATION = ActorType.ORGANIZATION,
+    DECISION_AUTHORITY = ActorType.DECISION_AUTHORITY,
+}
+
+export enum FileDelimiter {
+    COMMA = ',',
+    SEMICOLON = ';',
+    TAB = '\t',
+    SPACE = ' ',
+    SINGLE_QUOTE = "''",
+}

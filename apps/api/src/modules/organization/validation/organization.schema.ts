@@ -10,6 +10,8 @@ export const organizationSchema = z.object({
     id: idSchema,
 
     name: nameSchema,
+    nameVariants: z.array(nameSchema),
+    
     legalForm: z.enum(LegalForm),
     sector: z.enum(Sector),
     

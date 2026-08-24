@@ -1,6 +1,7 @@
 import { AwardDecisionWithRelatedDataDto } from "../dto/award-decision.dto";
 import { DtoMapper } from "../../../common/types/types";
 import { AwardDecisionEntityWithRelatedData } from "../types/award-decision.types";
+import { DecisionMaker, Recipient } from "../../../../../packages/shared/enums";
 
 export const toAwardDecisionWithRelatedDataDto: DtoMapper<AwardDecisionEntityWithRelatedData, AwardDecisionWithRelatedDataDto> = (
     data
@@ -18,12 +19,14 @@ export const toAwardDecisionWithRelatedDataDto: DtoMapper<AwardDecisionEntityWit
     awardSchemeName: data.awardScheme.name,
 
     decisionMakerId: data.decisionMakerId,
+    decisionMakerType: data.decisionMaker.type as DecisionMaker,
     decisionMakerName:
         data.decisionMaker.organization?.name ??
         data.decisionMaker.decisionAuthority?.name ??
         '',
 
     recipientId: data.recipientId,
+    recipientType: data.recipient.type as Recipient,
     recipientName:
         data.recipient.organization?.name ??
         data.recipient.decisionAuthority?.name ??

@@ -1,6 +1,6 @@
 import { describe, expect, it, beforeEach, afterAll } from "vitest";
 import { ImportFile } from "../../../../src/modules/data-import/types/import.types";
-import { ImportValidationError } from "../../../../src/modules/data-import/error/import.errors";
+import { ImportDataValidationError } from "../../../../src/modules/data-import/error/import.errors";
 import { LegalForm, Sector, AwardSchemeType, FundingArea } from "@prisma/client";
 import { prisma } from "../../../../src/db/prisma";
 import { wipeDatabase } from "../../helpers/db.helper";
@@ -173,7 +173,7 @@ describe('AwardDecision Import Service', () => {
 
         await expect(
             importer.import('awardDecision', awardDecisionFile)
-        ).rejects.toThrow(ImportValidationError);
+        ).rejects.toThrow(ImportDataValidationError);
     });
 
     it('throws when award decision composite award scheme lookup cannot be resolved', async () => {
@@ -238,7 +238,7 @@ describe('AwardDecision Import Service', () => {
 
         await expect(
             importer.import('awardDecision', awardDecisionFile)
-        ).rejects.toThrow(ImportValidationError);
+        ).rejects.toThrow(ImportDataValidationError);
     });
 
     it('throws on invalid award decision row data', async () => {
@@ -303,6 +303,6 @@ describe('AwardDecision Import Service', () => {
 
         await expect(
             importer.import('awardDecision', awardDecisionFile)
-        ).rejects.toThrow(ImportValidationError);
+        ).rejects.toThrow(ImportDataValidationError);
     });
 });

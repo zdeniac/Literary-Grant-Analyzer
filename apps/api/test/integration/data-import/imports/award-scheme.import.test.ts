@@ -1,7 +1,7 @@
 import { describe, expect, it, beforeEach, afterAll } from "vitest";
 import { AwardSchemeType, FundingArea, ImportJobStatus, LegalForm, Sector } from "@prisma/client";
 import { ImportFile } from "../../../../src/modules/data-import/types/import.types";
-import { ImportValidationError } from "../../../../src/modules/data-import/error/import.errors";
+import { ImportDataValidationError } from "../../../../src/modules/data-import/error/import.errors";
 import { prisma } from "../../../../src/db/prisma";
 import { wipeDatabase } from "../../helpers/db.helper";
 import { createOrganization } from "../../helpers/factories/organization.factory";
@@ -77,7 +77,7 @@ describe('AwardScheme Import Service', () => {
 
         await expect(
             importer.import('awardScheme', awardSchemeFile)
-        ).rejects.toThrow(ImportValidationError);
+        ).rejects.toThrow(ImportDataValidationError);
     });
 
     it('throws on invalid award scheme row data', async () => {
@@ -103,6 +103,6 @@ describe('AwardScheme Import Service', () => {
 
         await expect(
             importer.import('awardScheme', invalidAwardSchemeFile)
-        ).rejects.toThrow(ImportValidationError);
+        ).rejects.toThrow(ImportDataValidationError);
     });
 });

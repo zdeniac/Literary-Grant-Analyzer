@@ -1,5 +1,5 @@
 import { ImportFile, ImportOptions, ImportRow } from "../types/import.types";
-import { ImportEmptyFileError, ImportError, ImportValidationError } from "../error/import.errors";
+import { ImportEmptyFileError, ImportError, ImportDataValidationError } from "../error/import.errors";
 import { validateHeaders, validateRows } from "../validation/import.validation";
 import { ImportBlueprintRegistry } from "../registry/import-blueprint.registry";
 import { isCompositeRelationBlueprint, isRelationalEntityBlueprint } from "../types/guards.types";
@@ -56,7 +56,7 @@ export class ImportService
 
             return importJob;
         } catch(error) {
-            if (error instanceof ImportValidationError) {
+            if (error instanceof ImportDataValidationError) {
                 await this.importJobRepository.fail(job.id, {
                     errorMessage: error.message,
                     failedRows: error.errors.length

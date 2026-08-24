@@ -19,7 +19,6 @@ export class AwardDecisionController
     async list(req: Request, res: Response): Promise<void>
     {
         const awardDecisions = await this.service.getList(req.listQueryParams);
-
         sendData(
             res,
             awardDecisions.map(this.mapper),
@@ -34,7 +33,6 @@ export class AwardDecisionController
         const awardDecision = await this.service.findByIdWithRelations(
             idSchema.parse(req.params.id)
         );
-
         sendData(res, this.mapper(awardDecision));
     }
 }

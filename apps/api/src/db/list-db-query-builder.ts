@@ -1,4 +1,4 @@
-import { ListQueryParams } from "../common/types/types";
+import { ListOrder, ListQueryParams, SortableField } from "../common/types/types";
 import { SearchQueryBuilder } from "./query-builders/search.query-builder";
 import { SortQueryBuilder } from "./query-builders/sort.query-builder";
 import { ListDbQueryOptions } from "./types";
@@ -22,16 +22,19 @@ export class ListDbQueryBuilder
             Object.assign(
                 result,
                 this.sortBuilder.build(
-                    query.sort, 
-                    query.order
+                    query.sort as SortableField, 
+                    query.order as ListOrder,
                 ),
             );
         }
 
-        if (query.q && query.fields?.length) {
+        if (query.searchParams && query.searchParams.fields?.length) {
             Object.assign(
                 result,
-                this.searchBuilder.build(query.q, query.fields),
+                this.searchBuilder.build(
+                    query.searchParams.q, 
+                    query.searchParams.fields
+                ),
             );
         }
 

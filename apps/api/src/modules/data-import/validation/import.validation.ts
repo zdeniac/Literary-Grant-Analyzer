@@ -1,5 +1,5 @@
 import { ZodType } from "zod";
-import { ImportValidationError } from "../error/import.errors";
+import { ImportDataValidationError } from "../error/import.errors";
 import { ImportField, ImportHeader, ImportRow } from "../types/import.types";
 import { ImportFileRowError } from "../types/error.types";
 
@@ -25,7 +25,7 @@ export function validateRows<T extends ImportRow>(
         validated.push(result.data);
     });
 
-    if (errors.length) throw new ImportValidationError(errors);
+    if (errors.length) throw new ImportDataValidationError(errors);
 
     return validated;
 }
@@ -73,7 +73,7 @@ export function validateHeaders(
     }
 
     if (missingHeaderFields.length || unexpectedHeaderFields.length) {
-        throw new ImportValidationError(errors);
+        throw new ImportDataValidationError(errors);
     }
 }
 

@@ -1,7 +1,7 @@
 import { describe, expect, it, beforeEach, afterAll } from "vitest";
 import { LegalForm, Sector } from "@prisma/client";
 import { ImportFile } from "../../../../src/modules/data-import/types/import.types";
-import { ImportValidationError } from "../../../../src/modules/data-import/error/import.errors";
+import { ImportDataValidationError } from "../../../../src/modules/data-import/error/import.errors";
 import { prisma } from "../../../../src/db/prisma";
 import { wipeDatabase } from "../../helpers/db.helper";
 import { createOrganization } from "../../helpers/factories/organization.factory";
@@ -69,7 +69,7 @@ describe('DecisionAuthority Import Service', () => {
 
         await expect(
             importer.import('decisionAuthority', decisionAuthorityFile)
-        ).rejects.toThrow(ImportValidationError);
+        ).rejects.toThrow(ImportDataValidationError);
     });
 
     it('throws on invalid decision body row data', async () => {
@@ -93,6 +93,6 @@ describe('DecisionAuthority Import Service', () => {
 
         await expect(
             importer.import('decisionAuthority', invalidDecisionAuthorityFile)
-        ).rejects.toThrow(ImportValidationError);
+        ).rejects.toThrow(ImportDataValidationError);
     });
 });

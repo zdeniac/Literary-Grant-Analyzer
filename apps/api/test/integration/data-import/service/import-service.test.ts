@@ -8,7 +8,7 @@ import {
     ImportJobStatus,
     FundingArea,
 } from "@prisma/client";
-import { ImportEmptyFileError, ImportError, ImportValidationError } from "../../../../src/modules/data-import/error/import.errors";
+import { ImportEmptyFileError, ImportError, ImportDataValidationError } from "../../../../src/modules/data-import/error/import.errors";
 import { prisma } from "../../../../src/db/prisma";
 import { wipeDatabase } from "../../helpers/db.helper";
 import { createOrganization } from "../../helpers/factories/organization.factory";
@@ -171,7 +171,7 @@ describe('Data Import Service test', () => {
                     rows: [],
                 }
             )
-        ).rejects.toThrow(ImportValidationError);
+        ).rejects.toThrow(ImportDataValidationError);
     });
 
     it('throws when an import file has no rows', async () => {
@@ -222,7 +222,7 @@ describe('Data Import Service test', () => {
 
         await expect(
             importer.import('organization', emptyRowFile)
-        ).rejects.toThrow(ImportValidationError);
+        ).rejects.toThrow(ImportDataValidationError);
 
         const importJob = await prisma.importJob.findFirst({
             where: { model: 'organization', fileName: 'organizations_import.csv' },
@@ -267,7 +267,7 @@ describe('Data Import Service test', () => {
             )
         )
         .rejects
-        .toThrow(ImportValidationError);
+        .toThrow(ImportDataValidationError);
 
         const importJob = await prisma.importJob.findFirst({
             where: { model: 'organization', fileName: 'organizations_import.csv' },
@@ -306,6 +306,6 @@ describe('Data Import Service test', () => {
             )
         )
         .rejects
-        .toThrow(ImportValidationError);
+        .toThrow(ImportDataValidationError);
     });
 });

@@ -1,5 +1,5 @@
 import { afterAll, describe, expect, it } from "vitest";
-import { ImportEmptyFileError, ImportValidationError } from "../../../../src/modules/data-import/error/import.errors";
+import { ImportEmptyFileError, ImportDataValidationError } from "../../../../src/modules/data-import/error/import.errors";
 import { createImportFile } from "../helpers/import.helpers";
 import { prisma } from "../../../../src/db/prisma";
 import { AwardSchemeType, FundingArea, ImportJobStatus, LegalForm, Sector } from "@prisma/client";
@@ -74,7 +74,7 @@ describe('ImportJob failure handling', () => {
                         }
                     ]
                 ),
-                error: ImportValidationError,
+                error: ImportDataValidationError,
                 expected: {
                     totalRows: 1,
                     failedRows: 1,
@@ -95,7 +95,7 @@ describe('ImportJob failure handling', () => {
                         }
                     ],
                 },
-                error: ImportValidationError,
+                error: ImportDataValidationError,
                 expected: {
                     totalRows: 1,
                     failedRows: 1,

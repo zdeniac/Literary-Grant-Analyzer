@@ -1,4 +1,5 @@
 import type { ButtonProps } from "react-admin";
+import type { FileDelimiter } from "../../../../../packages/shared/enums";
 
 export type EntityName = 
     | 'organization' 
@@ -10,5 +11,7 @@ export type EntityName =
 ;
 
 export type ImportButtonProps = ButtonProps & {
-    entity: EntityName;
+    fileHeader: string[],
+    fileDelimiter: FileDelimiter,
+    entity: EntityName,
 };

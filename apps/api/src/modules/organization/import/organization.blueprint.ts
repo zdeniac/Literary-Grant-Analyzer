@@ -12,6 +12,11 @@ export const organizationBlueprint: EntityImportBlueprint =
                 required: true,
             },
             {
+                name: 'nameVariants',
+                type: 'array[string]',
+                required: false,
+            },
+            {
                 name: 'website',
                 type: 'string',
                 required: false,

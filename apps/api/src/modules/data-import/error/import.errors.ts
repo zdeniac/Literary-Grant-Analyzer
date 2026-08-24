@@ -3,54 +3,65 @@ import { ImportFileRowError } from "../types/error.types";
 
 export class ImportError extends AppError 
 {
-    static code = 'IMPORT_ERROR';
     static statusCode = 500;
+    static code = 'IMPORT_ERROR';
 
     constructor(
         readonly message: string,
         statusCode = ImportError.statusCode,
+        code = ImportError.code,
     ) {
-        super(message, statusCode);
+        super(message, statusCode, code);
         this.name = 'ImportError';
     }
 }
 
-export class ImportValidationError extends ImportError 
+export class ImportDataValidationError extends ImportError 
 {
     static code = 'IMPORT_VALIDATION_ERROR';
     static statusCode = 422;
 
     constructor(
         readonly errors: ImportFileRowError[] = [],
-        readonly message = ImportValidationError.code
+        readonly message = 'Import data validation failed',
+        readonly code = ImportDataValidationError.code,
     ) {
-        super(message, ImportValidationError.statusCode);
+        super(
+            message, 
+            ImportDataValidationError.statusCode, 
+            code,
+        );
         this.name = 'ImportValidationError';
     }
 }
 
-export class ImportRelationError extends ImportValidationError
+export class ImportRelationError extends ImportDataValidationError
 {
     static code = 'IMPORT_RELATION_ERROR';
-    static statusCode = 422;
 
     constructor(
         readonly errors: ImportFileRowError[] = [],
     ) {
-        super(errors, ImportRelationError.code);
-        this.name = ImportValidationError.name;
+        super(
+            errors,
+            'Invalid data relation',
+            ImportRelationError.code,
+        );
+        this.name = ImportRelationError.name;
     }
 }
 
-export class ImportEmptyFileError extends ImportValidationError
+export class ImportEmptyFileError extends ImportError
 {
     static code = 'IMPORT_EMPTY_FILE_ERROR';
     static statusCode = 422;
 
-    constructor(
-        readonly message = 'Import file contains no rows.'
-    ) {
-        super([], message);
+    constructor() {
+        super(
+            'Import file contains no rows.',
+            ImportEmptyFileError.statusCode,
+            ImportEmptyFileError.code,
+        );
         this.name = ImportEmptyFileError.name;
     }
 }

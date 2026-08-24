@@ -8,6 +8,7 @@ import { ImportError } from "../error/import.errors";
 import { ImportWorkflowService } from "../service/import-workflow-service";
 import { ImportableEntityName } from "../constants/importable-models";
 import { entityNameSchema } from "../../../common/validation/schema";
+import { importFileDelimiterSchema } from "../validation/import.schema";
 
 export class ImportController
 {
@@ -57,26 +58,18 @@ export class ImportController
             return;
         }
 
+        const delimiter = importFileDelimiterSchema.parse(req.body.delimiter);
+
         let sourceDocuments: CreateSourceDocumentInput[] = [];
 
         if (req.body.saveSourceDocument === 'true') {
-            try {
-                sourceDocuments = this.validateSourceDocuments(
-                    req.body.sourceDocuments
-                );
-            } catch (e: unknown) {
-                if (e instanceof z.ZodError) {
-                    throw new ImportError('IMPORT_SOURCE_DOCUMENTS_ERROR');
-                }
-
-                throw e;
-            }
+            sourceDocuments = this.validateSourceDocuments(req.body.sourceDocuments);
         }
 
         const importJob = 
             await this.importWorkflowService.import(
                 parsedEntity.data as ImportableEntityName, 
-                toImportFile(req.file), 
+                toImportFile(req.file, delimiter), 
                 sourceDocuments
             );
 
@@ -89,7 +82,15 @@ export class ImportController
 
     private validateSourceDocuments(sourceDocuments: any[]): CreateSourceDocumentInput[]
     {
-        return z.array(createSourceDocumentSchema)
-            .parse(sourceDocuments);        
+        try {
+            return z.array(createSourceDocumentSchema)
+                .parse(sourceDocuments);        
+        } catch (e: unknown) {
+            if (e instanceof z.ZodError) {
+                throw new ImportError(e.message);
+            }
+
+            throw e;
+        }
     }
 }

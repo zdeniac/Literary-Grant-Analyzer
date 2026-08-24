@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { validateHeaders, validateRows } from "../../../src/modules/data-import/validation/import.validation";
-import { ImportValidationError } from "../../../src/modules/data-import/error/import.errors";
+import { ImportDataValidationError } from "../../../src/modules/data-import/error/import.errors";
 import z from "zod";
 
 describe('Data import validation', () => {
@@ -15,7 +15,7 @@ describe('Data import validation', () => {
                         { name: 'email', type: 'email', required: true },
                     ],
                 )
-            ).toThrow(ImportValidationError);
+            ).toThrow(ImportDataValidationError);
         });
 
         it('throws when header contains unknown fields and not allowed', () => {
@@ -25,7 +25,7 @@ describe('Data import validation', () => {
                     [{ name: 'asd', type: 'string', required: true }],
                     false
                 )
-            ).toThrow(ImportValidationError);
+            ).toThrow(ImportDataValidationError);
         });
 
         it('doesnt throw when header contains unknown fields and allowed', () => {
@@ -59,9 +59,9 @@ describe('Data import validation', () => {
 
                 expect.fail('Expected ImportValidationError');
             } catch (error) {
-                expect(error).toBeInstanceOf(ImportValidationError);
+                expect(error).toBeInstanceOf(ImportDataValidationError);
 
-                const e = error as ImportValidationError;
+                const e = error as ImportDataValidationError;
 
                 expect(e.errors).toBeInstanceOf(Array);
                 expect(e.errors.length).toBe(1);
@@ -89,7 +89,7 @@ describe('Data import validation', () => {
 
                 expect.fail('Expected ImportValidationError');
             } catch (error) {
-                const e = error as ImportValidationError;
+                const e = error as ImportDataValidationError;
 
                 expect(e.errors).toEqual([
                     {
@@ -115,7 +115,7 @@ describe('Data import validation', () => {
 
                 expect.fail('Expected ImportValidationError');
             } catch (error) {
-                const e = error as ImportValidationError;
+                const e = error as ImportDataValidationError;
 
                 expect(e.errors).toHaveLength(2);
 
@@ -159,7 +159,7 @@ describe('Data import validation', () => {
 
             expect(() =>
                 validateRows([{ name: 123 }], schema)
-            ).toThrow(ImportValidationError);
+            ).toThrow(ImportDataValidationError);
 
         });
 
@@ -170,7 +170,7 @@ describe('Data import validation', () => {
 
             expect(() =>
                 validateRows([{}], schema)
-            ).toThrow(ImportValidationError);
+            ).toThrow(ImportDataValidationError);
 
         });
 
@@ -226,7 +226,7 @@ describe('Data import validation', () => {
 
                 expect.fail('Expected ImportValidationError');
             } catch (error) {
-                const e = error as ImportValidationError;
+                const e = error as ImportDataValidationError;
 
                 expect(e.errors).toHaveLength(2);
 
@@ -252,7 +252,7 @@ describe('Data import validation', () => {
 
                 expect.fail('Expected ImportValidationError');
             } catch (error) {
-                const e = error as ImportValidationError;
+                const e = error as ImportDataValidationError;
 
                 expect(e.errors).toHaveLength(2);
                 expect(e.errors[0].rowNum).toBe(3);

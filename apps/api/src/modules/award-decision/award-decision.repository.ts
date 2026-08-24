@@ -15,7 +15,8 @@ export class AwardDecisionRepository
         return this.entity.findMany({
             include: {
                 decisionMaker: {
-                    include: {
+                    select: {
+                        type: true,
                         organization: {
                             select: {
                                 id: true,
@@ -31,7 +32,8 @@ export class AwardDecisionRepository
                     },
                 },
                 recipient: {
-                    include: {
+                    select: {
+                        type: true,
                         organization: {
                             select: {
                                 id: true,
