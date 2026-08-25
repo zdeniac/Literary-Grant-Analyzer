@@ -1,4 +1,4 @@
-import { DataTable, FunctionField, List } from "react-admin";
+import { DataTable, FunctionField, Link, List, Pagination } from "react-admin";
 import { AuditColumns } from "../../../components/table/AuditColumns";
 import { CustomEmpty } from "../../../components/table/CustomEmpty";
 import { AwardDecisionListActions } from "./actions";
@@ -8,9 +8,10 @@ import { HungarianNumberField } from "../../../components/table/HungarianNumberF
 import { DecisionMaker, Recipient } from "../../../../../packages/shared/enums";
 
 export const AwardDecisionList = () => (
-    <List 
+    <List
         actions={<AwardDecisionListActions />} empty={<CustomEmpty hasImport entity="awardDecision" />}
         sort={{ field: 'id', order: 'DESC' }}
+        pagination={<Pagination rowsPerPageOptions={[5, 10, 25, 50, 100, 250, 500]} />}
     >
         <DataTable>
 
@@ -24,9 +25,21 @@ export const AwardDecisionList = () => (
                         : `/persons/${id}`;
 
                     return (
-                        <TableLink to={link}>
-                        { record.recipientName }
-                        </TableLink>
+                        <>
+                            <TableLink to={link}>
+                                { record.recipientName }
+                            </TableLink>
+                            {/* <TableLink
+                                to={`/award-decisions?filter=${encodeURIComponent(
+                                    JSON.stringify({
+                                        q: record.recipientName,
+                                        fields: ['recipientName'],
+                                    })
+                                )}`}
+                            >
+                                Díjak megtekintése
+                            </TableLink> */}
+                        </>
                     );
                 }} />
             </DataTable.Col>

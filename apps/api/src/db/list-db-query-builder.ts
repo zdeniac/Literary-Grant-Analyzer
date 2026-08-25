@@ -1,17 +1,15 @@
 import { ListOrder, ListQueryParams, SortableField } from "../common/types/types";
-import { SearchQueryBuilder } from "./query-builders/search.query-builder";
-import { SortQueryBuilder } from "./query-builders/sort.query-builder";
-import { ListDbQueryOptions } from "./types";
+import { ListDbQueryOptions, SearchQueryBuilderInterface, SortQueryBuilderInterface } from "./types";
 
 export class ListDbQueryBuilder
 {
     constructor(
-        private readonly sortBuilder: SortQueryBuilder,
-        private readonly searchBuilder: SearchQueryBuilder,
+        private readonly sortBuilder: SortQueryBuilderInterface,
+        private readonly searchBuilder: SearchQueryBuilderInterface,
     ) {}
 
     build(query?: ListQueryParams): ListDbQueryOptions
-    {   
+    {
         const result: ListDbQueryOptions = {};
 
         if (!query) {
@@ -48,4 +46,4 @@ export class ListDbQueryBuilder
 
         return result;
     }
-}
+ }

@@ -89,6 +89,8 @@ export const validSearchableFields = {
         'purpose',
         'sourceIdentifier',
         'decisionDate',
+        'decisionMakerName',
+        'recipientName'
     ],
     awardScheme: [
         'name',

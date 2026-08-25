@@ -9,12 +9,12 @@ import { toAwardDecisionDto } from "./mapper/award-decision-mapper";
 import { AwardDecisionRepository } from "./award-decision.repository";
 import { ListDbQueryBuilder } from "../../db/list-db-query-builder";
 import { SortQueryBuilder } from "../../db/query-builders/sort.query-builder";
-import { SearchQueryBuilder } from "../../db/query-builders/search.query-builder";
+import { AwardDecisionSearchQueryBuilder } from "./query-builder/award-decision.search-query-builder";
 
 export const createAwardDecisionModule = () => {
     const listQb = new ListDbQueryBuilder(
         new SortQueryBuilder(),
-        new SearchQueryBuilder(),
+        new AwardDecisionSearchQueryBuilder(),
     );
 
     const repository = new AwardDecisionRepository(

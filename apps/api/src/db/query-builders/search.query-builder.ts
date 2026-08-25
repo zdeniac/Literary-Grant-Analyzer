@@ -1,6 +1,6 @@
-import { ListDbQueryOptions } from "../types";
+import { ListDbQueryOptions, SearchQueryBuilderInterface } from "../types";
 
-export class SearchQueryBuilder
+export class SearchQueryBuilder implements SearchQueryBuilderInterface
 {
     build(keyword: string, fields: string[]): ListDbQueryOptions
     {

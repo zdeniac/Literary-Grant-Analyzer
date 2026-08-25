@@ -11,7 +11,7 @@ export type EntityName =
 ;
 
 export type ImportButtonProps = ButtonProps & {
-    fileHeader: string[],
-    fileDelimiter: FileDelimiter,
     entity: EntityName,
+    fileHeader?: string[],
+    fileDelimiter?: FileDelimiter,
 };

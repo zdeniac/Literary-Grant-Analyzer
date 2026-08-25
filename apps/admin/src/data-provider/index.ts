@@ -14,11 +14,12 @@ const dataProvider: DataProvider = {
 		query.set('page', String(params?.pagination?.page));
 		query.set('perPage', String(params?.pagination?.perPage));
 
+		let entityName: SortableEntityName | undefined = resourceToSortableEntity[resource as ResourceName];
+
 		// Sort
 		if (params.sort?.field) {
 			const field = params.sort.field;
 			// Prepare the entity's name from the resource to validate the sortable fields
-			let entityName: SortableEntityName | undefined = resourceToSortableEntity[resource as ResourceName];
 
 			if (entityName && validSortableFields[entityName].includes(field)) {
 				query.set('sort', String(field));
@@ -32,7 +33,7 @@ const dataProvider: DataProvider = {
         		return;
     		}
 
-			if (Array.isArray(value)) {
+			if (Array.isArray(value) && validSortableFields[entityName].includes(key)) {
 				query.set(key, value.join(','));
 				return;
 			}

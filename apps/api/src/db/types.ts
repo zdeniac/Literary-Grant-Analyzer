@@ -1,4 +1,5 @@
 import { Prisma, PrismaClient } from "@prisma/client";
+import { ListOrder, SortableField } from "../common/types/types";
 
 export type ListDbQueryOptions = {
     orderBy?: Record<string, 'asc' | 'desc'>;
@@ -35,3 +36,14 @@ export interface CrudRepositoryInterface<TEntity, TCreate, TUpdate = Partial<TCr
     findByIdOrThrow(id: number): Promise<TEntity>;
     update(id: number, data: TUpdate): Promise<TEntity>;
 }
+
+export interface SearchQueryBuilderInterface
+{
+    build(keyword: string, fields: string[]): ListDbQueryOptions;
+}
+
+export interface SortQueryBuilderInterface
+{
+    build(sort: SortableField, order: ListOrder): ListDbQueryOptions;
+}
+

@@ -18,14 +18,20 @@ export const toAwardDecisionWithRelatedDataDto: DtoMapper<AwardDecisionEntityWit
     awardSchemeId: data.awardScheme.id,
     awardSchemeName: data.awardScheme.name,
 
-    decisionMakerId: data.decisionMakerId,
+    decisionMakerId: 
+        data.decisionMaker.organization?.id ??
+        data.decisionMaker.decisionAuthority?.id ??
+        NaN,
     decisionMakerType: data.decisionMaker.type as DecisionMaker,
     decisionMakerName:
         data.decisionMaker.organization?.name ??
         data.decisionMaker.decisionAuthority?.name ??
         '',
 
-    recipientId: data.recipientId,
+    recipientId: 
+        data.recipient.decisionAuthority?.id ??
+        data.recipient.organization?.id ??
+        NaN,
     recipientType: data.recipient.type as Recipient,
     recipientName:
         data.recipient.organization?.name ??
