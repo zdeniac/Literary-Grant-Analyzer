@@ -6,6 +6,7 @@ import { HungarianDateField } from "../../../components/table/HungarianDateField
 import { TableLink } from "../../../components/table/TableLink";
 import { HungarianNumberField } from "../../../components/table/HungarianNumberField";
 import { DecisionMaker, Recipient } from "../../../../../packages/shared/enums";
+import { TruncateField } from "../../../components/table/TruncateField";
 
 export const AwardDecisionList = () => (
     <List
@@ -25,21 +26,9 @@ export const AwardDecisionList = () => (
                         : `/persons/${id}`;
 
                     return (
-                        <>
-                            <TableLink to={link}>
-                                { record.recipientName }
-                            </TableLink>
-                            {/* <TableLink
-                                to={`/award-decisions?filter=${encodeURIComponent(
-                                    JSON.stringify({
-                                        q: record.recipientName,
-                                        fields: ['recipientName'],
-                                    })
-                                )}`}
-                            >
-                                Díjak megtekintése
-                            </TableLink> */}
-                        </>
+                        <TableLink to={link}>
+                            { record.recipientName }
+                        </TableLink>
                     );
                 }} />
             </DataTable.Col>
@@ -68,16 +57,20 @@ export const AwardDecisionList = () => (
             </DataTable.Col>
              
             <DataTable.Col source="amount" field={HungarianNumberField}/>
-            <DataTable.Col source="purpose" />
+            <DataTable.Col>
+                <TruncateField source="purpose"/>
+            </DataTable.Col>
 
             <DataTable.Col source="decisionDate" field={HungarianDateField}/>
             
             <DataTable.Col source="sourceIdentifier" />
 
-            <DataTable.Col source="sourceDocumentTitle" disableSort >
+            <DataTable.Col disableSort >
                 <FunctionField render={(record) => (
                     <TableLink to={`/source-documents/${record.sourceDocumentId}`}>
-                        { record.sourceDocumentTitle }
+                        <TruncateField source="sourceDocumentTitle">
+                            { record.sourceDocumentTitle }
+                        </TruncateField>
                     </TableLink>
                 )} />
             </DataTable.Col>

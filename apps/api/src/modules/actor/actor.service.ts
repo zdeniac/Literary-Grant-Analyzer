@@ -1,3 +1,4 @@
+import { Actor } from "@prisma/client";
 import { ActorRepository } from "./actor.repository";
 
 export class ActorService
@@ -7,13 +8,13 @@ export class ActorService
     ){
     }
 
-    async getRecipients()
+    async getRecipients(): Promise<Actor[]>
     {
-        return this.repository.findAllRecipients();
+        return this.repository.findAllRecipient();
     }
 
-    async getDecisionMakers()
+    async getDecisionMakers(): Promise<Actor[]>
     {
-        return this.repository.findAllDecisionMakers();
+        return this.repository.findAllDecisionMaker();
     }
 }

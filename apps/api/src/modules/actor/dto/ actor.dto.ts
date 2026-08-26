@@ -4,7 +4,7 @@ import { Id } from "../../../common/types/types";
 export type RecipientDto = {
     id: Id;
     name: string;
-    type: ActorType.ORGANIZATION | ActorType.PERSON;
+    type: ActorType.ORGANIZATION | ActorType.PERSON ;
 };
 
 export type DecisionMakerDto = {

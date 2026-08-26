@@ -9,7 +9,9 @@ export const personSearchableFieldSchema = z.enum(validSearchableFields.person);
 export const personSchema = z.object({
     id: idSchema,
 
-    name: nameSchema,
+    firstName: nameSchema,
+    lastName: nameSchema,
+
     birthYear: yearSchema.nullable().default(null),
     deathYear: yearSchema.nullable().default(null),
 

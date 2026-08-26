@@ -11,9 +11,13 @@ export const PersonList = () => (
         <DataTable>
 
             <DataTable.Col source="id" />
-            <DataTable.Col source="name" />
+
+            <DataTable.Col source="lastName" />
+            <DataTable.Col source="firstName" />
+
             <DataTable.Col source="birthYear" />
             <DataTable.Col source="deathYear" />
+            
             <DataTable.Col source="roles" disableSort/>
 
             <AuditColumns />

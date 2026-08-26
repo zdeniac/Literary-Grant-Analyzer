@@ -6,13 +6,12 @@ export const toRecipientDto: DtoMapper<RecipientActorEntityWithRelatedData, Reci
     const name = entity.organization?.name ?? entity.person?.name;
 
     if (!name) {
-        throw new Error(`Actor ${entity.id} has no recipient name.`);
+        throw new Error(`Recipient actor ${entity.id} has no recipient name.`);
     }
 
     return {
         id: entity.id,
-        
-        name: name,
+        name,
         type: entity.type
     }
-};
+};  

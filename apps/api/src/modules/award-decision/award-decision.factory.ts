@@ -17,21 +17,23 @@ export const createAwardDecisionModule = () => {
         new AwardDecisionSearchQueryBuilder(),
     );
 
+    const entity = prisma.awardDecision;
+    const crudRepo = new PrismaCrudRepository(entity);
+
     const repository = new AwardDecisionRepository(
-        prisma.awardDecision,
+        entity,
+        crudRepo,
         listQb,
     );
 
     const service = new AwardDecisionService(repository);
-    const controller = new AwardDecisionController(service, toAwardDecisionWithRelatedDataDto);
-
-    const crudController = new CrudController(
-        new CrudService(new PrismaCrudRepository(prisma.awardDecision)),
+    const controller = new AwardDecisionController(
+        service,
         toAwardDecisionDto,
+        toAwardDecisionWithRelatedDataDto
     );
 
     return {
         controller,
-        crudController,
     }
 };

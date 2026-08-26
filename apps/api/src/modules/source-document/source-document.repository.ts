@@ -25,12 +25,7 @@ export class SourceDocumentRepository
     {
         return this.crud.update(id, data);
     }
-    
-    async findById(id: number): Promise<SourceDocumentEntity | null>
-    {
-        return this.crud.findById(id);
-    }
-    
+        
     async findByIdOrThrow(id: Id): Promise<SourceDocumentEntity>
     {
         return this.crud.findByIdOrThrow(id);

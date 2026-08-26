@@ -8,7 +8,7 @@ import { AwardDecisionSearchableField, AwardDecisionSortableField } from "./type
 import { validateSearch } from "../../common/middleware/validate-search.middleware";
 
 const router = Router();
-const { controller, crudController } = createAwardDecisionModule();
+const { controller } = createAwardDecisionModule();
 
 router.get(
     '/:id',
@@ -18,18 +18,18 @@ router.get(
 router.patch(
     '/:id',
     validate(updateAwardDecisionSchema),
-    crudController.update,
+    controller.update,
 );
 
 router.delete(
     '/:id',
-    crudController.delete,
+    controller.delete,
 );
 
 router.post(
     '/',
     validate(createAwardDecisionSchema),
-    crudController.create,
+    controller.create,
 );
 
 router.get(

@@ -1,12 +1,14 @@
+import type { ReactNode } from "react";
 import { TextField } from "react-admin";
 
 type TruncateFieldProps = {
     source: string;
     // Width in em
     maxWidth?: number;
+    children?: ReactNode;
 };
 
-export const TruncateField = ({source, maxWidth = 15}: TruncateFieldProps) => (
+export const TruncateField = ({ children, source, maxWidth = 15 }: TruncateFieldProps) => (
     <TextField
         source={source}
         sx={{
@@ -16,5 +18,7 @@ export const TruncateField = ({source, maxWidth = 15}: TruncateFieldProps) => (
             overflow: 'hidden', 
             textOverflow: 'ellipsis'
         }}
-    />
+    >
+        { children }
+    </TextField>
 );

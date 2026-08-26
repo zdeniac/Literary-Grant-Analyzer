@@ -1,9 +1,6 @@
 import { Request, Response } from "express";
 import { sendData } from "../../common/http/response";
-import { ListQueryParams } from "../../common/types/types";
 import { toAwardSchemeDto } from "./mapper/award-scheme.mapper";
-import { AwardSchemeSortableField } from "./types/award-scheme.types";
-import { awardSchemeSortableFieldSchema } from "./validation/award-scheme.schema";
 import { AwardSchemeService } from "./award-scheme.service";
 
 export class AwardSchemeController
@@ -16,10 +13,7 @@ export class AwardSchemeController
 
     async list(req: Request, res: Response): Promise<void>
     {
-        const query: ListQueryParams| undefined = req.listQueryParams;
-        awardSchemeSortableFieldSchema.parse(query?.sort)
-
-        const awardSchemes = await this.service.getList(query);
+        const awardSchemes = await this.service.getList(req.listQueryParams);
 
         sendData(
             res,

@@ -6,12 +6,12 @@ export const toDecisionMakerDto: DtoMapper<DecisionMakerActorEntityWithRelatedDa
     const name = entity.organization?.name ?? entity.decisionAuthority?.name;
 
     if (!name) {
-        throw new Error(`Actor ${entity.id} has no recipient name.`);
+        throw new Error(`Decision maker actor ${entity.id} has no name or actor id.`);
     }
 
     return {
         id: entity.id,
-        name: name,
+        name,
         type: entity.type
     }
 }

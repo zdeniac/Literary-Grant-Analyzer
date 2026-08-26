@@ -122,7 +122,13 @@ export const validSearchableFields = {
         'sector',
     ],
     person: [
-        'name',
+        'firstName',
+        'lastName',
+        'birthYear',
+        'deathYear',
+        'role',
+        'createdAt',
+        'updatedAt',
     ],
     sourceDocument: [
         'title',

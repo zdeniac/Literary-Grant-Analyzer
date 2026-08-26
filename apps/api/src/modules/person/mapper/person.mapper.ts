@@ -4,7 +4,9 @@ import { PersonDto, PersonEntity } from "../dto/person.dto";
 export const toPersonDto: DtoMapper<PersonEntity, PersonDto> = (person) => ({
     id: person.id,
 
-    name: person.name,
+    firstName: person.firstName,
+    lastName: person.lastName,
+
     deathYear: person.deathYear,
     birthYear: person.birthYear,
 

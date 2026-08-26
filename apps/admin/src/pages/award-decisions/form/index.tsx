@@ -15,7 +15,6 @@ const validateRecipient = [required()];
 const validateSourceDocument = [required()];
 
 const validateAmount = [minValue(0)];
-
 const validateDecisionDate = [required()];
 
 export const AwardDecisionForm = () => (

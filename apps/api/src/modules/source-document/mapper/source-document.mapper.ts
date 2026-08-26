@@ -10,7 +10,7 @@ export const toSourceDocumentDto: DtoMapper<SourceDocumentEntity, SourceDocument
     url: sourceDocument.url,
     retrievedAt: sourceDocument.retrievedAt,
 
-    issueingOrganizationId: sourceDocument.issueingOrganizationId,
+    issuingOrganizationId: sourceDocument.issuingOrganizationId,
     
     createdAt: sourceDocument.createdAt,
     updatedAt: sourceDocument.updatedAt,

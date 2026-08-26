@@ -1,6 +1,5 @@
 import { Actor, ActorType } from "@prisma/client";
 import { Database } from "../../db/types";
-import { RecipientDto } from "./dto/ actor.dto";
 import { DecisionMakerActorEntityWithRelatedData, RecipientActorEntityWithRelatedData } from "./types/actor.types";
 
 export class ActorRepository
@@ -23,7 +22,7 @@ export class ActorRepository
         });
     }
 
-    async findAllRecipients(): Promise<RecipientActorEntityWithRelatedData[]>
+    async findAllRecipient(): Promise<RecipientActorEntityWithRelatedData[]>
     {
         return this.model.findMany({
             where: {
@@ -48,7 +47,7 @@ export class ActorRepository
         })
     }
 
-    async findAllDecisionMakers(): Promise<DecisionMakerActorEntityWithRelatedData[]>
+    async findAllDecisionMaker(): Promise<DecisionMakerActorEntityWithRelatedData[]>
     {
         return this.model.findMany({
             where: {
@@ -59,13 +58,11 @@ export class ActorRepository
             include: {
                 organization: {
                     select: {
-                        id: true,
                         name: true,
                     },
                 },
                 decisionAuthority: {
                     select: {
-                        id: true,
                         name: true,
                     },
                 },
