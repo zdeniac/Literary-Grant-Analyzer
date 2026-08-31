@@ -1,5 +1,5 @@
 import { ImportJobRepository } from "../repository/import-job.repository";
-import { ImportJobEntity } from "../dto/import-job.dto";
+import { ImportJobEntityWithSourceDocuments } from "../dto/import-job.dto";
 import { ListQueryParams } from "../../../common/types/types";
 
 export class ImportJobService
@@ -8,13 +8,13 @@ export class ImportJobService
         private readonly repository: ImportJobRepository,
     ) {}
 
-    async findAll(query?: ListQueryParams): Promise<ImportJobEntity[]>
+    async getList(query?: ListQueryParams): Promise<ImportJobEntityWithSourceDocuments[]>
     {
-        return this.repository.findAll(query);
+        return this.repository.findAllWithSourceDocuments(query);
     }
 
-    async findById(id: number): Promise<ImportJobEntity>
+    async findByIdWithSourceDocuments(id: number): Promise<ImportJobEntityWithSourceDocuments>
     {
-        return this.repository.findByIdOrThrow(id);
+        return this.repository.findByIdWithSourceDocuments(id);
     }
 }

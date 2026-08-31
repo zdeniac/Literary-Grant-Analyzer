@@ -1,4 +1,4 @@
-import { DataTable, FunctionField, Link, List } from "react-admin";
+import { DataTable, FunctionField, List } from "react-admin";
 import { JournalListActions } from "./actions";
 import { AuditColumns } from "../../../components/table/AuditColumns";
 import { CustomEmpty } from "../../../components/table/CustomEmpty";

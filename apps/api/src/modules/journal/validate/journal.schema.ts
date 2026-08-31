@@ -29,7 +29,7 @@ const importFormatSchema = z.union([
     z.array(z.enum(JournalFormat)).min(1)
 );
 
-export const organizationNamesSchema = z.union([
+const importOrganizationNamesSchema = z.union([
     z.string(),
     z.array(organizationSchema.shape.name),
 ]).transform(value => {
@@ -119,7 +119,7 @@ export const importJournalSchema = createJournalSchema
             yearSchema.optional()
         ),
         format: importFormatSchema,
-        organizationNames: organizationNamesSchema.optional(),
+        organizationNames: importOrganizationNamesSchema.optional(),
         organizationName: organizationSchema.shape.name.optional(),
     })
     .refine(

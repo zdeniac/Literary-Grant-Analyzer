@@ -51,10 +51,25 @@ export const createOrganizationWithActorIdSchema = createOrganizationSchema
 
 export const updateOrganizationSchema = createOrganizationSchema.partial();
 
+export const nameVariantsImportSchema = z.union([
+    z.string(),
+    z.array(z.string()),
+]).transform(value => {
+    if (typeof value === 'string') {
+        return value.split('|');
+    }
+
+    return value;
+}).pipe(
+    z.array(z.string()),
+);
+
 export const importOrganizationSchema = createOrganizationSchema
     .extend({
         foundingYear: z.preprocess(
             value => value === '' ? undefined : value,
             yearSchema.optional()
         ),
+        nameVariants: nameVariantsImportSchema
     });
+

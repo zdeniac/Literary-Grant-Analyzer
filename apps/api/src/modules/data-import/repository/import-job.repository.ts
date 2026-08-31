@@ -1,7 +1,7 @@
 import { ImportJobStatus } from "@prisma/client";
 import { Id, ListQueryParams } from "../../../common/types/types";
 import { Database } from "../../../db/types";
-import { CreateImportJobInput, ImportJobEntity, UpdateImportJobInput } from "../dto/import-job.dto";
+import { CreateImportJobInput, ImportJobEntity, ImportJobEntityWithSourceDocuments, UpdateImportJobInput } from "../dto/import-job.dto";
 import { NotFoundError } from "../../../common/errors/http.error";
 import { ListDbQueryBuilder } from "../../../db/list-db-query-builder";
 
@@ -34,20 +34,44 @@ export class ImportJobRepository
         });
     }
 
-    async findByIdOrThrow(id: Id): Promise<ImportJobEntity>
+    async findByIdWithSourceDocuments(id: Id): Promise<ImportJobEntityWithSourceDocuments>
     {
-        const importJob = await this.findById(id);
+        const importJob = await this.entity.findUnique({
+            where: { id },
+            include: {
+                sourceDocuments: {
+                    include: {
+                        sourceDocument: true
+                    }
+                },
+            }
+        });
 
         if (!importJob) {
             throw new NotFoundError();
         }
 
         return importJob;
+
     }
     
-    async findAll(query?: ListQueryParams): Promise<ImportJobEntity[]>
+    async findAllWithSourceDocuments(query?: ListQueryParams): Promise<ImportJobEntityWithSourceDocuments[]>
     {
-        return this.entity.findMany({ ...this.listQueryBuilder.build(query) });
+        return this.entity.findMany({
+            include: {
+                sourceDocuments: {
+                    include: {
+                        sourceDocument: {
+                            select: {
+                                id: true,
+                                title: true,
+                            }
+                        },
+                    }
+                },
+            },
+            ...this.listQueryBuilder.build(query)
+        });
     }
 
     async update(id: Id,data: UpdateImportJobInput): Promise<ImportJobEntity>
