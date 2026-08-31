@@ -41,6 +41,10 @@ export const createOrganizationSchema = organizationSchema
             value => value === '' || value === null ? undefined : value,
             z.httpUrl().optional()
         ),
+        nameVariants: z.preprocess(
+            value => value === '' || value === null ? undefined : value,
+            z.array(nameSchema).optional()
+        ),
         foundingYear: yearSchema.optional(),
     });
 
@@ -51,18 +55,7 @@ export const createOrganizationWithActorIdSchema = createOrganizationSchema
 
 export const updateOrganizationSchema = createOrganizationSchema.partial();
 
-export const nameVariantsImportSchema = z.union([
-    z.string(),
-    z.array(z.string()),
-]).transform(value => {
-    if (typeof value === 'string') {
-        return value.split('|');
-    }
-
-    return value;
-}).pipe(
-    z.array(z.string()),
-);
+export const nameVariantsImportSchema = z.string().transform(value =>  value.split('|'));
 
 export const importOrganizationSchema = createOrganizationSchema
     .extend({
@@ -70,6 +63,6 @@ export const importOrganizationSchema = createOrganizationSchema
             value => value === '' ? undefined : value,
             yearSchema.optional()
         ),
-        nameVariants: nameVariantsImportSchema
+        nameVariants: nameVariantsImportSchema.optional()
     });
 

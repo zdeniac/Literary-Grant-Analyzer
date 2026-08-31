@@ -43,10 +43,18 @@ export class AwardDecisionSearchQueryBuilder implements SearchQueryBuilderInterf
                                 },
                                 {
                                     person: {
-                                        name: {
-                                            contains: keyword,
-                                            mode: 'insensitive',
-                                        },
+                                        OR: [
+                                            {
+                                            firstName: {
+                                                contains: keyword,
+                                                mode: 'insensitive',
+                                            },
+                                            lastName: {
+                                                contains: keyword,
+                                                mode: 'insensitive',
+                                            },
+                                        }
+                                        ]
                                     },
                                 },
                             ],

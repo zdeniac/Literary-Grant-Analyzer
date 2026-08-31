@@ -1,4 +1,4 @@
-import { DataTable, FunctionField, Link, List, Pagination } from "react-admin";
+import { DataTable, FunctionField, List, Pagination } from "react-admin";
 import { AuditColumns } from "../../../components/table/AuditColumns";
 import { CustomEmpty } from "../../../components/table/CustomEmpty";
 import { AwardDecisionListActions } from "./actions";
@@ -12,7 +12,7 @@ export const AwardDecisionList = () => (
     <List
         actions={<AwardDecisionListActions />} empty={<CustomEmpty hasImport entity="awardDecision" />}
         sort={{ field: 'id', order: 'DESC' }}
-        pagination={<Pagination rowsPerPageOptions={[5, 10, 25, 50, 100, 250, 500]} />}
+        pagination={<Pagination rowsPerPageOptions={[5, 10, 15, 30, 60, 120, 240, 500, 1000]} />}
     >
         <DataTable>
 
@@ -57,7 +57,7 @@ export const AwardDecisionList = () => (
             </DataTable.Col>
              
             <DataTable.Col source="amount" field={HungarianNumberField}/>
-            <DataTable.Col>
+            <DataTable.Col label="Purpose">
                 <TruncateField source="purpose"/>
             </DataTable.Col>
 
@@ -65,7 +65,7 @@ export const AwardDecisionList = () => (
             
             <DataTable.Col source="sourceIdentifier" />
 
-            <DataTable.Col disableSort >
+            <DataTable.Col label="Source document" disableSort>
                 <FunctionField render={(record) => (
                     <TableLink to={`/source-documents/${record.sourceDocumentId}`}>
                         <TruncateField source="sourceDocumentTitle">
