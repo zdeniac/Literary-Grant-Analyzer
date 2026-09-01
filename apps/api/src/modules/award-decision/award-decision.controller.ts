@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { sendData } from "../../common/http/response";
 import { DtoMapper } from "../../common/types/types";
-import { idSchema } from "../../common/validation/schema";
+import { idSchema, idsSchema } from "../../common/validation/schema";
 import { AwardDecisionService } from "./award-decision.service";
 import { AwardDecisionDto, AwardDecisionWithRelatedDataDto } from "./dto/award-decision.dto";
 import { AwardDecisionEntity, AwardDecisionEntityWithRelatedData } from "./types/award-decision.types";
@@ -17,6 +17,7 @@ export class AwardDecisionController
         this.show = this.show.bind(this);
         this.update = this.update.bind(this);
         this.delete = this.show.bind(this);
+        this.deleteMany = this.deleteMany.bind(this);
         this.list = this.list.bind(this);
     }
 
@@ -47,10 +48,19 @@ export class AwardDecisionController
 
     async delete(req: Request, res: Response): Promise<void> 
     {
-        await this.service.delete(
+        const awardDecision = await this.service.delete(
             idSchema.parse(req.params.id)
         );
-        res.sendStatus(204);
+        sendData(res, awardDecision);
+    }
+
+    async deleteMany(req: Request, res: Response): Promise<void> 
+    {
+        const ids = idsSchema.parse(req.params.ids);
+
+        await this.service.deleteMany(ids);
+        
+        sendData(res, ids);
     }
 
     async list(req: Request, res: Response): Promise<void>

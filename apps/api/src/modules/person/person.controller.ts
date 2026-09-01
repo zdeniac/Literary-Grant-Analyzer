@@ -2,7 +2,7 @@ import { PersonService } from "./person.service";
 import { PersonDto, PersonEntity } from "./dto/person.dto";
 import { DtoMapper } from "../../common/types/types";
 import { sendData } from "../../common/http/response";
-import { idSchema } from "../../common/validation/schema";
+import { idSchema, idsSchema } from "../../common/validation/schema";
 import { Request, Response } from "express";
 
 export class PersonController
@@ -15,6 +15,7 @@ export class PersonController
         this.show = this.show.bind(this);
         this.update = this.update.bind(this);
         this.delete = this.delete.bind(this);
+        this.deleteMany = this.deleteMany.bind(this);
         this.list = this.list.bind(this);
     }
 
@@ -45,10 +46,17 @@ export class PersonController
 
     async delete(req: Request, res: Response): Promise<void> 
     {
-        await this.service.delete(
+        const person = await this.service.delete(
             idSchema.parse(req.params.id)
         );
-        res.sendStatus(204);
+        sendData(res, person);
+    }
+
+    async deleteMany(req: Request, res: Response): Promise<void>
+    {
+        const ids = idsSchema.parse(req.params.ids);
+        await this.service.deleteMany(ids);
+        sendData(res, ids);
     }
 
     async list(req: Request, res: Response): Promise<void>

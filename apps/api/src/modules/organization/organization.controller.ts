@@ -2,7 +2,7 @@ import { OrganizationService } from "./organization.service";
 import { OrganizationDto, OrganizationEntity } from "./dto/organization.dto";
 import { DtoMapper } from "../../common/types/types";
 import { sendData } from "../../common/http/response";
-import { idSchema } from "../../common/validation/schema";
+import { idSchema, idsSchema } from "../../common/validation/schema";
 import { Request, Response } from "express";
 
 export class OrganizationController
@@ -14,6 +14,7 @@ export class OrganizationController
         this.create = this.create.bind(this);
         this.update = this.update.bind(this);
         this.delete = this.delete.bind(this);
+        this.deleteMany = this.deleteMany.bind(this);
         this.show = this.show.bind(this);
         this.list = this.list.bind(this);
     }
@@ -45,10 +46,19 @@ export class OrganizationController
 
     async delete(req: Request, res: Response): Promise<void> 
     {
-        await this.service.delete(
+        const organization = await this.service.delete(
             idSchema.parse(req.params.id)
         );
-        res.sendStatus(204);
+        sendData(res, organization);
+    }
+
+    async deleteMany(req: Request, res: Response): Promise<void>
+    {
+        const ids = idsSchema.parse(req.params.ids);
+
+        await this.service.deleteMany(ids);
+
+        sendData(res, ids);
     }
 
     async list(req: Request, res: Response): Promise<void>

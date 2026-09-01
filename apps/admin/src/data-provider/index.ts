@@ -4,10 +4,10 @@ import { resourceToSortableEntity, validSortableFields } from "../../../packages
 import { type ResourceName, type SortableEntityName } from "../../../packages/shared/types";
 
 const dataProvider: DataProvider = {
-	getList: async <RecordType extends RaRecord = RaRecord>(
+	getList: async function <RecordType extends RaRecord = RaRecord>(
 		resource: string,
 		params: GetListParams & QueryFunctionContext
-	): Promise<GetListResult<RecordType>> => {
+	): Promise<GetListResult<RecordType>> {
 		const query = new URLSearchParams();
 
 		// Pagination
@@ -52,26 +52,24 @@ const dataProvider: DataProvider = {
 			total: res.total,
 		};
 	},
-	getOne: async <RecordType extends RaRecord = RaRecord>(
-		resource: string,
-		params: GetOneParams<RecordType>
-	): Promise<GetOneResult<RecordType>> => {
+	getOne: async function <RecordType extends RaRecord = RaRecord>(resource: string,params: GetOneParams<RecordType>): Promise<GetOneResult<RecordType>>
+	{
 		return {
 			data: (await request(`/api/${resource}/${params.id}`)).data,
 		};
 	},
-	getMany: async function <RecordType extends RaRecord = any>(
-		resource: string, 
-		params: GetManyParams<RecordType> & QueryFunctionContext
-	): Promise<GetManyResult<RecordType>> {
+	getMany: async function <RecordType extends RaRecord = any>(resource: string, params: GetManyParams<RecordType> & QueryFunctionContext): Promise<GetManyResult<RecordType>>
+	{
 		return {
 			data: (await request(`/api/${resource}`)).data,
 		};
 	},
-	getManyReference: function <RecordType extends RaRecord = any>(resource: string, params: GetManyReferenceParams & QueryFunctionContext): Promise<GetManyReferenceResult<RecordType>> {
+	getManyReference: async function <RecordType extends RaRecord = any>(resource: string, params: GetManyReferenceParams & QueryFunctionContext): Promise<GetManyReferenceResult<RecordType>>
+	{
 		throw new Error('Function not implemented.');
 	},
-	update: async function <RecordType extends RaRecord = any>(resource: string, params: UpdateParams): Promise<UpdateResult<RecordType>> {		
+	update: async function <RecordType extends RaRecord = any>(resource: string, params: UpdateParams): Promise<UpdateResult<RecordType>>
+	{		
 		const res = await request(`/api/${resource}/${params.id}`, {
 			method: 'PATCH',
 			body: JSON.stringify(params.data),
@@ -83,10 +81,12 @@ const dataProvider: DataProvider = {
 			data: res.data,
 		};
 	},
-	updateMany: function <RecordType extends RaRecord = any>(resource: string, params: UpdateManyParams): Promise<UpdateManyResult<RecordType>> {
+	updateMany: async function <RecordType extends RaRecord = any>(resource: string, params: UpdateManyParams): Promise<UpdateManyResult<RecordType>>
+	{
 		throw new Error('Function not implemented.');
 	},
-	create: async function <RecordType extends Omit<RaRecord, 'id'> = any, ResultRecordType extends RaRecord = RecordType & { id: Identifier; }>(resource: string, params: CreateParams): Promise<CreateResult<ResultRecordType>> {
+	create: async function <RecordType extends Omit<RaRecord, 'id'> = any, ResultRecordType extends RaRecord = RecordType & { id: Identifier; }>(resource: string, params: CreateParams): Promise<CreateResult<ResultRecordType>>
+	{
 		const res = await request(`/api/${resource}/`, {
 			method: 'POST',
 			body: JSON.stringify(params.data),
@@ -98,24 +98,31 @@ const dataProvider: DataProvider = {
 			data: res.data,
 		};
 	},
-	delete: async function <RecordType extends RaRecord = any>(resource: string, params: DeleteParams<RecordType>): Promise<DeleteResult<RecordType>> {
+	delete: async function <RecordType extends RaRecord = any>(resource: string, params: DeleteParams<RecordType>): Promise<DeleteResult<RecordType>>
+	{
 		const res = await request(`/api/${resource}/${params.id}`, {
 			method: 'DELETE',
+		});
+
+		return {
+			data: res.data,
+		};
+	},
+	deleteMany: async function <RecordType extends RaRecord = any>(resource: string, params: DeleteManyParams<RecordType>): Promise<DeleteManyResult<RecordType>>
+	{
+		const res = await request(`/api/${resource}`, {
+			method: 'DELETE',
+			body: JSON.stringify({
+				ids: params.ids,
+			}),
 			headers: {
 				'Content-Type': 'application/json',
 			},
 		});
 
-		if (res.status === 204) {
-    		return;
-		}
-
 		return {
 			data: res.data,
-		};		
-	},
-	deleteMany: function <RecordType extends RaRecord = any>(resource: string, params: DeleteManyParams<RecordType>): Promise<DeleteManyResult<RecordType>> {
-		throw new Error('Function not implemented.');
+		};
 	}
 }
 

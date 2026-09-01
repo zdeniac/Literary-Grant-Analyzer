@@ -8,15 +8,19 @@ import { CreateAwardSchemeInput, UpdateAwardSchemeInput } from "../../modules/aw
 import { OrganizationEntity } from "../../modules/organization/dto/organization.dto";
 import { AwardSchemeEntity } from "../../modules/award-scheme/dto/award-scheme.dto";
 import { DecisionAuthorityEntity } from "../../modules/decision-authority/dto/decision-authority.dto";
-import { SourceDocumentEntity } from "../../modules/source-document/dto/source-document.dto";
-import { CreateSourceDocumentInput, UpdateSourceDocumentInput } from "../../modules/source-document/dto/source-document.input.dto";
 import { JournalAffiliationRepository } from "../../modules/journal-affiliation/journal-affiliation.repository";
 import { ImportJobRepository } from "../../modules/data-import/repository/import-job.repository";
 import { ImportJobSourceDocumentRepository } from "../../modules/import-job-source-document/import-job-source-document.repository";
 import { PersonDto } from "../../modules/person/dto/person.dto";
 import { CreatePersonWithActorIdInput, UpdatePersonInput } from "../../modules/person/dto/person.input";
 import { CreateDecisionAuthorityWithActorIdInput, UpdateDecisionAuthorityInput } from "../../modules/decision-authority/dto/decision-authority.input.dto";
+import { SourceDocumentRepository } from "../../modules/source-document/source-document.repository";
+import { createAwardDecisionRepository } from "../../modules/award-decision/award-decision.factory";
+import { createJournalRepository } from "../../modules/journal/journal.factory";
+import { createSourceDocumentRepository } from "../../modules/source-document/source-document.factories";
 
+// this class is used for transactional operations, 
+// so we need to create new instances of repositories for each transaction
 export function repositoryContainer(db: Database)
 {
     let actor: ActorRepository | undefined;
@@ -46,11 +50,7 @@ export function repositoryContainer(db: Database)
 
     let awardDecision: AwardDecisionRepository | undefined;
 
-    let sourceDocument: PrismaCrudRepository<
-        SourceDocumentEntity, 
-        CreateSourceDocumentInput, 
-        UpdateSourceDocumentInput
-    > | undefined;
+    let sourceDocument: SourceDocumentRepository | undefined;
     
     let importJob: ImportJobRepository | undefined;
     let importJobSourceDocument: ImportJobSourceDocumentRepository | undefined;
@@ -61,7 +61,7 @@ export function repositoryContainer(db: Database)
         },
 
         get journal() {
-            return journal ??= new JournalRepository(db.journal);
+            return journal ??= createJournalRepository(db.journal);
         },
 
         get journalAffiliation() {
@@ -77,11 +77,11 @@ export function repositoryContainer(db: Database)
         },
 
         get sourceDocument() {
-            return sourceDocument ??= new PrismaCrudRepository(db.sourceDocument);
+            return sourceDocument ??= createSourceDocumentRepository(db.sourceDocument);
         },
 
         get awardDecision() {
-            return awardDecision ??= new AwardDecisionRepository(db.awardDecision);
+            return awardDecision ??= createAwardDecisionRepository(db.awardDecision);
         },
 
         get actor() {

@@ -49,6 +49,20 @@ export class OrganizationService
         });
     }
 
+    async deleteMany(ids: Id[]): Promise<number>
+    {
+        await transaction(async tx => {
+            const repositories = repositoryContainer(tx);
+
+            for (const id of ids) {
+                const organization = await repositories.organization.delete(id);
+                
+                await repositories.actor.delete(organization.actorId);
+            }
+        })
+        return ids.length;
+    }
+
     async getList(query?: ListQueryParams): Promise<OrganizationEntity[]>
     {
         return this.repository.findAll(query);

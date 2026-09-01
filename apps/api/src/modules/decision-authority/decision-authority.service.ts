@@ -46,6 +46,21 @@ export class DecisionAuthorityService
         });
     }
 
+    async deleteMany(ids: Id[]): Promise<number>
+    {
+        await transaction(async tx => {
+            const repositories = repositoryContainer(tx);
+
+            for (const id of ids) {
+                const decisionAuthority = await repositories.decisionAuthority.delete(id);
+                
+                await repositories.actor.delete(decisionAuthority.actorId);
+            }
+        })
+
+        return ids.length;
+    }
+
     async getList(query?: ListQueryParams): Promise<DecisionAuthorityEntity[]>
     {
         return this.repository.findAll(query);

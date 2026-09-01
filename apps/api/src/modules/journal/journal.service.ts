@@ -72,6 +72,11 @@ export class JournalService
         return this.repository.delete(id);
     }
 
+    async deleteMany(ids: Id[]): Promise<number>
+    {
+        return this.repository.deleteMany(ids);
+    }
+
     async findByIdWithAffiliations(id: Id): Promise<JournalWithOrganizationsAndSourceDocument | null>
     {
         const journal = await this.repository.findByIdWithOrganizationsAndSourceDocument(id);

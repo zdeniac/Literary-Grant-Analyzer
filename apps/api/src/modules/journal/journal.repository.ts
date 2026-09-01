@@ -26,6 +26,27 @@ export class JournalRepository
             } 
         })
     }
+
+    async deleteMany(ids: Id[]): Promise<number>
+    {
+        const result = await this.entity.deleteMany({
+            where: {
+                id: {
+                    in: ids
+                }
+            }
+        });
+        return result.count;
+    }
+
+    async findById(id: Id): Promise<JournalEntity | null>
+    {
+        return this.entity.findUnique({
+            where: {
+                id
+            }
+        });
+    }
     
     async createWithAffiliations(input: CreateJournalWithAffiliationsInput): Promise<JournalWithOrganizationsAndSourceDocument>
     {

@@ -51,6 +51,21 @@ export class PersonService
         });
     }
 
+    async deleteMany(ids: Id[]): Promise<number>
+    {
+        await transaction(async tx => {
+            const repositories = repositoryContainer(tx);
+
+            for (const id of ids) {
+                const person = await repositories.person.delete(id);
+                
+                await repositories.actor.delete(person.actorId);
+            }
+        })
+
+        return ids.length;
+    }
+
     async getList(query?: ListQueryParams): Promise<PersonEntity[]>
     {
         return this.repository.findAll(query);

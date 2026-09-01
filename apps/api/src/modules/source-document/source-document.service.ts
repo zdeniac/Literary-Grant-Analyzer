@@ -29,6 +29,11 @@ export class SourceDocumentService
         return this.repository.delete(id);
     }
 
+    async deleteMany(ids: Id[]): Promise<number>
+    {
+        return this.repository.deleteMany(ids);
+    }
+
     async getList(query?: ListQueryParams): Promise<SourceDocumentEntity[]>
     {
         return this.repository.findAll(query);

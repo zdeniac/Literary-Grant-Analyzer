@@ -26,6 +26,11 @@ router.delete(
     controller.delete,
 );
 
+router.delete(
+    '/',
+    controller.deleteMany,
+);
+
 router.post(
     '/',
     validate(createAwardDecisionSchema),

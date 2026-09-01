@@ -25,6 +25,11 @@ export class AwardDecisionService
         return this.repository.delete(id);
     }
 
+    async deleteMany(ids: Id[]): Promise<number>
+    {
+        return this.repository.deleteMany(ids);
+    }
+
     async getList(query?: ListQueryParams): Promise<AwardDecisionEntityWithRelatedData[]>
     {
         return this.repository.findAllWithRelatedData(query);

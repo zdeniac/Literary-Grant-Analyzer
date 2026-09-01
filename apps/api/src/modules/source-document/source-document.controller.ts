@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { SourceDocumentService } from "./source-document.service";
-import { idSchema } from "../../common/validation/schema";
+import { idSchema, idsSchema } from "../../common/validation/schema";
 import { sendData } from "../../common/http/response";
 import { DtoMapper } from "../../common/types/types";
 import { SourceDocumentDto, SourceDocumentEntity } from "./dto/source-document.dto";
@@ -13,9 +13,10 @@ export class SourceDocumentController
     ) {
         this.create = this.create.bind(this);
         this.show = this.show.bind(this);
-        this.list = this.list.bind(this);
         this.update = this.update.bind(this);
         this.delete = this.delete.bind(this);
+        this.deleteMany = this.deleteMany.bind(this);
+        this.list = this.list.bind(this);
     }
 
     async create(req: Request, res: Response): Promise<void>
@@ -48,14 +49,22 @@ export class SourceDocumentController
 
     async delete(req: Request, res: Response): Promise<void>
     {
-        await this.service.delete(idSchema.parse(req.params.id));
-        res.sendStatus(204);
+        const sourceDoc = await this.service.delete(
+            idSchema.parse(req.params.id)
+        );
+        sendData(res, sourceDoc);
+    }
+
+    async deleteMany(req: Request, res: Response): Promise<void>
+    {
+        const ids = idsSchema.parse(req.params.ids);
+        await this.service.deleteMany(ids);
+        sendData(res, ids);
     }
 
     async list(req: Request, res: Response): Promise<void>
     {
         const sourceDocs = await this.service.getList(req.listQueryParams);
-
         sendData(
             res, 
             sourceDocs.map(this.mapper),

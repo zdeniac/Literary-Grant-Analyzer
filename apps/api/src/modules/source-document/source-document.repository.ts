@@ -41,6 +41,19 @@ export class SourceDocumentRepository
         return this.crud.delete(id);
     }
 
+    async deleteMany(ids: Id[]): Promise<number>
+    {
+        const result = await this.entity.deleteMany({
+            where: {
+                id: {
+                    in: ids,
+                },
+            },
+        });
+
+        return result.count;
+    }
+
     async findManyByUrls(urls: string[]): Promise<SourceDocumentEntity[]>
     {
         return this.entity.findMany({

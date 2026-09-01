@@ -9,7 +9,7 @@ export class ImportJobRepository
 {
     constructor(
         private readonly entity: Database['importJob'],
-        private readonly listQueryBuilder: ListDbQueryBuilder,
+        private readonly listQueryBuilder?: ListDbQueryBuilder,
     ) {}
 
     async create(data: CreateImportJobInput): Promise<ImportJobEntity>
