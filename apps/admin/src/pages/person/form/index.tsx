@@ -7,7 +7,12 @@ const validateRoles = [required()];
 export const PersonForm = () => (
     <SimpleForm>
         <TextInput 
-            source="name"
+            source="firstName"
+            validate={validateName}
+        />
+
+        <TextInput 
+            source="lastName"
             validate={validateName}
         />
 

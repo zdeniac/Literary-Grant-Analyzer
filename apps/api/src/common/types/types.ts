@@ -16,6 +16,7 @@ declare global {
         }
     }
 }
+
 export type SortableField = 
     | AwardDecisionSortableField
     | AwardSchemeSortableField
@@ -52,7 +53,6 @@ export type ListQueryParams = {
 };
 
 export type Id = z.infer<typeof idSchema>;
-export type IdParam = Id;
 
 export type Year = z.infer<typeof yearSchema>;
 export type Name = z.infer<typeof nameSchema>;

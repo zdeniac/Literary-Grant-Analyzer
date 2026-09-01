@@ -16,7 +16,7 @@ export const ImportJobList = () => (
                     render={record =>
                         record.sourceDocuments
                             ?.map((sourceDocument: { id: number; title: string }) => (
-                                <TableLink to={`/source-documents/${sourceDocument.id}`}>
+                                <TableLink key={sourceDocument.id} to={`/source-documents/${sourceDocument.id}`}>
                                     {sourceDocument.title}
                                 </TableLink>
                             ))

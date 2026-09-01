@@ -57,7 +57,8 @@ export const validSortableFields = {
     ],
     person: [
         'id',
-        'name',
+        'firstName',
+        'lastName',
         'birthYear',
         'deathYear',
         'createdAt',
@@ -116,6 +117,7 @@ export const validSearchableFields = {
     ],
     organization: [
         'name',
+        'nameVariants',
         'website',
         'address',
         'legalForm',

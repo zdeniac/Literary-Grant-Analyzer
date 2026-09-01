@@ -6,14 +6,14 @@ import { prisma } from "../../db/prisma";
 import { PrismaCrudRepository } from "../../db/repositories/prisma-crud-repository";
 import { ListDbQueryBuilder } from "../../db/list-db-query-builder";
 import { SortQueryBuilder } from "../../db/query-builders/sort.query-builder";
-import { SearchQueryBuilder } from "../../db/query-builders/search.query-builder";
+import { OrganizationSearchQueryBuilder } from "./query-builder/organization.search-query-builder";
 
 export const createOrganizationModule = () => {
     const organization = prisma.organization;
     
     const listQb = new ListDbQueryBuilder(
         new SortQueryBuilder(),
-        new SearchQueryBuilder(),
+        new OrganizationSearchQueryBuilder(),
     );
 
     const crudRepo = new PrismaCrudRepository(organization);

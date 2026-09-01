@@ -4,7 +4,6 @@ import {
     DateInput, 
     FileInput, 
     FormDataConsumer, 
-    ReferenceInput, 
     required, 
     SaveButton, 
     SelectInput, 
@@ -14,9 +13,8 @@ import {
     Toolbar, 
     useNotify, 
     useRefresh, 
-    type ButtonProps 
 } from "react-admin";
-import type { AcceptedFormat, ImportFormProps, ImportFormValues } from "../types/import-form.types";
+import type { ImportFormProps, ImportFormValues } from "../types/import-form.types";
 import { url } from "../../../shared/validation/validators";
 import { Box } from "@mui/material";
 import { ImportValidationApiError } from "../errors/ImportValidationApiError";
@@ -26,6 +24,7 @@ import { ImportErrorList } from "./ImportErrorList";
 import type { ImportRowError } from "../types/error.types";
 import { validFileDelimiters } from "../constants";
 import type { FileDelimiter } from "../../../../../packages/shared/enums";
+import { OrganizationAutocompleteInput } from "../../../pages/organizations/components/OrganizationInput";
 
 const titleValidation = [required()];
 const urlValidation = [url(), required()];
@@ -212,13 +211,9 @@ export const ImportForm = ({
                                 validate={urlValidation}
                             />
 
-                            <ReferenceInput
-                                source="issuingOrganizationId"
-                                reference="organizations"
-                            >
-                                <SelectInput optionText="name" />
-                            </ReferenceInput>
-            
+
+                            <OrganizationAutocompleteInput source="issuingOrganizationId" />
+
                             <DateInput
                                 source="retrievedAt"
                                 validate={retrievedAtValidation}

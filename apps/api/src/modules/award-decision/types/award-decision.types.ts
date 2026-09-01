@@ -49,10 +49,11 @@ export type AwardDecisionEntityWithRelatedData = Prisma.AwardDecisionGetPayload<
                         name: true,
                     },
                 };
-                decisionAuthority: {
+                person: {
                     select: {
                         id: true,
-                        name: true,
+                        firstName: true,
+                        lastName: true,
                     },
                 };
             };
@@ -72,5 +73,5 @@ export type AwardDecisionEntityWithRelatedData = Prisma.AwardDecisionGetPayload<
     };
 }>;
 
-export type AwardDecisionSortableField = z.infer<typeof awardDecisionSortableFieldSchema>;
-export type AwardDecisionSearchableField = z.infer<typeof awardDecisionSearchableFieldSchema>;
+export type AwardDecisionSortableField = z.infer<keyof typeof awardDecisionSortableFieldSchema>;
+export type AwardDecisionSearchableField = z.infer<keyof typeof awardDecisionSearchableFieldSchema>;

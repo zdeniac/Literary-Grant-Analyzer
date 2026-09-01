@@ -66,10 +66,11 @@ export class AwardDecisionRepository
                                 name: true,
                             },
                         },
-                        decisionAuthority: {
+                        person: {
                             select: {
                                 id: true,
-                                name: true,
+                                firstName: true,
+                                lastName: true,
                             },
                         },
                     },

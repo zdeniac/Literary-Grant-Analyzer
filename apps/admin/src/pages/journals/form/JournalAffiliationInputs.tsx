@@ -1,5 +1,6 @@
 import { BooleanInput, FormDataConsumer, ReferenceInput, SelectInput, TextInput } from "react-admin";
 import { YearInput } from "../../../components/inputs/YearInput";
+import { OrganizationAutocompleteInput } from "../../organizations/components/OrganizationInput";
 
 export const JournalAffiliationInputs = () => (
     <>
@@ -9,15 +10,10 @@ export const JournalAffiliationInputs = () => (
                 const isExisting = scopedFormData?.id !== undefined;
 
                 return (
-                    <ReferenceInput
+                    <OrganizationAutocompleteInput 
                         source="organizationId"
-                        reference="organizations"
-                    >
-                        <SelectInput
-                            optionText="name"
-                            disabled={isExisting}
-                        />
-                    </ReferenceInput>
+                        disabled={isExisting}
+                    />
                 );
             }}
         </FormDataConsumer>

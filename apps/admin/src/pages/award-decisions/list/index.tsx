@@ -26,7 +26,7 @@ export const AwardDecisionList = () => (
                         : `/persons/${id}`;
 
                     return (
-                        <TableLink to={link}>
+                        <TableLink key={id} to={link}>
                             { record.recipientName }
                         </TableLink>
                     );
@@ -35,7 +35,7 @@ export const AwardDecisionList = () => (
 
             <DataTable.Col source="awardSchemeName" disableSort>
                 <FunctionField render={(record) => (
-                    <TableLink to={`/award-schemes/${record.awardSchemeId}`}>
+                    <TableLink key={record.awardSchemeId} to={`/award-schemes/${record.awardSchemeId}`}>
                         { record.awardSchemeName }
                     </TableLink>
                 )} />
@@ -49,7 +49,7 @@ export const AwardDecisionList = () => (
                         : `/decision-authorities/${id}`;
 
                     return (
-                        <TableLink to={link}>
+                        <TableLink key={id} to={link}>
                             { record.decisionMakerName }
                         </TableLink>
                     );
@@ -67,7 +67,7 @@ export const AwardDecisionList = () => (
 
             <DataTable.Col label="Source document" disableSort>
                 <FunctionField render={(record) => (
-                    <TableLink to={`/source-documents/${record.sourceDocumentId}`}>
+                    <TableLink key={record.sourceDocumentId} to={`/source-documents/${record.sourceDocumentId}`}>
                         <TruncateField source="sourceDocumentTitle">
                             { record.sourceDocumentTitle }
                         </TruncateField>

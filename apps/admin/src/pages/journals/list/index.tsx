@@ -40,7 +40,7 @@ export const JournalList = () => (
                     render={record =>
                         record.organizations
                             ?.map((org: { id: number; name: string }) => (
-                                <TableLink to={`/organizations/${org.id}`}>
+                                <TableLink key={org.id} to={`/organizations/${org.id}`}>
                                     {org.name}
                                 </TableLink>
                             ))

@@ -1,10 +1,11 @@
 import { Router } from "express";
 import { createOrganizationModule } from "./organization.factory";
 import { validate } from "../../common/middleware/validate.middleware";
-import { createOrganizationSchema, organizationSortableFieldSchema, updateOrganizationSchema } from "./validation/organization.schema";
+import { createOrganizationSchema, organizationSearchableFieldSchema, organizationSortableFieldSchema, updateOrganizationSchema } from "./validation/organization.schema";
 import { parseListQuery } from "../../common/middleware/parse-list-query.middleware";
 import { validateSort } from "../../common/middleware/validate-sort.middleware";
-import { OrganizationSortableField } from "./types/organization.types";
+import { OrganizationSearchableField, OrganizationSortableField } from "./types/organization.types";
+import { validateSearch } from "../../common/middleware/validate-search.middleware";
 
 const router = Router();
 const { controller } = createOrganizationModule();
@@ -35,6 +36,7 @@ router.get(
     '/',
     parseListQuery,
     validateSort<OrganizationSortableField>(organizationSortableFieldSchema),
+    validateSearch<OrganizationSearchableField>(organizationSearchableFieldSchema),
     controller.list,
 );
 

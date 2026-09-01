@@ -11,9 +11,13 @@ const dataProvider: DataProvider = {
 		const query = new URLSearchParams();
 
 		// Pagination
-		query.set('page', String(params?.pagination?.page));
-		query.set('perPage', String(params?.pagination?.perPage));
-
+		const page = params.pagination?.page;
+		const perPage = params.pagination?.perPage;
+		if (page && perPage) {
+			query.set('page', String(page));
+			query.set('perPage', String(perPage));
+		}
+		
 		let entityName: SortableEntityName | undefined = resourceToSortableEntity[resource as ResourceName];
 
 		// Sort
@@ -21,7 +25,7 @@ const dataProvider: DataProvider = {
 			const field = params.sort.field;
 			// Prepare the entity's name from the resource to validate the sortable fields
 
-			if (entityName && validSortableFields[entityName].includes(field)) {
+			if (entityName && validSortableFields[entityName]?.includes(field)) {
 				query.set('sort', String(field));
 				query.set('order', String(params.sort.order));
 			}
@@ -33,7 +37,7 @@ const dataProvider: DataProvider = {
         		return;
     		}
 
-			if (Array.isArray(value) && validSortableFields[entityName].includes(key)) {
+			if (Array.isArray(value) && validSortableFields[entityName]?.includes(key)) {
 				query.set(key, value.join(','));
 				return;
 			}

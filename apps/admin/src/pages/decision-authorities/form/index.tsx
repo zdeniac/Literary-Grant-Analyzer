@@ -1,22 +1,19 @@
-import { ReferenceInput, required, SimpleForm, TextInput } from "react-admin";
+import { required, SimpleForm, TextInput } from "react-admin";
+import { OrganizationAutocompleteInput } from "../../organizations/components/OrganizationInput";
 
 const validateName = [required()];
+const validateOrganizationId = [required()];
 
 export const DecisionAuthorityForm = () => {
     return (
-        <>
-            <SimpleForm>
-                <TextInput 
-                    source="name"
-                    validate={validateName}
-                />
+        <SimpleForm>
+            <TextInput 
+                source="name"
+                validate={validateName}
+            />
 
-                <ReferenceInput 
-                    source="organizationId" 
-                    reference="organizations"
-                />
+            <OrganizationAutocompleteInput source="organizationId" validate={validateOrganizationId} />
 
-            </SimpleForm>
-        </>
+        </SimpleForm>
     );
 }
