@@ -12,14 +12,15 @@ import {
     TextInput, 
     Toolbar, 
     useNotify, 
-    useRefresh, 
+    useRefresh,
 } from "react-admin";
+import { useFormContext } from "react-hook-form";
 import type { ImportFormProps, ImportFormValues } from "../types/import-form.types";
 import { url } from "../../../shared/validation/validators";
 import { Box } from "@mui/material";
 import { ImportValidationApiError } from "../errors/ImportValidationApiError";
 import { ImportSourceDocumentApiError } from "../errors/ImportSourceDocumentApiError";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ImportErrorList } from "./ImportErrorList";
 import type { ImportRowError } from "../types/error.types";
 import { validFileDelimiters } from "../constants";
@@ -47,6 +48,7 @@ export const ImportForm = ({
         if (!params.file?.rawFile) {
             return;
         }
+
         try {
             const formData = new FormData();
 
@@ -73,6 +75,11 @@ export const ImportForm = ({
                         document.retrievedAt
                     );
                 });
+            } else {
+                formData.append(
+                    'sourceDocuments', 
+                    JSON.stringify([])
+                );
             }
 
             const res = await fetch(submitRoute, {
