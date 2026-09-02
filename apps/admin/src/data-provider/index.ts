@@ -110,7 +110,7 @@ const dataProvider: DataProvider = {
 	},
 	deleteMany: async function <RecordType extends RaRecord = any>(resource: string, params: DeleteManyParams<RecordType>): Promise<DeleteManyResult<RecordType>>
 	{
-		const res = await request(`/api/${resource}`, {
+		await request(`/api/${resource}`, {
 			method: 'DELETE',
 			body: JSON.stringify({
 				ids: params.ids,
@@ -121,7 +121,7 @@ const dataProvider: DataProvider = {
 		});
 
 		return {
-			data: res.data,
+			data: params.ids,
 		};
 	}
 }

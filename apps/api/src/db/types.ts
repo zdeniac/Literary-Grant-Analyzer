@@ -23,18 +23,20 @@ export type DatabaseCrudDelegate<T> = {
     findMany(args: any): Promise<T[]>;
     update(args: any): Promise<T>;
     delete(args: any): Promise<T>;
+    count(): Promise<number>;
     findMany(): Promise<T[]>;
     createMany(data: any): Promise<{ count: number }>;
 };
 
 export interface CrudRepositoryInterface<TEntity, TCreate, TUpdate = Partial<TCreate>>
 {
-    findById(id: number): Promise<TEntity | null>;
-    findAll(): Promise<TEntity[]>;
     create(data: TCreate): Promise<TEntity>;
-    delete(id: number): Promise<TEntity>;
-    findByIdOrThrow(id: number): Promise<TEntity>;
     update(id: number, data: TUpdate): Promise<TEntity>;
+    findById(id: number): Promise<TEntity | null>;
+    findByIdOrThrow(id: number): Promise<TEntity>;
+    findAll(): Promise<TEntity[]>;
+    delete(id: number): Promise<TEntity>;
+    count(): Promise<number>;
 }
 
 export interface SearchQueryBuilderInterface

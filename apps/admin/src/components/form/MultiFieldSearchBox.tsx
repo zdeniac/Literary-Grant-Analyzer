@@ -20,7 +20,6 @@ export const MultiFieldSearchBox = <T extends string>(
         const value = search?.trim();
 
         if (!value || !selectedFields?.length) {
-            setFilters({});
             return;
         }
 

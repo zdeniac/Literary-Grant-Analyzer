@@ -1,6 +1,6 @@
 import { ImportLookupInterface, LookupQueryOptions } from "../types/import-lookup.types";
 import { DatabaseDelegate } from "../../../db/types";
-import { ImportWriterInterface } from "../types/import.types";
+import { ImportWriterInterface } from "../types/service.types";
 
 export class ImportTargetRepository<TEntity, TCreate> 
     implements ImportLookupInterface<TEntity>, ImportWriterInterface<TCreate>
@@ -33,9 +33,9 @@ export class ImportTargetRepository<TEntity, TCreate>
             return [];
         }
 
-        const whereValue: any = {
-            in: filteredValues,
-        };
+        const whereValue: any = options?.type === 'array'
+            ? { hasSome: filteredValues }
+            : { in: filteredValues};
 
         if (options?.mode) {
             whereValue.mode = options.mode;

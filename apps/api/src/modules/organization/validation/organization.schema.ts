@@ -17,7 +17,11 @@ export const organizationSchema = z.object({
     
     address: z.string().min(4).max(256).nullable(),
     website: z.httpUrl().nullable(),
-    foundingYear: yearSchema.nullable(),
+
+    foundingYear: z.preprocess(
+        value => value === '' || value === null || value === 0 || value === undefined ? null : value,
+        yearSchema.nullable()
+    ),
 
     actorId: idSchema,
 
@@ -45,7 +49,6 @@ export const createOrganizationSchema = organizationSchema
             value => value === '' || value === null ? undefined : value,
             z.array(nameSchema).optional()
         ),
-        foundingYear: yearSchema.optional(),
     });
 
 export const createOrganizationWithActorIdSchema = createOrganizationSchema
@@ -55,14 +58,14 @@ export const createOrganizationWithActorIdSchema = createOrganizationSchema
 
 export const updateOrganizationSchema = createOrganizationSchema.partial();
 
-export const nameVariantsImportSchema = z.string().transform(value =>  value.split('|'));
+export const importOrganizationNameVariantsSchema = z.string().transform(value =>  value.split('|'));
 
 export const importOrganizationSchema = createOrganizationSchema
     .extend({
         foundingYear: z.preprocess(
-            value => value === '' ? undefined : value,
+            value => value === '' || value === null || value === 0 ? undefined : value,
             yearSchema.optional()
         ),
-        nameVariants: nameVariantsImportSchema.optional()
+        nameVariants: importOrganizationNameVariantsSchema.optional()
     });
 

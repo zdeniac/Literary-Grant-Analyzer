@@ -1,5 +1,4 @@
 import { NotFoundError } from "../../common/errors/http.error";
-import { ListQueryParams } from "../../common/types/types";
 import { CrudRepositoryInterface, DatabaseCrudDelegate } from "../types";
 
 export class PrismaCrudRepository<TEntity, TCreate, TUpdate = Partial<TCreate>>
@@ -61,5 +60,10 @@ export class PrismaCrudRepository<TEntity, TCreate, TUpdate = Partial<TCreate>>
         });
 
         return result.count;
+    }
+
+    async count(): Promise<number>
+    {
+        return this.entity.count();
     }
 }

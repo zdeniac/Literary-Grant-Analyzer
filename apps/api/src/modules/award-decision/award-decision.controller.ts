@@ -70,7 +70,7 @@ export class AwardDecisionController
             res,
             awardDecisions.map(this.withRelatedDataMapper),
             {
-                total: awardDecisions.length
+                total: await this.service.getTotalCount()
             }
         );
     }

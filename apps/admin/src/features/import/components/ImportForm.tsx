@@ -14,13 +14,12 @@ import {
     useNotify, 
     useRefresh,
 } from "react-admin";
-import { useFormContext } from "react-hook-form";
 import type { ImportFormProps, ImportFormValues } from "../types/import-form.types";
 import { url } from "../../../shared/validation/validators";
 import { Box } from "@mui/material";
 import { ImportValidationApiError } from "../errors/ImportValidationApiError";
 import { ImportSourceDocumentApiError } from "../errors/ImportSourceDocumentApiError";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ImportErrorList } from "./ImportErrorList";
 import type { ImportRowError } from "../types/error.types";
 import { validFileDelimiters } from "../constants";
@@ -91,9 +90,7 @@ export const ImportForm = ({
                 const body = await res.json();
 
                 if (ImportValidationApiError.codes.includes(body.error)) {
-                    throw new ImportValidationApiError(
-                        body.errors
-                    );
+                    throw new ImportValidationApiError(body.errors);
                 } else if (body.error === ImportSourceDocumentApiError.code) {
                     throw new ImportSourceDocumentApiError();
                 } else {
@@ -141,7 +138,6 @@ export const ImportForm = ({
                     alignItems: 'center',
                 }}
             >
-
                 <FormDataConsumer>
                     {({ formData }) => {
                         const file = formData.file?.rawFile;
@@ -184,7 +180,6 @@ export const ImportForm = ({
                     validate={fileInputValidation}
                     multiple={false} 
                     accept={{'text/csv' : ['.csv']}}
-
                 />
 
                 <BooleanInput label="Dokumentumok adatainak mentése" 
@@ -192,46 +187,9 @@ export const ImportForm = ({
                 />
 
                 <FormDataConsumer>
-
                 {({ formData }) => formData.saveSourceDocument ? (
-                    
-                    <ArrayInput
-                        source="sourceDocuments"
-                        defaultValue={[
-                            {
-                                title: '',
-                                url: '',
-                                issuingOrganizationId: null,
-                                retrievedAt: undefined,
-                            },
-                        ]}
-                    >
-
-                        <SimpleFormIterator disableReordering>                                
-                            <TextInput
-                                source="title"
-                                validate={titleValidation}
-                            />
-
-                            <TextInput
-                                source="url"
-                                validate={urlValidation}
-                            />
-
-
-                            <OrganizationAutocompleteInput source="issuingOrganizationId" />
-
-                            <DateInput
-                                source="retrievedAt"
-                                validate={retrievedAtValidation}
-                            />
-
-                        </SimpleFormIterator>
-
-                    </ArrayInput>
-
+                    <SourceDocumentInputs />
                 ) : null }
-
                 </FormDataConsumer>
 
             {importErrors?.length > 0 && (
@@ -241,5 +199,35 @@ export const ImportForm = ({
             </Box>
 
         </SimpleForm>
+    );
+};
+
+const SourceDocumentInputs = () => {
+    return (
+        <ArrayInput source="sourceDocuments" defaultValue={[{ 
+            title: '', 
+            url: '', 
+            issuingOrganizationId: '', 
+            retrievedAt: '' 
+        }]}>
+            <SimpleFormIterator disableReordering>                                
+                <TextInput
+                    source="title"
+                    validate={titleValidation}
+                />
+
+                <TextInput
+                    source="url"
+                    validate={urlValidation}
+                />
+
+                <OrganizationAutocompleteInput source="issuingOrganizationId" />
+
+                <DateInput
+                    source="retrievedAt"
+                    validate={retrievedAtValidation}
+                />
+            </SimpleFormIterator>
+        </ArrayInput>
     );
 };

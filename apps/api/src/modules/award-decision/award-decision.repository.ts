@@ -49,6 +49,11 @@ export class AwardDecisionRepository
         return result.count;
     }
 
+    async count(): Promise<number>
+    {
+        return this.crud.count();
+    }
+
     async findAllWithRelatedData(query?: ListQueryParams): Promise<AwardDecisionEntityWithRelatedData[]>
     {
         return this.entity.findMany({

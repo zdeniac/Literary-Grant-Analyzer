@@ -18,7 +18,8 @@ export const AwardDecisionListActions = () => {
                 defaultValues={{
                     q: filterValues.q ?? '',
                     fields: filterValues.fields ?? [],
-                }}>
+                }}
+            >
                 <MultiFieldSearchBox fields={validSearchableFields.awardDecision} />
             </Form>
         </Box>

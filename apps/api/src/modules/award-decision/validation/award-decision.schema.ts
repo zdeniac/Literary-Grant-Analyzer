@@ -65,6 +65,8 @@ export const updateAwardDecisionSchema = awardDecisionSchema
 
 export const importAwardDecisionSchema = z.object({
     recipientName: organizationSchema.shape.name,
+    recipientNameVariants: organizationSchema.shape.name,
+
     awardSchemeName: awardSchemeSchema.shape.name,
     awardSchemeOrganizationName: organizationSchema.shape.name,
     

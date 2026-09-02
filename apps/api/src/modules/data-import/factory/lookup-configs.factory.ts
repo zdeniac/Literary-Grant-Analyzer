@@ -1,7 +1,6 @@
 import { LookupConfig } from "../types/import-lookup.types";
 
 export const trim = (value: unknown): string => String(value).trim();
-
 export const toLowerCase = (value: unknown): string => String(value).toLowerCase();
 
 export const organizationLookupConfig: LookupConfig = new Map([
@@ -15,6 +14,18 @@ export const organizationLookupConfig: LookupConfig = new Map([
             query: {
                 mode: 'insensitive'
             }
+        },
+    ],
+    [
+        'nameVariants',
+        {
+            normalizers: [
+                trim,
+                toLowerCase
+            ],
+            query: {
+                type: 'array',
+            },
         }
     ]
 ]);

@@ -36,6 +36,11 @@ export class OrganizationRepository
         return this.crud.delete(id);
     }
 
+    async count(): Promise<number>
+    {
+        return this.crud.count();
+    }
+
     async findAll(query?: ListQueryParams): Promise<OrganizationEntity[]>
     {
         return this.entity.findMany(this.listQueryBuilder?.build(query));

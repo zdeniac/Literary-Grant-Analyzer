@@ -1,7 +1,6 @@
 import { prisma } from "../../../db/prisma";
 import { ImportTargetRepository } from "../repository/import-target.repository";
 import { ImportRepositoryRegistry } from "../registry/import-repository.registry";
-import { ImportBlueprintRegistry } from "../registry/import-blueprint.registry";
 
 export const createImportRepositoryRegistry = () =>
     new ImportRepositoryRegistry([

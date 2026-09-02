@@ -6,6 +6,11 @@ export const awardDecisionBlueprint: RelationalEntityImportBlueprint =
         entity: 'awardDecision',
         fields: [
             {
+                name: 'recipientNameVariants',
+                type: 'string',
+                required: true
+            },
+            {
                 name: 'recipientName',
                 type: 'string',
                 required: true
@@ -48,6 +53,17 @@ export const awardDecisionBlueprint: RelationalEntityImportBlueprint =
         ],
         schema: importAwardDecisionSchema,
         relations: [
+            {
+                entity: 'organization',
+
+                foreignKey: 'recipientId',
+                targetField: 'actorId',
+
+                lookup: {
+                    sourceField: 'recipientNameVariants',
+                    lookupField: 'nameVariants',
+                },
+            },
             {
                 entity: 'organization',
 

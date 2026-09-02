@@ -35,6 +35,11 @@ export class AwardDecisionService
         return this.repository.findAllWithRelatedData(query);
     }
 
+    async getTotalCount(): Promise<number>
+    {
+        return this.repository.count();
+    }
+
     async findByIdWithRelations(id: Id): Promise<AwardDecisionEntity>
     {
         const entity = await this.repository.findByIdOrThrow(id);
