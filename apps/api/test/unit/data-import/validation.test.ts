@@ -67,7 +67,7 @@ describe('Data import validation', () => {
                 expect(e.errors.length).toBe(1);
 
                 expect(e.errors[0]).toEqual({
-                        row: 1,
+                        rowNum: 1,
                         issues: [
                             {
                                 message: 'Missing field: email',
@@ -93,7 +93,7 @@ describe('Data import validation', () => {
 
                 expect(e.errors).toEqual([
                     {
-                        row: 1,
+                        rowNum: 1,
                         issues: [
                             {
                                 message: 'Unknown field: foo',

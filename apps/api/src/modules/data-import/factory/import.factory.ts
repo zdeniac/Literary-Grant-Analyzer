@@ -44,8 +44,8 @@ export const createImportModule = () => {
 
     const importWorkflowService = new ImportWorkflowService(
         service,
-        createSourceDocumentService(prisma),
-        createImportJobSourceDocumentService(prisma),
+        createSourceDocumentService(),
+        createImportJobSourceDocumentService(),
     )
 
     const controller = new ImportController(

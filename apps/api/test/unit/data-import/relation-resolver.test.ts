@@ -3,42 +3,76 @@ import { CompositeRelationResolver } from "../../../src/modules/data-import/reso
 import { SimpleRelationResolver } from "../../../src/modules/data-import/resolver/simple-relation-resolver";
 import { ImportRow } from "../../../src/modules/data-import/types/import.types";
 import { JournalStatus } from "@prisma/client";
-import { ImportDataValidationError as ImportRelationError } from "../../../src/modules/data-import/error/import.errors";
 import { ImportLookupInterface } from "../../../src/modules/data-import/types/import-lookup.types";
 import { ImportWriterInterface } from "../../../src/modules/data-import/types/service.types";
 import { EntityName } from "../../../src/common/types/types";
+import { ImportLookupRegistry } from "../../../src/modules/data-import/registry/import-lookup.registry";
+import { OrganizationEntity } from "../../../src/modules/organization/dto/organization.dto";
+import { JournalEntity } from "../../../src/modules/journal/dto/journal.dto";
+import { ImportRelationError } from "../../../src/modules/data-import/error/import.errors";
 
 describe('RelationResolver', () => {
-    const findManyBy = vi.fn<ImportLookupInterface<any>['findManyBy']>();
-    const createMany = vi.fn<ImportWriterInterface<any>['createMany']>();
-    const repositories = {
-        organization: {
-            findManyBy,
-            createMany
-        },
-        journal: {
-            findManyBy,
-            createMany,
-        }
-    } satisfies Record<EntityName, ImportLookupInterface<any> & ImportWriterInterface<any>>;
-    
+    const organizationLookup = {
+        findManyBy: vi.fn<ImportLookupInterface<any>['findManyBy']>(),
+        normalize: vi.fn<ImportLookupInterface<any>['normalize']>(),
+    } satisfies ImportLookupInterface<OrganizationEntity>;
+
+    const journalLookup = {
+        findManyBy: vi.fn<ImportLookupInterface<any>['findManyBy']>(),
+        normalize: vi.fn<ImportLookupInterface<any>['normalize']>(),
+    } satisfies ImportLookupInterface<JournalEntity>;
+ 
+    const getOrThrow = vi.fn<ImportLookupRegistry['getOrThrow']>();
+
+    const importLookupRegistry = {
+        getOrThrow,
+        get: vi.fn<ImportLookupRegistry['get']>(),
+        has: vi.fn<ImportLookupRegistry['has']>(),
+        getAll: vi.fn<ImportLookupRegistry['getAll']>(),
+    } satisfies Pick<
+        ImportLookupRegistry,
+        'getOrThrow' | 'get' | 'has' | 'getAll'
+    >;    
+
     let resolver: SimpleRelationResolver;
-    
+
     beforeEach(() => {
         vi.clearAllMocks();
-        resolver = new SimpleRelationResolver(repositories);
+
+        // Needed for identity mock, so the returned value is correct
+        organizationLookup.normalize.mockImplementation(
+            (_field, value) => value
+        );
+
+        journalLookup.normalize.mockImplementation(
+            (_field, value) => value
+        );
+
+        getOrThrow.mockImplementation((entity) => {
+            switch (entity) {
+                case 'organization':
+                    return organizationLookup;
+
+                case 'journal':
+                    return journalLookup;
+
+                default:
+                    throw new Error(`Unexpected entity: ${entity}`);
+            }
+        });
+
+        resolver = new SimpleRelationResolver(importLookupRegistry);
     });
 
     it('maps the foreign data and checks the db with them', async () => {
-        repositories.organization.findManyBy.mockResolvedValue([]);
-
+        organizationLookup.findManyBy.mockResolvedValue([]);
         const importRows: ImportRow[] = [
             {
                 name: 'Alföld Folyóirat',
                 issn: '1234-5678',
                 status: JournalStatus.ACTIVE,
                 foundingYear: 1990,
-                organizationName: 'Alföld Alapítvány', 
+                organizationName: 'Alföld Alapítvány',
             },
         ];
 
@@ -54,14 +88,14 @@ describe('RelationResolver', () => {
             })
         ).rejects.toThrow();
 
-        expect(repositories.organization.findManyBy).toHaveBeenCalledWith(
+        expect(organizationLookup.findManyBy).toHaveBeenCalledWith(
             'name',
             ['Alföld Alapítvány']
         );
     });
 
     it('sets the foreign data to its lookup field', async () => {
-        repositories.organization.findManyBy.mockResolvedValue([
+        organizationLookup.findManyBy.mockResolvedValue([
             {
                 id: 42,
                 name: 'Alföld Alapítvány',
@@ -74,7 +108,7 @@ describe('RelationResolver', () => {
                 issn: '1234-5678',
                 status: JournalStatus.ACTIVE,
                 foundingYear: 1990,
-                organizationName: 'Alföld Alapítvány', 
+                organizationName: 'Alföld Alapítvány',
             },
         ];
 
@@ -98,14 +132,14 @@ describe('RelationResolver', () => {
             },
         ]);
 
-        expect(repositories.organization.findManyBy).toHaveBeenCalledWith(
+        expect(organizationLookup.findManyBy).toHaveBeenCalledWith(
             'name',
             ['Alföld Alapítvány'],
         );
     });
 
     it('throws on missing foreign record', async () => {
-        repositories.organization.findManyBy.mockResolvedValue([]);
+        organizationLookup.findManyBy.mockResolvedValue([]);
 
         const importRows: ImportRow[] = [
             {
@@ -113,7 +147,7 @@ describe('RelationResolver', () => {
                 issn: '1234-5678',
                 status: JournalStatus.ACTIVE,
                 foundingYear: 1990,
-                organizationName: 'Alföld Alapítvány', 
+                organizationName: 'Alföld Alapítvány',
             },
         ];
 
@@ -131,16 +165,18 @@ describe('RelationResolver', () => {
             expect.fail('Expected ImportRelationError');
         } catch (e) {
             expect(e).toBeInstanceOf(ImportRelationError);
+
             const error = e as ImportRelationError;
-            expect(error.name).toBe('ImportValidationError');
-            expect(error.message).toBe('IMPORT_RELATION_ERROR');
+
+            expect(error.name).toBe('ImportRelationError');
+            expect(error.code).toBe('IMPORT_RELATION_ERROR');
             expect(error.errors).toBeInstanceOf(Array);
             expect(error.errors.length).toBe(1);
         }
     });
 
     it('returns validated data correctly', async () => {
-        repositories.organization.findManyBy.mockResolvedValue([]);
+        organizationLookup.findManyBy.mockResolvedValue([]);
 
         const importRows: ImportRow[] = [
             {
@@ -148,7 +184,7 @@ describe('RelationResolver', () => {
                 issn: '1234-5678',
                 status: JournalStatus.ACTIVE,
                 foundingYear: 1990,
-                organizationName: 'Alföld Alapítvány', 
+                organizationName: 'Alföld Alapítvány',
             },
         ];
 
@@ -164,14 +200,14 @@ describe('RelationResolver', () => {
             })
         ).rejects.toThrow();
 
-        expect(repositories.organization.findManyBy).toHaveBeenCalledWith(
+        expect(organizationLookup.findManyBy).toHaveBeenCalledWith(
             'name',
             ['Alföld Alapítvány']
         );
     });
 
     it('resolves multiple foreign relations', async () => {
-        repositories.organization.findManyBy.mockResolvedValue([
+        organizationLookup.findManyBy.mockResolvedValue([
             {
                 id: 1,
                 name: 'Alföld Alapítvány',
@@ -214,7 +250,7 @@ describe('RelationResolver', () => {
             },
         ]);
 
-        expect(repositories.organization.findManyBy)
+        expect(organizationLookup.findManyBy)
             .toHaveBeenCalledWith(
                 'name',
                 [
@@ -225,7 +261,7 @@ describe('RelationResolver', () => {
     });
 
     it('reports all missing foreign relations', async () => {
-        repositories.organization.findManyBy.mockResolvedValue([]);
+        organizationLookup.findManyBy.mockResolvedValue([]);
 
         const importRows: ImportRow[] = [
             {
@@ -257,7 +293,7 @@ describe('RelationResolver', () => {
 
             expect(error.errors).toEqual([
                 {
-                    row: 2,
+                    rowNum: 2,
                     issues: [
                         {
                             field: 'organizationName',
@@ -267,7 +303,7 @@ describe('RelationResolver', () => {
                     ],
                 },
                 {
-                    row: 3,
+                    rowNum: 3,
                     issues: [
                         {
                             field: 'organizationName',
@@ -281,7 +317,7 @@ describe('RelationResolver', () => {
     });
 
     it('does not mutate original rows', async () => {
-        repositories.organization.findManyBy.mockResolvedValue([
+        organizationLookup.findManyBy.mockResolvedValue([
             {
                 id: 42,
                 name: 'Alföld Alapítvány',
@@ -311,7 +347,7 @@ describe('RelationResolver', () => {
     });
 
     it('returns empty array when resolving empty input', async () => {
-        repositories.organization.findManyBy.mockResolvedValue([]);
+        organizationLookup.findManyBy.mockResolvedValue([]);
 
         const result = await resolver.resolve([], {
             entity: 'organization',
@@ -325,7 +361,7 @@ describe('RelationResolver', () => {
 
         expect(result).toEqual([]);
 
-        expect(repositories.organization.findManyBy)
+        expect(organizationLookup.findManyBy)
             .toHaveBeenCalledWith(
                 'name',
                 []
@@ -333,7 +369,7 @@ describe('RelationResolver', () => {
     });
 
     it('keeps other row fields when replacing relation field', async () => {
-        repositories.organization.findManyBy.mockResolvedValue([
+        organizationLookup.findManyBy.mockResolvedValue([
             {
                 id: 5,
                 name: 'Alföld Alapítvány',
@@ -375,30 +411,65 @@ describe('RelationResolver', () => {
 });
 
 describe('CompositeRelationResolver', () => {
-    const organizationFindManyBy = vi.fn<ImportLookupInterface<any>['findManyBy']>();
-    const awardSchemeFindManyBy = vi.fn<ImportLookupInterface<any>['findManyBy']>();
-    const compositeRepositories = {
-        organization: {
-            findManyBy: organizationFindManyBy,
-        },
-        awardScheme: {
-            findManyBy: awardSchemeFindManyBy,
-        },
-    } satisfies Record<EntityName, ImportLookupInterface<any>>;
+    const organizationLookup = {
+        findManyBy: vi.fn<ImportLookupInterface<any>['findManyBy']>(),
+        normalize: vi.fn<ImportLookupInterface<any>['normalize']>(),
+    } satisfies ImportLookupInterface<OrganizationEntity>;
+
+    const awardSchemeLookup = {
+        findManyBy: vi.fn<ImportLookupInterface<any>['findManyBy']>(),
+        normalize: vi.fn<ImportLookupInterface<any>['normalize']>(),
+    } satisfies ImportLookupInterface<any>;
+
+    const getOrThrow = vi.fn<ImportLookupRegistry['getOrThrow']>();
+
+    const importLookupRegistry = {
+        getOrThrow,
+        get: vi.fn<ImportLookupRegistry['get']>(),
+        has: vi.fn<ImportLookupRegistry['has']>(),
+        getAll: vi.fn<ImportLookupRegistry['getAll']>(),
+    } satisfies Pick<
+        ImportLookupRegistry,
+        'getOrThrow' | 'get' | 'has' | 'getAll'
+    >;
 
     let compositeResolver: CompositeRelationResolver;
 
     beforeEach(() => {
         vi.clearAllMocks();
-        compositeResolver = new CompositeRelationResolver(compositeRepositories);
+
+        organizationLookup.normalize.mockImplementation(
+            (_field, value) => value
+        );
+
+        awardSchemeLookup.normalize.mockImplementation(
+            (_field, value) => value
+        );
+
+        getOrThrow.mockImplementation((entity) => {
+            switch (entity) {
+                case 'organization':
+                    return organizationLookup;
+
+                case 'awardScheme':
+                    return awardSchemeLookup;
+
+                default:
+                    throw new Error(`Unexpected entity: ${entity}`);
+            }
+        });
+
+        compositeResolver = new CompositeRelationResolver(
+            importLookupRegistry
+        );
     });
 
     it('resolves award scheme by name and organization name for composite lookup', async () => {
-        organizationFindManyBy.mockResolvedValue([
+        organizationLookup.findManyBy.mockResolvedValue([
             { id: 11, name: 'Central Foundation' },
         ]);
 
-        awardSchemeFindManyBy.mockResolvedValue([
+        awardSchemeLookup.findManyBy.mockResolvedValue([
             { id: 100, name: 'Best Grant', organizationId: 11 },
         ]);
 
@@ -433,17 +504,17 @@ describe('CompositeRelationResolver', () => {
             },
         ]);
 
-        expect(organizationFindManyBy).toHaveBeenCalledWith(
+        expect(organizationLookup.findManyBy).toHaveBeenCalledWith(
             'name',
             ['Central Foundation'],
         );
 
-        expect(awardSchemeFindManyBy).toHaveBeenCalledWith(
+        expect(awardSchemeLookup.findManyBy).toHaveBeenCalledWith(
             'name',
             ['Best Grant'],
         );
 
-        expect(awardSchemeFindManyBy).toHaveBeenCalledWith(
+        expect(awardSchemeLookup.findManyBy).toHaveBeenCalledWith(
             'organizationId',
             [11],
         );

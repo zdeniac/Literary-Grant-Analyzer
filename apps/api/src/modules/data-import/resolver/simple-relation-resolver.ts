@@ -2,13 +2,14 @@ import { ImportRelationError } from "../error/import.errors";
 import { ImportLookupRegistry } from "../registry/import-lookup.registry";
 import { ImportFileRowError } from "../types/error.types";
 import { SimpleImportLookup, SimpleRelationImportBlueprint } from "../types/import-blueprint.types";
+import { ImportLookupRegistryInterface } from "../types/import-lookup.types";
 import { ImportRow } from "../types/import.types";
 import { RelationResolverInterface } from "../types/service.types";
 
 export class SimpleRelationResolver implements RelationResolverInterface<SimpleRelationImportBlueprint>
 {
     constructor(
-        private readonly lookupRegistry: ImportLookupRegistry,
+        private readonly lookupRegistry: ImportLookupRegistryInterface,
     ) {}
 
     public async resolve(rows: ImportRow[], relationBlueprint: SimpleRelationImportBlueprint): Promise<ImportRow[]>

@@ -1,9 +1,8 @@
 import { EntityName } from "../../../common/types/types";
 import { ImportRelationError } from "../error/import.errors";
-import { ImportLookupRegistry } from "../registry/import-lookup.registry";
 import { ImportFileRowError } from "../types/error.types";
 import { CompositeImportLookup, CompositeRelationImportBlueprint } from "../types/import-blueprint.types";
-import { ImportLookupInterface } from "../types/import-lookup.types";
+import { ImportLookupInterface, ImportLookupRegistryInterface } from "../types/import-lookup.types";
 import { ImportRow } from "../types/import.types";
 import { RelationResolverInterface } from "../types/service.types";
 
@@ -55,7 +54,7 @@ import { RelationResolverInterface } from "../types/service.types";
 export class CompositeRelationResolver implements RelationResolverInterface<CompositeRelationImportBlueprint>
 {
     constructor(
-        private readonly lookupRegistry: ImportLookupRegistry
+        private readonly lookupRegistry: ImportLookupRegistryInterface
     ) {}
 
     public async resolve(rows: ImportRow[], relationBlueprint: CompositeRelationImportBlueprint): Promise<ImportRow[]>

@@ -1,9 +1,10 @@
+import { prisma } from "../../db/prisma";
 import { Database } from "../../db/types";
 import { ImportJobSourceDocumentRepository } from "./import-job-source-document.repository";
 import { ImportJobSourceDocumentService } from "./import-job-source-document.service";
 
-export const createImportJobSourceDocumentService = (db: Database) => (
+export const createImportJobSourceDocumentService = () => (
     new ImportJobSourceDocumentService(
-        new ImportJobSourceDocumentRepository(db.importJobSourceDocument),
+        new ImportJobSourceDocumentRepository(prisma.importJobSourceDocument),
     )
 );

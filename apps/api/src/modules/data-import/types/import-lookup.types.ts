@@ -1,3 +1,5 @@
+import { EntityName } from "../../../common/types/types";
+
 export type LookupConfig = Map<string, LookupFieldConfig>;
 export type LookupFieldConfig = {
     normalizers: Normalizer[];
@@ -15,4 +17,9 @@ export type LookupQueryOptions = {
 export interface ImportLookupInterface<TEntity>
 {
     findManyBy(field: string, values: unknown[], options?: LookupQueryOptions): Promise<TEntity[]>;
+    normalize(field: string, value: unknown): unknown;
+}
+export interface ImportLookupRegistryInterface
+{
+    getOrThrow(entity: EntityName): ImportLookupInterface<any>;
 }
