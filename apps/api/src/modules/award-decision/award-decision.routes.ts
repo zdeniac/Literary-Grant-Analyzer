@@ -22,13 +22,13 @@ router.patch(
 );
 
 router.delete(
-    '/:id',
-    controller.delete,
+    '/',
+    controller.deleteMany,
 );
 
 router.delete(
-    '/',
-    controller.deleteMany,
+    '/:id',
+    controller.delete,
 );
 
 router.post(

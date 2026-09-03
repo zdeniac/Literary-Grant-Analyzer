@@ -23,6 +23,7 @@ export type DatabaseCrudDelegate<T> = {
     findMany(args: any): Promise<T[]>;
     update(args: any): Promise<T>;
     delete(args: any): Promise<T>;
+    deleteMany(args: any): Promise<{ count: number }>;
     count(): Promise<number>;
     findMany(): Promise<T[]>;
     createMany(data: any): Promise<{ count: number }>;
@@ -36,6 +37,7 @@ export interface CrudRepositoryInterface<TEntity, TCreate, TUpdate = Partial<TCr
     findByIdOrThrow(id: number): Promise<TEntity>;
     findAll(): Promise<TEntity[]>;
     delete(id: number): Promise<TEntity>;
+    deleteMany(ids: number[]): Promise<number>;
     count(): Promise<number>;
 }
 

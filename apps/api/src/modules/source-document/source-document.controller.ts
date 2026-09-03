@@ -65,10 +65,11 @@ export class SourceDocumentController
     async list(req: Request, res: Response): Promise<void>
     {
         const sourceDocs = await this.service.getList(req.listQueryParams);
+        const total = await this.service.getCount();
         sendData(
             res, 
             sourceDocs.map(this.mapper),
-            { total: sourceDocs.length }
+            { total }
         )
     }
 }

@@ -1,7 +1,7 @@
 import { CrudRepositoryInterface, Database } from "../../db/types";
 import { PersonEntity } from "./dto/person.dto";
 import { CreatePersonInput, UpdatePersonInput } from "./dto/person.input";
-import { ListQueryParams } from "../../common/types/types";
+import { Id, ListQueryParams } from "../../common/types/types";
 import { ListDbQueryBuilder } from "../../db/list-db-query-builder";
 
 export class PersonRepository
@@ -36,8 +36,18 @@ export class PersonRepository
         return this.crud.delete(id);
     }
 
+    async deleteMany(ids: Id[]): Promise<number>
+    {
+        return this.crud.deleteMany(ids);
+    }
+
     async findAll(query?: ListQueryParams): Promise<PersonEntity[]>
     {
         return this.entity.findMany(this.listQueryBuilder?.build(query));
+    }
+
+    async count(): Promise<number>
+    {
+        return this.crud.count();
     }
 }

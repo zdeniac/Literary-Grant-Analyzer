@@ -1,7 +1,7 @@
-import { Database } from "../../db/types";
+import { CrudRepositoryInterface, Database } from "../../db/types";
 import { JournalWithOrganizations, JournalWithOrganizationsAndSourceDocument } from "./types/journal.types";
 import { Id, ListQueryParams } from "../../common/types/types";
-import { CreateJournalInput, CreateJournalWithAffiliationsInput } from "./dto/journal.input.dto";
+import { CreateJournalInput, CreateJournalWithAffiliationsInput, UpdateJournalWithAffiliationsInput } from "./dto/journal.input.dto";
 import { NotFoundError } from "../../common/errors/http.error";
 import { JournalEntity } from "./dto/journal.dto";
 import { ListDbQueryBuilder } from "../../db/list-db-query-builder";
@@ -10,42 +10,37 @@ export class JournalRepository
 {
     constructor(
         private readonly entity: Database['journal'],
+        private readonly crud: CrudRepositoryInterface<
+            JournalEntity, 
+            CreateJournalInput, 
+            UpdateJournalWithAffiliationsInput
+        >,
         private readonly listQueryBuilder?: ListDbQueryBuilder,
     ) {}
 
     async create(data: CreateJournalInput): Promise<JournalEntity>
     {
-        return this.entity.create({ data });
+        return this.crud.create(data);
     }
 
     async delete(id: Id): Promise<JournalEntity>
     {
-        return this.entity.delete({ 
-            where : { 
-                id 
-            } 
-        })
+        return this.crud.delete(id);
     }
 
     async deleteMany(ids: Id[]): Promise<number>
     {
-        const result = await this.entity.deleteMany({
-            where: {
-                id: {
-                    in: ids
-                }
-            }
-        });
-        return result.count;
+        return this.crud.deleteMany(ids);
     }
 
     async findById(id: Id): Promise<JournalEntity | null>
     {
-        return this.entity.findUnique({
-            where: {
-                id
-            }
-        });
+        return this.crud.findById(id);
+    }
+
+    async count(): Promise<number>
+    {
+        return this.crud.count();
     }
     
     async createWithAffiliations(input: CreateJournalWithAffiliationsInput): Promise<JournalWithOrganizationsAndSourceDocument>

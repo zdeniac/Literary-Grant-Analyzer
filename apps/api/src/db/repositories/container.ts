@@ -16,38 +16,32 @@ import { CreatePersonWithActorIdInput, UpdatePersonInput } from "../../modules/p
 import { CreateDecisionAuthorityWithActorIdInput, UpdateDecisionAuthorityInput } from "../../modules/decision-authority/dto/decision-authority.input.dto";
 import { SourceDocumentRepository } from "../../modules/source-document/source-document.repository";
 import { createAwardDecisionRepository } from "../../modules/award-decision/award-decision.factory";
-import { createJournalRepository } from "../../modules/journal/journal.factory";
+import { createJournalAffiliationRepository, createJournalRepository } from "../../modules/journal/journal.factory";
 import { createSourceDocumentRepository } from "../../modules/source-document/source-document.factories";
+import { createOrganizationRepository } from "../../modules/organization/organization.factory";
+import { OrganizationRepository } from "../../modules/organization/organization.repository";
+import { createActorRepository } from "../../modules/actor/actor.factory";
+import { create } from "domain";
+import { createAwardSchemeRepository } from "../../modules/award-scheme/award-scheme.factory";
+import { AwardSchemeRepository } from "../../modules/award-scheme/award-scheme.repository";
+import { createDecisionAuthorityRepository } from "../../modules/decision-authority/decision-authority.factory";
+import { DecisionAuthorityRepository } from "../../modules/decision-authority/decision-authority.repository";
+import { createPersonRepository } from "../../modules/person/person.factory";
+import { PersonRepository } from "../../modules/person/person.repository";
 
 // this class is used for transactional operations, 
 // so we need to create new instances of repositories for each transaction
 export function repositoryContainer(db: Database)
 {
     let actor: ActorRepository | undefined;
-
-    let organization: PrismaCrudRepository<
-        OrganizationEntity, 
-        CreateOrganizationWithActorIdInput, 
-        UpdateOrganizationInput
-    > | undefined;
+    let organization: OrganizationRepository | undefined;
+    let person: PersonRepository | undefined;
 
     let journal: JournalRepository | undefined;
     let journalAffiliation: JournalAffiliationRepository | undefined;
 
-    let person: PrismaCrudRepository<PersonDto, CreatePersonWithActorIdInput, UpdatePersonInput> | undefined;
-
-    let awardScheme: PrismaCrudRepository<
-        AwardSchemeEntity, 
-        CreateAwardSchemeInput, 
-        UpdateAwardSchemeInput
-    > | undefined;
-    
-    let decisionAuthority: PrismaCrudRepository<
-        DecisionAuthorityEntity, 
-        CreateDecisionAuthorityWithActorIdInput, 
-        UpdateDecisionAuthorityInput
-    > | undefined;
-
+    let awardScheme: AwardSchemeRepository | undefined;
+    let decisionAuthority: DecisionAuthorityRepository | undefined;
     let awardDecision: AwardDecisionRepository | undefined;
 
     let sourceDocument: SourceDocumentRepository | undefined;
@@ -57,7 +51,7 @@ export function repositoryContainer(db: Database)
 
     return {
         get organization() {
-            return organization ??= new PrismaCrudRepository(db.organization);
+            return organization ??= createOrganizationRepository(db.organization);
         },
 
         get journal() {
@@ -65,15 +59,15 @@ export function repositoryContainer(db: Database)
         },
 
         get journalAffiliation() {
-            return journalAffiliation ??= new JournalAffiliationRepository(db.journalAffiliation);
+            return journalAffiliation ??= createJournalAffiliationRepository(db.journalAffiliation);
         },
 
         get awardScheme() {
-            return awardScheme ??= new PrismaCrudRepository(db.awardScheme);
+            return awardScheme ??= createAwardSchemeRepository(db.awardScheme);
         },
 
         get decisionAuthority() {
-            return decisionAuthority ??= new PrismaCrudRepository(db.decisionAuthority);
+            return decisionAuthority ??= createDecisionAuthorityRepository(db.decisionAuthority);
         },
 
         get sourceDocument() {
@@ -85,7 +79,7 @@ export function repositoryContainer(db: Database)
         },
 
         get actor() {
-            return actor ??= new ActorRepository(db.actor);
+            return actor ??= createActorRepository(db.actor);
         },
 
         get importJob() {
@@ -97,7 +91,7 @@ export function repositoryContainer(db: Database)
         },
 
         get person() {
-            return person ??= new PrismaCrudRepository(db.person);
+            return person ??= createPersonRepository(db.person);
         }
     };
 }

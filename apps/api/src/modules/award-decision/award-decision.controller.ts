@@ -56,7 +56,7 @@ export class AwardDecisionController
 
     async deleteMany(req: Request, res: Response): Promise<void> 
     {
-        const ids = idsSchema.parse(req.params.ids);
+        const ids = idsSchema.parse(req.body.ids);
 
         await this.service.deleteMany(ids);
         

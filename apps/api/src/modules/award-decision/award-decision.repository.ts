@@ -38,15 +38,7 @@ export class AwardDecisionRepository
 
     async deleteMany(ids: Id[]): Promise<number>
     {
-        const result = await this.entity.deleteMany({
-            where: {
-                id: {
-                    in: ids,
-                },
-            },
-        });
-        
-        return result.count;
+        return this.crud.deleteMany(ids);
     }
 
     async count(): Promise<number>

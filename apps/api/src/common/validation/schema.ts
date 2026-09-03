@@ -2,7 +2,7 @@ import { Prisma } from "@prisma/client";
 import * as z from "zod";
 
 export const idSchema = z.coerce.number().int().positive();
-export const idsSchema = z.array(z.coerce.number().int().positive());
+export const idsSchema = z.array(idSchema);
 
 export const decimalSchema = z.custom<Prisma.Decimal>();
 

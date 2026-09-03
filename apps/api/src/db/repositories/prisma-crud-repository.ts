@@ -53,6 +53,19 @@ export class PrismaCrudRepository<TEntity, TCreate, TUpdate = Partial<TCreate>>
         });
     }
 
+    async deleteMany(ids: number[]): Promise<number>
+    {
+        const result = await this.entity.deleteMany({
+            where: {
+                id: {
+                    in: ids
+                }
+            }
+        });
+
+        return result.count;
+    }
+
     async createMany(data: TCreate[]): Promise<number>
     {
         const result = await this.entity.createMany({

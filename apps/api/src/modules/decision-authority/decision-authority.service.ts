@@ -66,6 +66,11 @@ export class DecisionAuthorityService
         return this.repository.findAll(query);
     }
 
+    async getCount(): Promise<number>
+    {
+        return this.repository.count();
+    }
+
     async findById(id: number): Promise<DecisionAuthorityEntity>
     {
         return this.repository.findByIdOrThrow(id);

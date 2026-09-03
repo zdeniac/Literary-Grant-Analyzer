@@ -4,7 +4,7 @@ import { organizationSchema } from "../../organization/validation/organization.s
 import { idSchema, nameSchema, yearSchema } from "../../../common/validation/schema";
 import { 
     createJournalAffiliationForNewJournalSchema,
-    createJournalAffiliationSchema, 
+    createJournalAffiliationForExistingJournalSchema, 
     journalAffiliationWithOrganizationAndSourceDocumentSchema,
     updateJournalAffiliationWithIdSchema, 
 } from "../../journal-affiliation/validate/journal-affiliation.schema";
@@ -106,7 +106,7 @@ export const updateJournalWithAffiliationsSchema = createJournalSchema
         affiliations: z.array(
             z.union([
                 updateJournalAffiliationWithIdSchema,
-                createJournalAffiliationSchema
+                createJournalAffiliationForExistingJournalSchema
             ])
         ),
     })

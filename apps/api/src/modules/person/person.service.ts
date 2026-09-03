@@ -70,4 +70,9 @@ export class PersonService
     {
         return this.repository.findAll(query);
     }
+
+    async getCount(): Promise<number>
+    {
+        return this.repository.count();
+    }
 }

@@ -56,7 +56,7 @@ export class JournalController
 
     async deleteMany(req: Request, res: Response): Promise<void>
     {
-        const ids = idsSchema.parse(req.params.ids);
+        const ids = idsSchema.parse(req.body.ids);
 
         await this.service.deleteMany(ids);
 
@@ -66,11 +66,12 @@ export class JournalController
     async list(req: Request, res: Response): Promise<void>
     {
         const journals = await this.service.getList(req.listQueryParams);
+        const total = await this.service.getCount();
 
         sendData(
             res, 
             journals.map(this.listMapper),
-            { total: journals.length }
-        )
+            { total }
+        );
     }
 }

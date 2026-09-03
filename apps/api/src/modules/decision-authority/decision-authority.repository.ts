@@ -45,4 +45,9 @@ export class DecisionAuthorityRepository
     {
         return this.crud.delete(id);
     }
+
+    async count(): Promise<number>
+    {
+        return this.crud.count();
+    }
 }

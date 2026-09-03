@@ -5,33 +5,33 @@ import { prisma } from "../../db/prisma";
 import { SearchQueryBuilder } from "../../db/query-builders/search.query-builder";
 import { SortQueryBuilder } from "../../db/query-builders/sort.query-builder";
 import { PrismaCrudRepository } from "../../db/repositories/prisma-crud-repository";
+import { Database } from "../../db/types";
 import { AwardSchemeController } from "./award-scheme.controller";
 import { AwardSchemeRepository } from "./award-scheme.repository";
 import { AwardSchemeService } from "./award-scheme.service";
 import { toAwardSchemeDto } from "./mapper/award-scheme.mapper";
 
 export const createAwardSchemeModule = () => {
-    const crudRepo = new PrismaCrudRepository(prisma.awardScheme);
-    const crudController = new CrudController(
-        new CrudService(crudRepo),
-        toAwardSchemeDto,
+    const service = new AwardSchemeService(
+        createAwardSchemeRepository(prisma.awardScheme, true)
     );
-
-    const listQb = new ListDbQueryBuilder(
-        new SortQueryBuilder(),
-        new SearchQueryBuilder(),
-    )
-
-    const repo = new AwardSchemeRepository(
-        prisma.awardScheme,
-        listQb
+    const controller = new AwardSchemeController(
+        service, 
+        toAwardSchemeDto
     );
-
-    const service = new AwardSchemeService(repo);
-    const controller = new AwardSchemeController(service);
 
     return {
-        crudController,
         controller,
     }
+};
+
+export const createAwardSchemeRepository = (awardScheme: Database['awardScheme'], withQueryBuilders?: boolean) => {
+    const crudRepo = new PrismaCrudRepository(awardScheme);
+
+    const listQb = withQueryBuilders ? new ListDbQueryBuilder(
+        new SortQueryBuilder(),
+        new SearchQueryBuilder(),
+    ) : undefined;
+
+    return new AwardSchemeRepository(awardScheme, crudRepo, listQb);
 };

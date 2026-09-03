@@ -54,7 +54,7 @@ export class DecisionAuthorityController
 
     async deleteMany(req: Request, res: Response): Promise<void> 
     {
-        const ids = idsSchema.parse(req.params.ids);
+        const ids = idsSchema.parse(req.body.ids);
 
         await this.service.deleteMany(ids);
         
@@ -64,11 +64,12 @@ export class DecisionAuthorityController
     async list(req: Request, res: Response): Promise<void>
     {
         const decisionAuths = await this.service.getList(req.listQueryParams);
+        const total = await this.service.getCount();
         
         sendData(
             res, 
             decisionAuths.map(this.mapper),
-            { total: decisionAuths.length }
+            { total }
         );
     }
 }

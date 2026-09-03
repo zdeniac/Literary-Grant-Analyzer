@@ -93,6 +93,11 @@ export class JournalService
         return this.repository.findAllWithOrganizations(query);
     }
 
+    async getCount(): Promise<number>
+    {
+        return this.repository.count();
+    }
+
     private async updateJournalAffiliation(affiliation: UpdateJournalAffiliationWithIdInput): Promise<void>
     {
         await this.affiliationRepository.update(

@@ -54,7 +54,7 @@ export class PersonController
 
     async deleteMany(req: Request, res: Response): Promise<void>
     {
-        const ids = idsSchema.parse(req.params.ids);
+        const ids = idsSchema.parse(req.body.ids);
         await this.service.deleteMany(ids);
         sendData(res, ids);
     }
@@ -62,12 +62,12 @@ export class PersonController
     async list(req: Request, res: Response): Promise<void>
     {
         const persons = await this.service.getList(req.listQueryParams);
+        const total = await this.service.getCount();
+        
         sendData(
             res, 
             persons.map(this.mapper),
-            { 
-                total: persons.length 
-            },
+            { total }
         );
     }
 }

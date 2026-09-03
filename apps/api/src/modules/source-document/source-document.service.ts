@@ -39,6 +39,11 @@ export class SourceDocumentService
         return this.repository.findAll(query);
     }
 
+    async getCount(): Promise<number>
+    {
+        return this.repository.count();
+    } 
+
     async findOrCreateSourceDocuments(sourceDocuments: CreateSourceDocumentInput[]): Promise<SourceDocumentEntity[]> 
     { 
         const urls = sourceDocuments.map(document => document.url);

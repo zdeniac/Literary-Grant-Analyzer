@@ -1,6 +1,6 @@
 import { JournalAffiliation } from "@prisma/client";
 import { Id } from "../../common/types/types";
-import { Database } from "../../db/types";
+import { CrudRepositoryInterface, Database } from "../../db/types";
 import { 
     CreateJournalAffiliationInput, 
     UpdateJournalAffiliationInput 
@@ -9,7 +9,12 @@ import {
 export class JournalAffiliationRepository
 {
     constructor(
-        private readonly entity: Database['journalAffiliation']
+        private readonly entity: Database['journalAffiliation'],
+        private readonly crud: CrudRepositoryInterface<
+            JournalAffiliation, 
+            CreateJournalAffiliationInput, 
+            UpdateJournalAffiliationInput
+        >,
     ) {}
 
     async findManyByJournalId(journalId: Id): Promise<JournalAffiliation[]>
@@ -23,17 +28,12 @@ export class JournalAffiliationRepository
 
     async update(id: Id, data: UpdateJournalAffiliationInput): Promise<JournalAffiliation>
     {
-        return this.entity.update({
-            where: {
-                id
-            },
-            data
-        });
+        return this.crud.update(id, data);
     }
 
     async create(data: CreateJournalAffiliationInput): Promise<JournalAffiliation>
     {
-        return this.entity.create({ data });
+        return this.crud.create(data);
     }
 
     async createMany(data: CreateJournalAffiliationInput[]): Promise<number>
@@ -47,10 +47,6 @@ export class JournalAffiliationRepository
 
     async delete(id: Id): Promise<JournalAffiliation>
     {
-        return this.entity.delete({
-            where: {
-                id
-            },
-        });
+        return this.crud.delete(id);
     }
 }

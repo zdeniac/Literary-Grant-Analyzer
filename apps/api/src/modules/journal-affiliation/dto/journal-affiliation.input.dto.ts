@@ -1,12 +1,12 @@
 import z from "zod";
 import { 
     createJournalAffiliationForNewJournalSchema, 
-    createJournalAffiliationSchema, 
+    createJournalAffiliationForExistingJournalSchema, 
     updateJournalAffiliationSchema, 
     updateJournalAffiliationWithIdSchema
 } from "../validate/journal-affiliation.schema";
 
-export type CreateJournalAffiliationInput = z.infer<typeof createJournalAffiliationSchema>;
+export type CreateJournalAffiliationInput = z.infer<typeof createJournalAffiliationForExistingJournalSchema>;
 export type CreateNestedJournalAffiliationInput = z.infer<typeof createJournalAffiliationForNewJournalSchema>
 
 export type UpdateJournalAffiliationInput = z.infer<typeof updateJournalAffiliationSchema>;

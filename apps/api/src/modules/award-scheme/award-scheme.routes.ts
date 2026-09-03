@@ -8,28 +8,33 @@ import { AwardSchemeSearchableField, AwardSchemeSortableField } from "./types/aw
 import { validateSearch } from "../../common/middleware/validate-search.middleware";
 
 const router = Router();
-const { crudController, controller } = createAwardSchemeModule();
+const { controller } = createAwardSchemeModule();
 
 router.get(
     '/:id',
-    crudController.findById,
+    controller.show,
 );
 
 router.patch(
     '/:id',
     validate(updateAwardSchemeSchema),
-    crudController.update,
+    controller.update,
+);
+
+router.delete(
+    '/',
+    controller.deleteMany
 );
 
 router.delete(
     '/:id',
-    crudController.delete,
+    controller.delete,
 );
 
 router.post(
     '/',
     validate(createAwardSchemeSchema),
-    crudController.create,
+    controller.create,
 );
 
 router.get(

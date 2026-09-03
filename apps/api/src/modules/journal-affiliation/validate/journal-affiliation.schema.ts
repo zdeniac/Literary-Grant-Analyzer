@@ -45,7 +45,7 @@ export const createJournalAffiliationForNewJournalSchema = journalAffiliationCre
 /**
  * Used when creating an affiliation for an existing Journal.
  */
-export const createJournalAffiliationSchema = journalAffiliationCreateInputSchema
+export const createJournalAffiliationForExistingJournalSchema = journalAffiliationCreateInputSchema
     .extend({
         journalId: idSchema.optional()
     });

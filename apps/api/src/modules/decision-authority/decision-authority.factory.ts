@@ -3,30 +3,29 @@ import { prisma } from "../../db/prisma";
 import { SearchQueryBuilder } from "../../db/query-builders/search.query-builder";
 import { SortQueryBuilder } from "../../db/query-builders/sort.query-builder";
 import { PrismaCrudRepository } from "../../db/repositories/prisma-crud-repository";
+import { Database } from "../../db/types";
 import { DecisionAuthorityController } from "./decision-authority.controller";
 import { DecisionAuthorityRepository } from "./decision-authority.repository";
 import { DecisionAuthorityService } from "./decision-authority.service";
 import { toDecisionAuthorityDto } from "./mapper/decision-authority.mapper";
 
 export const createDecisionAuthorityModule = () => {
-    const entity = prisma.decisionAuthority;
-
-    const crudRepository = new PrismaCrudRepository(entity);
-
-    const listQb = new ListDbQueryBuilder(
-        new SortQueryBuilder(),
-        new SearchQueryBuilder(),
+    const service = new DecisionAuthorityService(
+        createDecisionAuthorityRepository(prisma.decisionAuthority, true)
     );
-
-    const authRepo = new DecisionAuthorityRepository(
-        entity,
-        crudRepository,
-        listQb,
-    );
-
-    const service = new DecisionAuthorityService(authRepo);
     
     return {
         controller: new DecisionAuthorityController(service, toDecisionAuthorityDto),
     }
 };
+
+export const createDecisionAuthorityRepository = (decisionAuthority: Database['decisionAuthority'], withQueryBuilders?: boolean) => {
+    const crudRepo = new PrismaCrudRepository(decisionAuthority);
+
+    const listQb = withQueryBuilders ? new ListDbQueryBuilder(
+        new SortQueryBuilder(),
+        new SearchQueryBuilder(),
+    ) : undefined;
+
+    return new DecisionAuthorityRepository(decisionAuthority, crudRepo, listQb);
+}

@@ -30,6 +30,11 @@ router.patch(
 );
 
 router.delete(
+    '/',
+    controller.deleteMany,
+);
+
+router.delete(
     '/:id',
     controller.delete,
 );
