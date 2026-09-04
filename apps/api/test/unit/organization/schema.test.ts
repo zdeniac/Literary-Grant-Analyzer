@@ -10,6 +10,7 @@ import {
 const validOrganization = {
     id: 1,
     name: 'Tiszatáj',
+    nameVariants: ['tiszataj'],
     legalForm: LegalForm.FOUNDATION,
     sector: Sector.CIVIL,
     address: '123 Main St',

@@ -5,6 +5,7 @@ import { idSchema, idsSchema } from "../../common/validation/schema";
 import { AwardDecisionService } from "./award-decision.service";
 import { AwardDecisionDto, AwardDecisionWithRelatedDataDto } from "./dto/award-decision.dto";
 import { AwardDecisionEntity, AwardDecisionEntityWithRelatedData } from "./types/award-decision.types";
+import { HttpStatusCode } from "../../common/http/status-codes";
 
 export class AwardDecisionController
 {
@@ -16,7 +17,7 @@ export class AwardDecisionController
         this.create = this.create.bind(this);
         this.show = this.show.bind(this);
         this.update = this.update.bind(this);
-        this.delete = this.show.bind(this);
+        this.delete = this.delete.bind(this);
         this.deleteMany = this.deleteMany.bind(this);
         this.list = this.list.bind(this);
     }
@@ -26,12 +27,13 @@ export class AwardDecisionController
         const awardDecision = await this.service.create(
             req.body
         );
+        res.status(HttpStatusCode.CREATED);
         sendData(res, this.mapper(awardDecision));
     }
 
     async show(req: Request, res: Response): Promise<void>
     {
-        const awardDecision = await this.service.findByIdWithRelations(
+        const awardDecision = await this.service.findById(
             idSchema.parse(req.params.id)
         );
         sendData(res, this.mapper(awardDecision));

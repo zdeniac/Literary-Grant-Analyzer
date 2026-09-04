@@ -9,7 +9,7 @@ export function errorHandler(
     next: NextFunction
 ): void {   
     console.error(error);
- 
+
     if (error instanceof ImportDataValidationError) {
         res.status(error.statusCode).json({
             error: (error as any).code ?? error.message,

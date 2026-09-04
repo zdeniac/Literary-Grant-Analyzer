@@ -1,9 +1,10 @@
 import { AppError } from "../../../common/errors/app.error";
+import { HttpStatusCode } from "../../../common/http/status-codes";
 import { ImportFileRowError } from "../types/error.types";
 
 export class ImportError extends AppError 
 {
-    static statusCode = 500;
+    static statusCode = HttpStatusCode.INTERNAL_SERVER_ERROR;
     static code = 'IMPORT_ERROR';
 
     constructor(
@@ -19,7 +20,7 @@ export class ImportError extends AppError
 export class ImportDataValidationError extends ImportError 
 {
     static code = 'IMPORT_VALIDATION_ERROR';
-    static statusCode = 422;
+    static statusCode = HttpStatusCode.UNPROCESSABLE_ENTITY;
 
     constructor(
         readonly errors: ImportFileRowError[] = [],
@@ -54,7 +55,7 @@ export class ImportRelationError extends ImportDataValidationError
 export class ImportEmptyFileError extends ImportError
 {
     static code = 'IMPORT_EMPTY_FILE_ERROR';
-    static statusCode = 422;
+    static statusCode = HttpStatusCode.UNPROCESSABLE_ENTITY;
 
     constructor() {
         super(

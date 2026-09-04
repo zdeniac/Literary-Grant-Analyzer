@@ -4,7 +4,7 @@ import { prisma } from "../../../../src/db/prisma";
 import { ActorType, AwardSchemeType, FundingArea, LegalForm, Sector } from "@prisma/client";
 import { Id } from "../../../../src/common/types/types";
 
-const route = "/api/award-decisions";
+const route = '/api/award-decisions';
 
 type CreateAwardDecisionInput = {
     amount?: number;
@@ -77,17 +77,17 @@ const createSourceDocument = async (): Promise<number> => {
 
 export const createAwardDecision = async (input: CreateAwardDecisionInput = {}) => {
     const awardSchemeId = input.awardSchemeId ?? await createAwardScheme();
-    const decisionMakerId = input.decisionMakerId ?? await createOrganizationActor("Nemzeti Kulturális Alap");
-    const recipientId = input.recipientId ?? await createOrganizationActor("Jelenkor Alapítvány");
+    const decisionMakerId = input.decisionMakerId ?? await createOrganizationActor('Nemzeti Kulturális Alap');
+    const recipientId = input.recipientId ?? await createOrganizationActor('Jelenkor Alapítvány');
     const sourceDocumentId = input.sourceDocumentId ?? await createSourceDocument();
 
     return request(app)
         .post(route)
         .send({
             amount: input.amount ?? 1000000,
-            purpose: input.purpose ?? "Laptámogatás",
-            sourceIdentifier: input.sourceIdentifier ?? "NKA-2024-001",
-            decisionDate: input.decisionDate ?? "2024-01-01",
+            purpose: input.purpose ?? 'Laptámogatás',
+            sourceIdentifier: input.sourceIdentifier ?? 'NKA-2024-001',
+            decisionDate: input.decisionDate ?? '2024-01-01',
             awardSchemeId,
             decisionMakerId,
             recipientId,

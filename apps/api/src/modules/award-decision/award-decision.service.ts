@@ -40,7 +40,7 @@ export class AwardDecisionService
         return this.repository.count();
     }
 
-    async findByIdWithRelations(id: Id): Promise<AwardDecisionEntity>
+    async findById(id: Id): Promise<AwardDecisionEntity>
     {
         const entity = await this.repository.findByIdOrThrow(id);
 
