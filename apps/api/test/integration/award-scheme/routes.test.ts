@@ -6,9 +6,13 @@ import {
     createAwardScheme,
     CreateAwardSchemeInput,
     deleteAwardScheme,
+    deleteManyAwardSchemes,
     getAwardScheme,
     updateAwardScheme,
 } from "../helpers/api/award-scheme.api";
+import { getAwardDecision } from "../helpers/api/award-decision.api";
+import { HttpStatusCode } from "../../../src/common/http/status-codes";
+import { expectNotFound } from "../helpers/error.helper";
 
 describe('Award Scheme routes test', () => {
 
@@ -29,10 +33,10 @@ describe('Award Scheme routes test', () => {
         });
     };
 
-    it('POST / creates Award Scheme', async () => {
+    it('POST / creates award scheme', async () => {
         const res = await createRouteAwardScheme();
 
-        expect(res.status).toBe(200);
+        expect(res.status).toBe(HttpStatusCode.OK);
         expect(res.body.data.name).toBe(awardSchemeName);
     });
 
@@ -41,29 +45,29 @@ describe('Award Scheme routes test', () => {
             name: '',
         });
 
-        expect(res.status).toBe(422);
+        expect(res.status).toBe(HttpStatusCode.UNPROCESSABLE_ENTITY);
         expect(res.body.error).toBe('VALIDATION_ERROR');
 
         res = await createRouteAwardScheme({
             type: 'd'
         });
 
-        expect(res.status).toBe(422);
+        expect(res.status).toBe(HttpStatusCode.UNPROCESSABLE_ENTITY);
         expect(res.body.error).toBe('VALIDATION_ERROR');
     });
 
-    it('GET /:id returns awardScheme', async () => {
+    it('GET /:id returns award scheme', async () => {
         const created = await createAwardScheme();
 
         const id = created.body.data.id;
 
         const res = await getAwardScheme(id);
 
-        expect(res.status).toBe(200);
+        expect(res.status).toBe(HttpStatusCode.OK);
         expect(res.body.data.id).toBe(id);
     });
 
-    it('PATCH /:id updates awardScheme', async () => {
+    it('PATCH /:id updates award scheme', async () => {
         const created = await createAwardScheme();
 
         const id = created.body.data.id;
@@ -74,7 +78,7 @@ describe('Award Scheme routes test', () => {
             organizationId: created.body.data.organizationId,
         });
 
-        expect(res.status).toBe(200);
+        expect(res.status).toBe(HttpStatusCode.OK);
         expect(res.body.data.name).toBe('teszt');
         expect(res.body.data.type).toBe('SCHOLARSHIP');
     });
@@ -89,19 +93,45 @@ describe('Award Scheme routes test', () => {
             }
         );
 
-        expect(res.status).toBe(422);
+        expect(res.status).toBe(HttpStatusCode.UNPROCESSABLE_ENTITY);
         expect(res.body.error).toBe('VALIDATION_ERROR');
     });
 
-    it('DELETE /:id deletes decisionBody', async () => {
+    it('DELETE /:id deletes award scheme', async () => {
         const created = await createRouteAwardScheme();
         const id = created.body.data.id;
         const res = await deleteAwardScheme(id);
 
-        expect(res.status).toBe(204);
+        expect(res.status).toBe(HttpStatusCode.OK);
 
         const deleted = await getAwardScheme(id);
 
-        expect(deleted.status).toBe(404);
+        expect(deleted.status).toBe(HttpStatusCode.NOT_FOUND);
+    });
+
+    it('DELETE / deletes many award schemes', async () => {
+        const created1 = await createRouteAwardScheme();
+        const created2 = await createRouteAwardScheme();
+        const created3 = await createRouteAwardScheme();
+
+        const id1 = created1.body.data.id;
+        const id2 = created2.body.data.id;
+        const id3 = created3.body.data.id;
+
+        const ids = [
+            id1,
+            id2,
+            id3,
+        ];
+
+        const res = await deleteManyAwardSchemes(ids);
+
+        expect(res.status).toBe(HttpStatusCode.OK);
+
+        expect(res.status).toBe(HttpStatusCode.OK);
+
+        await expectNotFound(getAwardDecision(ids[0]));
+        await expectNotFound(getAwardDecision(ids[1]));
+        await expectNotFound(getAwardDecision(ids[2]));
     });
 });

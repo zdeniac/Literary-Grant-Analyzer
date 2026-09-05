@@ -3,6 +3,7 @@ import app from "../../../../src/app";
 import { JournalFormat, JournalStatus } from "@prisma/client";
 import { Id } from "../../../../src/common/types/types";
 import { createOrganization } from "./organization.api";
+import { Issn } from "../../../../src/modules/journal/types/journal.types";
 
 const route = "/api/journals";
 
@@ -11,7 +12,7 @@ type CreateJournalInput = {
     status?: JournalStatus | string;
     foundingYear?: number;
     format?: JournalFormat[];
-    issn?: string;
+    issn?: Issn;
     affiliations?: Array<{
         organizationId: Id;
         fromYear?: number | null;
@@ -39,11 +40,11 @@ export const createJournal = async (input: CreateJournalInput = {}) => {
     return request(app)
         .post(route)
         .send({
-            name: input.name ?? "Tiszatáj",
+            name: input.name ?? 'Tiszatáj',
             status: input.status ?? JournalStatus.ACTIVE,
             foundingYear: input.foundingYear ?? 1980,
             format: input.format ?? [JournalFormat.PRINT, JournalFormat.ONLINE],
-            issn: input.issn ?? "12345683",
+            issn: input.issn ?? '12345683',
             affiliations,
         });
 };
@@ -60,3 +61,8 @@ export const updateJournal = async (id: Id, data: object) =>
 export const deleteJournal = async (id: Id) =>
     request(app)
         .delete(`${route}/${id}`);
+
+export const deleteManyJournals = async (ids: Id[]) =>
+    request(app)
+        .delete(`${route}`)
+        .send({ ids });

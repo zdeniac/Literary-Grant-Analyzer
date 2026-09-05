@@ -35,3 +35,8 @@ export const updateOrganization = async (id: Id, data: object) =>
 export const deleteOrganization = async (id: Id) =>
     request(app)
         .delete(`${route}/${id}`);
+
+export const deleteManyOrganizations = async (ids: Id[]) =>
+    request(app)
+        .delete(`${route}`)
+        .send({ ids });

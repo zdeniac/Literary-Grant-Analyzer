@@ -34,3 +34,8 @@ export const updateDecisionAuthority = async (id: Id, data: object) =>
 export const deleteDecisionAuthority = async (id: Id) =>
     request(app)
         .delete(`${route}/${id}`);
+
+export const deleteManyDecisionAuthorities = async (ids: Id[]) =>
+    request(app)
+        .delete(`${route}`)
+        .send({ ids });

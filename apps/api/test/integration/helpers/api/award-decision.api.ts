@@ -76,9 +76,13 @@ const createSourceDocument = async (): Promise<number> => {
 };
 
 export const createAwardDecision = async (input: CreateAwardDecisionInput = {}) => {
+    const suffix = crypto.randomUUID();
+
     const awardSchemeId = input.awardSchemeId ?? await createAwardScheme();
-    const decisionMakerId = input.decisionMakerId ?? await createOrganizationActor('Nemzeti Kulturális Alap');
-    const recipientId = input.recipientId ?? await createOrganizationActor('Jelenkor Alapítvány');
+
+    const decisionMakerId = input.decisionMakerId ?? await createOrganizationActor(`Nemzeti Kulturális Alap-${suffix}`);
+    const recipientId = input.recipientId ?? await createOrganizationActor(`Jelenkor Alapítvány-${suffix}`);
+    
     const sourceDocumentId = input.sourceDocumentId ?? await createSourceDocument();
 
     return request(app)
@@ -107,3 +111,9 @@ export const updateAwardDecision = async (id: Id, data: object) =>
 export const deleteAwardDecision = async (id: Id) =>
     request(app)
         .delete(`${route}/${id}`);
+
+export const deleteManyAwardDecisions = async (ids: Id[]) =>
+    request(app)
+        .delete(`${route}`)
+        .send({ ids });
+

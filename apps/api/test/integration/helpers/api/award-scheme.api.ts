@@ -39,3 +39,9 @@ export const updateAwardScheme = async (id: Id, data: object) =>
 export const deleteAwardScheme = async (id: Id) =>
     request(app)
         .delete(`${route}/${id}`);
+
+export const deleteManyAwardSchemes = async (ids: Id[]) =>
+    request(app)
+        .delete(`${route}`)
+        .send({ ids });
+

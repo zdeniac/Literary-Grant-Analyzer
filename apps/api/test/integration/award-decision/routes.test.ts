@@ -3,10 +3,12 @@ import { wipeDatabase } from "../helpers/db.helper";
 import {
     createAwardDecision,
     deleteAwardDecision,
+    deleteManyAwardDecisions,
     getAwardDecision,
     updateAwardDecision,
 } from "../helpers/api/award-decision.api";
 import { HttpStatusCode } from "../../../src/common/http/status-codes";
+import { expectNotFound } from "../helpers/error.helper";
 
 describe('AwardDecision routes test', () => {
     beforeEach(wipeDatabase);
@@ -102,15 +104,28 @@ describe('AwardDecision routes test', () => {
     });
 
     it('DELETE / deletes many award decisions', async () => {
-        const created = await createAwardDecision();
-        const id = created.body.data.id;
-        const res = await deleteAwardDecision(id);
+        const created1 = await createAwardDecision();
+        const created2 = await createAwardDecision();
+        const created3 = await createAwardDecision();
+
+        const id1 = created1.body.data.id;
+        const id2 = created2.body.data.id;
+        const id3 = created3.body.data.id;
+
+        const ids = [
+            id1,
+            id2,
+            id3,
+        ];
+
+        const res = await deleteManyAwardDecisions(ids);
 
         expect(res.status).toBe(HttpStatusCode.OK);
 
-        const deleted = await getAwardDecision(id);
+        expect(res.status).toBe(HttpStatusCode.OK);
 
-        expect(deleted.status).toBe(HttpStatusCode.NOT_FOUND);
+        await expectNotFound(getAwardDecision(ids[0]));
+        await expectNotFound(getAwardDecision(ids[1]));
+        await expectNotFound(getAwardDecision(ids[2]));
     });
-
 });
